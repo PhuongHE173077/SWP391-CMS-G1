@@ -1,30 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
 public class DBContext {
     protected Connection connection;
-    public DBContext()
-    {
+
+    public DBContext() {
         try {
-            // Edit URL , username, password to authenticate with your MS SQL Server
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=";
-            String username = "sa";
-            String password = "";
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            String url = "jdbc:mysql://localhost:3306/SWP391?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String username = "root";
+            String password = "123456";  
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, username, password);
+
         } catch (ClassNotFoundException | SQLException ex) {
-            System.out.println(ex);
+            System.out.println("LỖI KẾT NỐI MYSQL: " + ex.getMessage());
         }
-    }
-    public static void main(String[] args) {
-        
     }
 }
