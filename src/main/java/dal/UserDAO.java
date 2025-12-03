@@ -53,6 +53,21 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+    
+    public Users viewProfile(int id) {
+    String query = "SELECT * FROM _user WHERE id = ?";
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return mapResultSetToUser(rs);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
@@ -63,4 +78,6 @@ public class UserDAO extends DBContext {
             System.out.println("Login failed");
         }
     }
+    
+    
 }
