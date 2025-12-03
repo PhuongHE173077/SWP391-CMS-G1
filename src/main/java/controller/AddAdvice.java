@@ -1,34 +1,15 @@
-<<<<<<<< HEAD:src/main/java/controller/LoginServlet.java
-========
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
->>>>>>>> origin/develop:src/main/java/controller/AddAdvice.java
 package controller;
 
-import dal.UserDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-<<<<<<<< HEAD:src/main/java/controller/LoginServlet.java
-import jakarta.servlet.http.HttpSession;
-import model.Users;
-
-/**
- *
- * @author ADMIN
- */
-@WebServlet(name="LoginServlet", urlPatterns={"/Login"})
-public class LoginServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-========
 import service.iService.IDeviceService;
 
 /**
@@ -43,7 +24,6 @@ public class AddAdvice extends HttpServlet {
      * methods.
      *
      * @param request  servlet request
->>>>>>>> origin/develop:src/main/java/controller/AddAdvice.java
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException      if an I/O error occurs
@@ -51,10 +31,6 @@ public class AddAdvice extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-<<<<<<<< HEAD:src/main/java/controller/LoginServlet.java
-        
-    } 
-========
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -68,7 +44,6 @@ public class AddAdvice extends HttpServlet {
             out.println("</html>");
         }
     }
->>>>>>>> origin/develop:src/main/java/controller/AddAdvice.java
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
     // + sign on the left to edit the code.">
@@ -82,21 +57,9 @@ public class AddAdvice extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-<<<<<<<< HEAD:src/main/java/controller/LoginServlet.java
-    throws ServletException, IOException {
-        HttpSession session = request.getSession(false);         
-    if (session != null && session.getAttribute("acc") != null) {      
-        response.sendRedirect("Home"); 
-    } else {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-    }
-}     
-    
-========
             throws ServletException, IOException {
       request.getRequestDispatcher("manager/AddAdvice.jsp").forward(request, response);
     }
->>>>>>>> origin/develop:src/main/java/controller/AddAdvice.java
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -108,28 +71,8 @@ public class AddAdvice extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-<<<<<<<< HEAD:src/main/java/controller/LoginServlet.java
-    throws ServletException, IOException {
-         String username = request.getParameter("email");
-        String password = request.getParameter("password");
-        
-        UserDAO udao = new UserDAO();
-        Users a = udao.login(username, password);
-        if(a==null) {
-            request.setAttribute("mess", "User does not exist");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else if(a.isActive()== false){
-            request.setAttribute("messdie", "Account die");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }else{
-            HttpSession session = request.getSession();
-            session.setAttribute("acc", a);
-            response.sendRedirect("Home");
-        }
-========
             throws ServletException, IOException {
         request.getRequestDispatcher("/manager/AddAdvice.jsp").forward(request, response);
->>>>>>>> origin/develop:src/main/java/controller/AddAdvice.java
     }
 
     /**
