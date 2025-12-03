@@ -20,7 +20,6 @@ public class UserDAO extends DBContext {
         user.setActive(rs.getBoolean("active"));
         user.setAddress(rs.getString("address"));
         user.setGender(rs.getBoolean("gender"));
-        // Note: roles cần được load riêng nếu cần
         return user;
     }
 
@@ -68,6 +67,26 @@ public class UserDAO extends DBContext {
     }
     return null;
 }
+
+    public boolean insertUser(Users user) {
+        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getDisplayname());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.setString(4, user.getPhone());
+            ps.setBoolean(5, user.isActive());
+            ps.setString(6, user.getAddress());
+            ps.setBoolean(7, user.isGender());
+            ps.setInt(8, user.getRoles().getId());
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
