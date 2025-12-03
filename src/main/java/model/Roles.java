@@ -29,9 +29,15 @@ public class Roles extends BaseEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "status", columnDefinition = "boolean default true")
+    private boolean status;
+
     @OneToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<Users> users = new HashSet<>();
-    
+
     @OneToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<RolePermission> permissions = new HashSet<>();
 
@@ -66,5 +72,20 @@ public class Roles extends BaseEntity {
         this.permissions = permissions;
     }
 
-    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
 }
