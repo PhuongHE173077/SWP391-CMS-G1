@@ -7,9 +7,9 @@ package controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.RolePermission;
 import model.Roles;
+import model.RouterGroup;
+import model.Routers;
 import service.serviceImpl.RoleServiceImpl;
 import utils.RouterDefault;
 
@@ -64,18 +66,29 @@ public class ViewRoleDetail extends HttpServlet {
 
             List<RolePermission> permissions = roleService.getPermissionsByRoleId(roleId);
 
-            // Tạo danh sách permission với tên hiển thị từ RouterDefault
-            List<Map<String, String>> permissionList = new ArrayList<>();
-            for (RolePermission permission : permissions) {
-                Map<String, String> permMap = new HashMap<>();
-                permMap.put("router", permission.getRouter());
-                permMap.put("name", RouterDefault.getRouterNameByPath(permission.getRouter()));
-                permMap.put("groupName", RouterDefault.getGroupNameByRouterPath(permission.getRouter()));
-                permissionList.add(permMap);
+
+            Set<String> permittedRouters = new HashSet<>();
+            for (RolePermission perm : permissions) {
+                permittedRouters.add(perm.getRouter());
+            }
+
+            List<RouterGroup> filteredGroups = new ArrayList<>();
+            for (RouterGroup group : RouterDefault.getRouterGroups()) {
+                List<Routers> matchedRouters = new ArrayList<>();
+                for (Routers router : group.getRouterses()) {
+                    if (permittedRouters.contains(router.getRouter())) {
+                        matchedRouters.add(router);
+                    }
+                }
+                
+                if (!matchedRouters.isEmpty()) {
+                    RouterGroup filteredGroup = new RouterGroup(group.getId(), group.getName(), matchedRouters);
+                    filteredGroups.add(filteredGroup);
+                }
             }
 
             request.setAttribute("role", role);
-            request.setAttribute("permissionList", permissionList);
+            request.setAttribute("permissionGroups", filteredGroups);
             request.getRequestDispatcher("admin/role/roleDetail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {

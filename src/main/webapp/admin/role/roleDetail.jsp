@@ -9,18 +9,25 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
                 <title>Chi tiết Role - ${role.name}</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+                    rel="stylesheet">
             </head>
 
             <body>
                 <div class="container mt-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <a href="ViewRole" class="btn btn-secondary mb-4">
+                        <i class="bi bi-arrow-left"></i> 
+                        Quay lại
+                    </a>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
                         <h2>Chi tiết Role</h2>
-                        <a href="ViewRole" class="btn btn-secondary">Quay lại</a>
+                        <a href="/EditRole?id=${role.id}" class="btn btn-secondary">Cập nhật</a>
                     </div>
 
-                    <!-- Thông tin Role -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-primary text-white">
+
+                    <div class="border mb-4">
+                        <div class="p-1 bg-primary text-white">
                             <h5 class="mb-0">Thông tin Role</h5>
                         </div>
                         <div class="card-body">
@@ -46,43 +53,37 @@
                         </div>
                     </div>
 
-                    <!-- Danh sách Permission -->
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
+
+                    <div class="border">
+                        <div class="p-1 bg-success text-white">
                             <h5 class="mb-0">Danh sách Permission</h5>
                         </div>
                         <div class="card-body">
                             <c:choose>
-                                <c:when test="${not empty permissionList}">
-                                    <table class="table table-bordered table-striped">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Nhóm chức năng</th>
-                                                <th>Tên quyền</th>
-                                                <th>Router</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach var="perm" items="${permissionList}" varStatus="status">
-                                                <tr>
-                                                    <td>${status.index + 1}</td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${not empty perm.groupName}">
-                                                                <span class="badge bg-info">${perm.groupName}</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="badge bg-secondary">Không xác định</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>${perm.name}</td>
-                                                    <td><code>${perm.router}</code></td>
-                                                </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                    </table>
+                                <c:when test="${not empty permissionGroups}">
+                                    <div class="permission-tree">
+                                        <c:forEach var="group" items="${permissionGroups}">
+                                            <div class="group-item mb-3">
+                                                <div
+                                                    class="group-header d-flex align-items-center p-2 bg-light rounded">
+                                                    <i class="bi bi-folder-fill text-warning me-2"></i>
+                                                    <strong class="text-primary">${group.name}</strong>
+                                                    <span class="badge bg-secondary ms-2">${group.routerses.size()}
+                                                        quyền</span>
+                                                </div>
+                                                <div class="router-list ms-4 mt-2">
+                                                    <c:forEach var="router" items="${group.routerses}">
+                                                        <div
+                                                            class="router-item d-flex align-items-center py-1 ps-3 border-start border-2">
+                                                            <i class="bi bi-file-earmark-code text-success me-2"></i>
+                                                            <span class="me-2">${router.name}</span>
+                                                            <code class="text-muted small">${router.router}</code>
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="alert alert-warning mb-0">

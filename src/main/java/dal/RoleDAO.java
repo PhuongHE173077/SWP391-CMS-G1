@@ -75,4 +75,46 @@ public class RoleDAO extends DBContext {
         return permissions;
     }
 
+    public boolean updateRole(Roles role) {
+        String query = "UPDATE roles SET name = ?, description = ?, status = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, role.getName());
+            ps.setString(2, role.getDescription());
+            ps.setBoolean(3, role.isStatus());
+            ps.setInt(4, role.getId());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void deletePermissionsByRoleId(int roleId) {
+        String query = "DELETE FROM role_permission WHERE role_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, roleId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addPermission(int roleId, String router) {
+        String query = "INSERT INTO role_permission (role_id, router) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, roleId);
+            ps.setString(2, router);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateRolePermissions(int roleId, List<String> routers) {
+        deletePermissionsByRoleId(roleId);
+        for (String router : routers) {
+            addPermission(roleId, router);
+        }
+    }
+
 }
