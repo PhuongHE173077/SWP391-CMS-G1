@@ -5,8 +5,8 @@
 package service.serviceImpl;
 
 import dal.RoleDAO;
-import java.util.ArrayList;
 import java.util.List;
+import model.RolePermission;
 import model.Roles;
 import service.iService.IRoleService;
 
@@ -24,6 +24,16 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public List<Roles> getListRoleses() {
         return roleRespone.getAllRoleses();
+    }
+
+    @Override
+    public Roles getRoleById(int id) {
+        return roleRespone.getRoleById(id);
+    }
+
+    @Override
+    public List<RolePermission> getPermissionsByRoleId(int roleId) {
+        return roleRespone.getPermissionsByRoleId(roleId);
     }
 
 }

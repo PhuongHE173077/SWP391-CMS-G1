@@ -5,6 +5,7 @@
 package service.iService;
 
 import java.util.List;
+import model.RolePermission;
 import model.Roles;
 
 /**
@@ -12,6 +13,10 @@ import model.Roles;
  * @author admin
  */
 public interface IRoleService {
-    
-    List<Roles>getListRoleses();
+
+    List<Roles> getListRoleses();
+
+    Roles getRoleById(int id);
+
+    List<RolePermission> getPermissionsByRoleId(int roleId);
 }

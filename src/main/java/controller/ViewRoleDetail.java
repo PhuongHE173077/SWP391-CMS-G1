@@ -6,22 +6,26 @@ package controller;
  */
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.RolePermission;
 import model.Roles;
 import service.serviceImpl.RoleServiceImpl;
+import utils.RouterDefault;
 
 /**
  *
  * @author admin
  */
-@WebServlet(urlPatterns = { "/ViewRole" })
-public class ViewRole extends HttpServlet {
+@WebServlet(urlPatterns = { "/RoleDetail" })
+public class ViewRoleDetail extends HttpServlet {
 
     private RoleServiceImpl roleService;
 
@@ -33,32 +37,6 @@ public class ViewRole extends HttpServlet {
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ViewRole</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ViewRole at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
-    /**
      * Handles the HTTP <code>GET</code> method.
      *
      * @param request  servlet request
@@ -69,9 +47,40 @@ public class ViewRole extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Roles> listRoles = roleService.getListRoleses();
-        request.setAttribute("listRoles", listRoles);
-        request.getRequestDispatcher("admin/role/listRole.jsp").forward(request, response);
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendRedirect("ViewRole");
+            return;
+        }
+
+        try {
+            int roleId = Integer.parseInt(idParam);
+            Roles role = roleService.getRoleById(roleId);
+
+            if (role == null) {
+                response.sendRedirect("ViewRole");
+                return;
+            }
+
+            List<RolePermission> permissions = roleService.getPermissionsByRoleId(roleId);
+
+            // Tạo danh sách permission với tên hiển thị từ RouterDefault
+            List<Map<String, String>> permissionList = new ArrayList<>();
+            for (RolePermission permission : permissions) {
+                Map<String, String> permMap = new HashMap<>();
+                permMap.put("router", permission.getRouter());
+                permMap.put("name", RouterDefault.getRouterNameByPath(permission.getRouter()));
+                permMap.put("groupName", RouterDefault.getGroupNameByRouterPath(permission.getRouter()));
+                permissionList.add(permMap);
+            }
+
+            request.setAttribute("role", role);
+            request.setAttribute("permissionList", permissionList);
+            request.getRequestDispatcher("admin/role/roleDetail.jsp").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            response.sendRedirect("ViewRole");
+        }
     }
 
     /**
@@ -85,7 +94,7 @@ public class ViewRole extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("admin/role/listRole.jsp").forward(request, response);
+        doGet(request, response);
     }
 
     /**
