@@ -23,12 +23,7 @@ import java.util.Set;
  *
  * @author admin
  */
-@Getter
-@Setter
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name="device_category")
 public class device_category extends BaseEntity{
     
@@ -38,5 +33,30 @@ public class device_category extends BaseEntity{
     
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private Set<device> devices = new HashSet<>();
+
+    public device_category() {
+    }
+
+    public device_category(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(Set<device> devices) {
+        this.devices = devices;
+    }
+    
+    
     
 }
