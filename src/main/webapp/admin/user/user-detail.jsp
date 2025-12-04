@@ -8,7 +8,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="../adminLayout.jsp">
-    <jsp:param name="pageTitle" value="Chỉnh sửa 1 người dùng" />
+    <jsp:param name="pageTitle" value="Chi tiết 1 người dùng" />
 </jsp:include>
 <div class="detail-card">
     <h2 style="text-align: center;">User Information</h2>
