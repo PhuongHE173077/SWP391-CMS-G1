@@ -69,69 +69,40 @@ public class UserDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-//        UserDAO u = new UserDAO();
-//        Users user = u.login("admin@system.com", "123456");
-//        if (user != null) {
-//            System.out.println("Login success: " + user.getDisplayname());
-//        } else {
-//            System.out.println("Login failed");
-//        }
         UserDAO u = new UserDAO();
-        List<Users> list = u.getAllUsersWithRole();
-        for (Users us : list) {
-            System.out.println(us.getId() + "_Name: " + us.getDisplayname() + "_Role: " + us.getRoles().getName());
+        Users user = u.login("admin@system.com", "123456");
+        if (user != null) {
+            System.out.println("Login success: " + user.getDisplayname());
+        } else {
+            System.out.println("Login failed");
         }
     }
 
-    public List<Users> getAllUsersWithRole() {
-        List<Users> users = new ArrayList<>();
-        String sql = "SELECT u.*, r.name as role_name \n"
-                + "                   FROM _user u \n"
-                + "                   INNER JOIN role r ON u.role_id = r.id\n"
-                + "                   where u.role_id != 1";
-        try {
-            //câu lệnh để kết nối database
-            PreparedStatement ps = connection.prepareStatement(sql);
-            //thực thi câu lệnh, lấy kết quả
-            ResultSet rs = ps.executeQuery();
-            //duyệt qua từng kết quả
-            while (rs.next()) {
-                Roles role = new Roles();
-                role.setId(rs.getInt("role_id"));
-                role.setName(rs.getString("role_name"));
-
-                Users user = new Users();
-                //Map từng cột
-                user.setId(rs.getInt("id"));
-                user.setDisplayname(rs.getString("displayname"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-                user.setPhone(rs.getString("phone"));
-                user.setActive(rs.getBoolean("active"));
-                user.setAddress(rs.getString("address"));
-                user.setGender(rs.getBoolean("gender"));
-                user.setRoles(role);
-                users.add(user);
-            }
-        } catch (SQLException ex) {
-            System.out.println("Lỗi lấy danh sách User: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return users;
-    }
-
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex) {
         List<Users> list = new ArrayList<>();
-
-        // 1. Câu SQL gốc (Luôn dùng WHERE 1=1 để dễ nối chuỗi)
-        // Lưu ý: Vẫn phải JOIN bảng role để lấy tên role
+        //số lượng User trên 1 page
+        int pageSize = 5;
+        
+        /*
+        Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
+        Trang 1 (pageIndex = 1):
+        Lấy 5 người đầu tiên(1 -> 5)
+        => offset bỏ qua 0 người
+        Công thức: (1 - 1) * 5 = 0. 
+        
+        Trang 2: (pageIndex = 2)
+        Lấy 5 người tiếp theo (6->10)
+        => offset bỏ qua 5 người từ 1->5(vì đã lấy ở pageIndex =1 rồi)
+        Công thức: (2 - 1) * 5 = 5. 
+        */
+         
+        int offset = (pageIndex - 1) * pageSize;
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
                 + "INNER JOIN role r ON u.role_id = r.id "
                 + "WHERE 1=1 and u.role_id != 1";
 
-        // 2. Nếu người dùng có chọn filter nào thì nối thêm câu SQL đó
-        // (Dùng dấu ? để lát nữa điền dữ liệu sau - chống hack SQL)
+        // 2. Nếu user chọn filter nào thì nối thêm câu SQL đó
         // Nếu có nhập từ khóa (Search)
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND u.displayname LIKE ? ";
@@ -151,6 +122,7 @@ public class UserDAO extends DBContext {
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
+        sql += " LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -172,14 +144,15 @@ public class UserDAO extends DBContext {
             if (gender != null && !gender.isEmpty()) {
                 ps.setBoolean(index++, gender.equals("1"));
             }
+            ps.setInt(index++, pageSize); // Lấy 5 người
+            ps.setInt(index++, offset);   // Bỏ qua offset người
 
             // 4. Chạy câu lệnh và lấy kết quả (Giống hệt hàm getAll cũ)
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Roles role = new Roles();
                 role.setId(rs.getInt("role_id"));
-                role.setName(rs.getString("role_name")); // Nhớ lấy theo alias role_name
-
+                role.setName(rs.getString("role_name"));
                 Users user = new Users();
                 user.setId(rs.getInt("id"));
                 user.setDisplayname(rs.getString("displayname"));
@@ -194,7 +167,8 @@ public class UserDAO extends DBContext {
                 list.add(user);
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            System.out.println("Lỗi lấy danh sách User: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
@@ -247,12 +221,57 @@ public class UserDAO extends DBContext {
                 user.setGender(rs.getBoolean("gender"));
 
                 user.setRoles(role);
-                return user; 
+                return user;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;  
+        return null;
+    }
+
+    // 1. Hàm đếm tổng số kết quả tìm được (Để tính số trang)
+    public int countUsers(String keyword, String roleId, String status, String gender) {
+        String sql = "SELECT COUNT(*) FROM _user u WHERE 1=1 and u.role_id != 1";
+
+        // Copy y nguyên phần nối chuỗi điều kiện ở hàm search cũ
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND u.displayname LIKE ? ";
+        }
+        if (roleId != null && !roleId.isEmpty()) {
+            sql += " AND u.role_id = ? ";
+        }
+        if (status != null && !status.isEmpty()) {
+            sql += " AND u.active = ? ";
+        }
+        if (gender != null && !gender.isEmpty()) {
+            sql += " AND u.gender = ? ";
+        }
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            // Copy y nguyên phần set tham số (index)
+            int index = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+            }
+            if (roleId != null && !roleId.isEmpty()) {
+                ps.setInt(index++, Integer.parseInt(roleId));
+            }
+            if (status != null && !status.isEmpty()) {
+                ps.setBoolean(index++, status.equals("1"));
+            }
+            if (gender != null && !gender.isEmpty()) {
+                ps.setBoolean(index++, gender.equals("1"));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1); // Trả về tổng users
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
 }

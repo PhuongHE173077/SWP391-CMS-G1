@@ -19,31 +19,31 @@
 
                 <select name="gender">
                     <option value="">-- All Gender --</option>
-                    <option value="1" ${genderVal == '1' ? 'selected' : ''}>Male</option>
-                    <option value="0" ${genderVal == '0' ? 'selected' : ''}>Female</option>
+                    <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
+                    <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
                 </select>
 
                 <select name="role">
                     <option value="">-- All Role --</option>
-                    <option value="1" ${roleVal == '1' ? 'selected' : ''}>Admin</option>
-                    <option value="2" ${roleVal == '2' ? 'selected' : ''}>Manager</option>
-                    <option value="3" ${roleVal == '3' ? 'selected' : ''}>Sale Staff</option>
-                    <option value="4" ${roleVal == '4' ? 'selected' : ''}>Customer</option>
+                    <option value="1" ${roleValue == '1' ? 'selected' : ''}>Admin</option>
+                    <option value="2" ${roleValue == '2' ? 'selected' : ''}>Manager</option>
+                    <option value="3" ${roleValue == '3' ? 'selected' : ''}>Sale Staff</option>
+                    <option value="4" ${roleValue == '4' ? 'selected' : ''}>Customer</option>
                 </select>
 
                 <select name="status">
                     <option value="">-- All Status --</option>
-                    <option value="1" ${statusVal == '1' ? 'selected' : ''}>Active</option>
-                    <option value="0" ${statusVal == '0' ? 'selected' : ''}>Inactive</option>
+                    <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
+                    <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
                 </select>
 
-                <input type="text" name="search" placeholder="Search name..." value="${searchVal}">
+                <input type="text" name="search" placeholder="Search name..." value="${searchValue}">
 
                 <button type="submit">Search</button>
             </div>
         </form>
 
-        <table style="border: 1px">
+        <table style="border: 1px solid black">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -68,7 +68,7 @@
                             <c:if test="${!u.active}">
                                 <span style="color: red; font-weight: bold;">Inactive</span>
                             </c:if>
-            
+
                         </td>
                         <td>
                             ${u.roles.name}
@@ -81,7 +81,7 @@
 
                         <td>
                             <a href="user-detail?id=${u.id}">View</a> | 
-                          <a href="edit?id=${u.id}">Edit</a> | 
+                            <a href="edit?id=${u.id}">Edit</a> | 
                             <a href="#">Delete</a>
                             <c:if test="${u.active}">
                                 <form action="change-user-status" method="post" style="display: inline;">
@@ -108,7 +108,22 @@
                     </tr>
                 </c:forEach>
             </tbody>
-
         </table>
+        <div style="margin-top: 20px; text-align: center;">
+            <c:if test="${totalPages > 0}">
+                <c:forEach begin="1" end="${totalPages}" var="i">
+                    <a href="user-list?page=${i}&search=${searchValue}&role=${roleValue}&status=${statusValue}&gender=${genderValue}" 
+                       style="${i == currentPage ? 'background-color: blue; color: white;' : ''}
+                       padding: 8px 16px;
+                       text-decoration: none;
+                       border: 1px solid #ddd;
+                       margin: 0 4px;">
+                        ${i}
+                    </a>
+                </c:forEach>
+            </c:if>
+        </div>
+        <p>Tổng số trang nhận được: ${totalPages}</p>
+        <p>Trang hiện tại: ${currentPage}</p>
     </body>
 </html>
