@@ -85,7 +85,7 @@
 
                     <td>
                         <a href="user-detail?id=${u.id}">View</a> | 
-                        <a href="edit?id=${u.id}">Edit</a> | 
+                        <a href="edit-user?id=${u.id}">Edit</a> | 
                         <a href="#">Delete</a>
                         <c:if test="${u.active}">
                             <form action="change-user-status" method="post" style="display: inline;">
