@@ -352,29 +352,6 @@ public class UserDAO extends DBContext {
 
         return false;
     }
-    public boolean updateUser(Users user) {
-        String sql = "UPDATE _user SET displayname = ?, phone = ?, address = ?, "
-                   + "gender = ?, role_id = ?, active = ? WHERE id = ?";
-        
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, user.getDisplayname());
-            ps.setString(2, user.getPhone());
-            ps.setString(3, user.getAddress());
-            ps.setBoolean(4, user.isGender());
-            
-            // Lưu ý: user.getRoles().getId() lấy ID của Role
-            ps.setInt(5, user.getRoles().getId()); 
-            ps.setBoolean(6, user.isActive());
-            ps.setInt(7, user.getId());
-            
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
         Users user = u.login("vana@example.com", "hashedpass1");
