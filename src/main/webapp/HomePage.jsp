@@ -1,4 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
         <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
             <!-- Bootstrap CSS -->
@@ -343,7 +345,7 @@
                                 <span class="nav-text">Đăng xuất</span>
                             </a>
                         </li>
-                    </ul>
+                    
                 </nav>
             </aside>
 
@@ -361,9 +363,10 @@
                         <div class="dropdown">
                             <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="user-avatar">
+                                    
                                     <c:choose>
                                         <c:when test="${not empty sessionScope.user}">
-                                            ${sessionScope.user.name.substring(0,1).toUpperCase()}
+                                            ${fn:toUpperCase(fn:substring(sessionScope.user.displayname, 0, 1))}
                                         </c:when>
                                         <c:otherwise>A</c:otherwise>
                                     </c:choose>
@@ -371,18 +374,13 @@
                                 <div class="user-info">
                                     <div class="user-name">
                                         <c:choose>
-                                            <c:when test="${not empty sessionScope.user}">${sessionScope.user.name}
-                                            </c:when>
-                                            <c:otherwise>Admin</c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                    <div class="user-role">
-                                        <c:choose>
-                                            <c:when test="${not empty sessionScope.user}">${sessionScope.user.role.name}
+                                            <c:when test="${not empty sessionScope.user}">
+                                                ${sessionScope.user.displayname}
                                             </c:when>
                                             <c:otherwise>Administrator</c:otherwise>
                                         </c:choose>
                                     </div>
+                                  
                                 </div>
                                 <i class="fas fa-chevron-down" style="color: #64748b; font-size: 12px;"></i>
                             </div>

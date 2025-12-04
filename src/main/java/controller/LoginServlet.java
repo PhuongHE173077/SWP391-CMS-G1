@@ -38,45 +38,49 @@ public class LoginServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        HttpSession session = request.getSession(false);         
-    if (session != null && session.getAttribute("acc") != null) {      
-        response.sendRedirect("Home"); 
+   @Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    HttpSession session = request.getSession(false);
+
+    // Nếu đã login → vào trang Home
+    if (session != null && session.getAttribute("user") != null) {
+        response.sendRedirect("HomePage.jsp");
     } else {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
-}     
-    
+}
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-         String username = request.getParameter("email");
-        String password = request.getParameter("password");
-        
-        UserDAO udao = new UserDAO();
-        Users a = udao.login(username, password);
-        if(a==null) {
-            request.setAttribute("mess", "User does not exist");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else if(a.isActive()== false){
-            request.setAttribute("messdie", "Account die");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }else{
-            HttpSession session = request.getSession();
-            session.setAttribute("acc", a);
-            response.sendRedirect("Home");
-        }
+@Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    String username = request.getParameter("email");
+    String password = request.getParameter("password");
+
+    UserDAO udao = new UserDAO();
+    Users a = udao.login(username, password);
+
+    if (a == null) {
+        request.setAttribute("mess", "User does not exist");
+        request.getRequestDispatcher("login.jsp").forward(request, response);
+        return;
     }
+
+    if (!a.isActive()) {
+        request.setAttribute("messdie", "Account is inactive");
+        request.getRequestDispatcher("login.jsp").forward(request, response);
+        return;
+    }
+
+    // Đăng nhập thành công
+    HttpSession session = request.getSession(true);
+    session.setAttribute("user", a);
+
+    // Redirect vào servlet Home
+    response.sendRedirect("HomePage.jsp");
+}
 
     /** 
      * Returns a short description of the servlet.
