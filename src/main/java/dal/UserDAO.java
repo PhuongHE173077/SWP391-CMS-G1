@@ -1,3 +1,4 @@
+
 package dal;
 
 import java.sql.PreparedStatement;
@@ -26,7 +27,8 @@ public class UserDAO extends DBContext {
     public List<Users> getAllUser() {
         List<Users> listUser = new ArrayList<>();
         String query = "SELECT * FROM _user";
-        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 listUser.add(mapResultSetToUser(rs));
             }
@@ -66,29 +68,26 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-    return null;
-}
-    
+
     public boolean editProfile(int id, Users updatedUser) {
-    String sql = "UPDATE _user SET displayname = ?, email = ?, phone = ?, "
-               + "address = ?, gender = ? WHERE id = ?";
+        String sql = "UPDATE _user SET displayname = ?, email = ?, phone = ?, "
+                + "address = ?, gender = ? WHERE id = ?";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setString(1, updatedUser.getDisplayname());
-        ps.setString(2, updatedUser.getEmail());
-        ps.setString(3, updatedUser.getPhone());
-        ps.setString(4, updatedUser.getAddress());
-        ps.setBoolean(5, updatedUser.isGender());
-        ps.setInt(6, id);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, updatedUser.getDisplayname());
+            ps.setString(2, updatedUser.getEmail());
+            ps.setString(3, updatedUser.getPhone());
+            ps.setString(4, updatedUser.getAddress());
+            ps.setBoolean(5, updatedUser.isGender());
+            ps.setInt(6, id);
 
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
-
-    return false;
-}
-
 
     public boolean insertUser(Users user) {
         String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id) "
@@ -110,34 +109,24 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        UserDAO u = new UserDAO();
-        Users user = u.login("admin@system.com", "123456");
-        if (user != null) {
-            System.out.println("Login success: " + user.getDisplayname());
-        } else {
-            System.out.println("Login failed");
-        }
-    }
-
     public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex) {
         List<Users> list = new ArrayList<>();
-        //số lượng User trên 1 page
+        // số lượng User trên 1 page
         int pageSize = 5;
-        
+
         /*
-        Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
-        Trang 1 (pageIndex = 1):
-        Lấy 5 người đầu tiên(1 -> 5)
-        => offset bỏ qua 0 người
-        Công thức: (1 - 1) * 5 = 0. 
-        
-        Trang 2: (pageIndex = 2)
-        Lấy 5 người tiếp theo (6->10)
-        => offset bỏ qua 5 người từ 1->5(vì đã lấy ở pageIndex =1 rồi)
-        Công thức: (2 - 1) * 5 = 5. 
-        */
-         
+         * Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
+         * Trang 1 (pageIndex = 1):
+         * Lấy 5 người đầu tiên(1 -> 5)
+         * => offset bỏ qua 0 người
+         * Công thức: (1 - 1) * 5 = 0.
+         * 
+         * Trang 2: (pageIndex = 2)
+         * Lấy 5 người tiếp theo (6->10)
+         * => offset bỏ qua 5 người từ 1->5(vì đã lấy ở pageIndex =1 rồi)
+         * Công thức: (2 - 1) * 5 = 5.
+         */
+
         int offset = (pageIndex - 1) * pageSize;
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
@@ -187,7 +176,7 @@ public class UserDAO extends DBContext {
                 ps.setBoolean(index++, gender.equals("1"));
             }
             ps.setInt(index++, pageSize); // Lấy 5 người
-            ps.setInt(index++, offset);   // Bỏ qua offset người
+            ps.setInt(index++, offset); // Bỏ qua offset người
 
             // 4. Chạy câu lệnh và lấy kết quả (Giống hệt hàm getAll cũ)
             ResultSet rs = ps.executeQuery();
@@ -224,9 +213,9 @@ public class UserDAO extends DBContext {
             PreparedStatement ps = connection.prepareStatement(sql);
             // Set tham số theo thứ tự dấu ?
             ps.setInt(1, status); // status
-            ps.setInt(2, id);     // id
+            ps.setInt(2, id); // id
 
-            ps.executeUpdate();   // Chạy lệnh Update
+            ps.executeUpdate(); // Chạy lệnh Update
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -308,12 +297,22 @@ public class UserDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1); // Trả về tổng users
+                return rs.getInt(1);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static void main(String[] args) {
+        UserDAO u = new UserDAO();
+        Users user = u.login("vana@example.com", "hashedpass1");
+        if (user != null) {
+            System.out.println("Login success: " + user.getDisplayname());
+        } else {
+            System.out.println("Login failed");
+        }
     }
 
 }
