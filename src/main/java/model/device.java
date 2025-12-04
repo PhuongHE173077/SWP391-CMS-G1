@@ -21,12 +21,7 @@ import utils.BaseEntity;
  *
  * @author admin
  */
-@Getter
-@Setter
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "device")
 public class device extends BaseEntity {
 
@@ -55,4 +50,73 @@ public class device extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false) 
     private device_category category;
+
+    public device(String image, String name, String description, Long price, String maintainceTime, device_category category) {
+        this.image = image;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.maintainceTime = maintainceTime;
+        this.category = category;
+    }
+
+    public device() {
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public Boolean getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Boolean isDelete) {
+        this.isDelete = isDelete;
+    }
+
+    public String getMaintainceTime() {
+        return maintainceTime;
+    }
+
+    public void setMaintainceTime(String maintainceTime) {
+        this.maintainceTime = maintainceTime;
+    }
+
+    public device_category getCategory() {
+        return category;
+    }
+
+    public void setCategory(device_category category) {
+        this.category = category;
+    }
+    
 }

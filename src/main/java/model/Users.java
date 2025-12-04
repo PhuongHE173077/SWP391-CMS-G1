@@ -1,38 +1,56 @@
-
 package model;
 
-public class Users {
-    private int userId;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
+import utils.BaseEntity;
+
+@Entity
+@Table(name = "_user")
+public class Users extends BaseEntity {
+
+    @Column(name = "displayname")
     private String displayname;
+
+    @Column(name = "email")
     private String email;
+    
+    @Column(name = "password")
     private String password;
+    
+    @Column(name = "phone")
     private String phone;
+    
+    @Column(name = "active")
     private boolean active;
-    private int roleId;
+    
+    @Column(name = "address")
     private String address;
+    
+    @Column(name = "gender")
     private boolean gender;
+    
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false) 
+    private Roles roles;
 
-    public Users() {
-    }
-
-    public Users(int userId, String displayname, String email, String password, String phone, boolean active, int roleId, String address, boolean gender) {
-        this.userId = userId;
+    public Users(String displayname, String email, String password, String phone, boolean active, String address, boolean gender, Roles roles) {
         this.displayname = displayname;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.active = active;
-        this.roleId = roleId;
         this.address = address;
         this.gender = gender;
+        this.roles = roles;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public Users() {
     }
 
     public String getDisplayname() {
@@ -75,14 +93,6 @@ public class Users {
         this.active = active;
     }
 
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -97,5 +107,15 @@ public class Users {
 
     public void setGender(boolean gender) {
         this.gender = gender;
-    }   
+    }
+
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = roles;
+    }
+    
+     
 }

@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    <!-- Define Persistence Unit -->
+    
     <persistence-unit name="my_persistence_unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
-        <!-- Entity classes -->
+        
         <class>model.device</class>
         <class>model.device_category</class>
+        <class>model.Users</class>
+        <class>model.Roles</class>
+        <class>model.RolePermission</class>
         <class>utils.BaseEntity</class>
         
         <properties>
-            <!-- Database connection settings -->
+            
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/SWP391?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC&amp;createDatabaseIfNotExist=true"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value="123456"/>
             
-            <!-- Hibernate settings -->
+            
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             
-            <!-- Auto schema update: update = cập nhật schema khi có thay đổi entity -->
-            <!-- Các option khác: create, create-drop, validate, none -->
+            
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             
-            <!-- Show SQL in console (optional, for debugging) -->
+            
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>
