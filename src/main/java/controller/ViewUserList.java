@@ -56,6 +56,6 @@ public class ViewUserList extends HttpServlet {
         request.setAttribute("roleValue", role);
         request.setAttribute("statusValue", status);
         request.setAttribute("genderValue", gender);
-        request.getRequestDispatcher("user-list.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/user/user-list.jsp").forward(request, response);
     }
 }
