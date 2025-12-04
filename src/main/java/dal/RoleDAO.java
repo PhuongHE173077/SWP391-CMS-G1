@@ -74,6 +74,17 @@ public class RoleDAO extends DBContext {
         }
         return permissions;
     }
+// active/deactive role
+    public void changeRoleStatus(int id, int status) {
+        String query = "UPDATE roles SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, status);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public boolean updateRole(Roles role) {
         String query = "UPDATE roles SET name = ?, description = ?, status = ? WHERE id = ?";
