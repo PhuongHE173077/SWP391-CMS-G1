@@ -322,13 +322,13 @@
                         <div class="menu-title">Quản lý</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/ListUser" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/user-list" class="nav-link">
                                     <i class="fas fa-users"></i>
                                     <span class="nav-text">Quản lý User</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/ListRole" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/ViewRole" class="nav-link">
                                     <i class="fas fa-user-shield"></i>
                                     <span class="nav-text">Quản lý Role</span>
                                 </a>
@@ -344,7 +344,7 @@
                         <div class="menu-title">Hệ thống</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/logout" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/LogOut" class="nav-link">
                                     <i class="fas fa-sign-out-alt"></i>
                                     <span class="nav-text">Đăng xuất</span>
                                 </a>
@@ -388,13 +388,13 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item"
-                                            href="${pageContext.request.contextPath}/viewprofile.jsp">
+                                            href="${pageContext.request.contextPath}/ViewProfile">
                                             <i class="fas fa-user me-2"></i>Xem hồ sơ
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item"
-                                            href="${pageContext.request.contextPath}/changepassword">
+                                            href="${pageContext.request.contextPath}/ChangePassword">
                                             <i class="fas fa-key me-2"></i>Đổi mật khẩu
                                         </a>
                                     </li>
@@ -403,7 +403,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item text-danger"
-                                            href="${pageContext.request.contextPath}/logout">
+                                            href="${pageContext.request.contextPath}/LogOut">
                                             <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                         </a>
                                     </li>
