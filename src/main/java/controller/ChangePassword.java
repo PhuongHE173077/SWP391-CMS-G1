@@ -19,8 +19,8 @@ import model.Users;
  *
  * @author Dell
  */
-@WebServlet(name = "ViewProfile", urlPatterns = {"/ViewProfile"})
-public class ViewProfile extends HttpServlet {
+@WebServlet(name = "ChangePassword", urlPatterns = {"/ChangePassword"})
+public class ChangePassword extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +39,10 @@ public class ViewProfile extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewProfile</title>");
+            out.println("<title>Servlet ChangePassword</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewProfile at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ChangePassword at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,20 +63,15 @@ public class ViewProfile extends HttpServlet {
 
         HttpSession session = request.getSession(false);
 
-        Users sessionUser = (session != null) ? (Users) session.getAttribute("user") : null;
+        // Kiểm tra đăng nhập
+        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
 
-        if (sessionUser == null) {
+        if (currentUser == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        int userId = sessionUser.getId();
-
-        UserDAO dao = new UserDAO();
-        Users user = dao.viewProfile(userId);
-
-        request.setAttribute("user", user);
-        request.getRequestDispatcher("viewprofile.jsp").forward(request, response);
+        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
     }
 
     /**
@@ -90,7 +85,36 @@ public class ViewProfile extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        HttpSession session = request.getSession();
+        Users currentUser = (Users) session.getAttribute("user");
+
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        int userId = currentUser.getId();
+        String oldPass = request.getParameter("oldPassword");
+        String newPass = request.getParameter("newPassword");
+        String confirmNewPass = request.getParameter("confirmPassword");
+
+        if (!newPass.equals(confirmNewPass)) {
+            request.setAttribute("error", "Mật khẩu mới không trùng khớp!");
+            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            return;
+        }
+
+        UserDAO dao = new UserDAO();
+        boolean success = dao.changePassword(userId, oldPass, newPass);
+
+        if (success) {
+            request.setAttribute("success", "Đổi mật khẩu thành công!");
+        } else {
+            request.setAttribute("error", "Mật khẩu cũ không đúng!");
+        }
+
+        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
     }
 
     /**
