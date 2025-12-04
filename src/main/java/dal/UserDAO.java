@@ -127,7 +127,7 @@ public class UserDAO extends DBContext {
         int offset = (pageIndex - 1) * pageSize;
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
-                + "INNER JOIN role r ON u.role_id = r.id "
+                + "INNER JOIN roles r ON u.role_id = r.id "
                 + "WHERE 1=1 and u.role_id != 1";
 
         // 2. Nếu user chọn filter nào thì nối thêm câu SQL đó
@@ -223,7 +223,7 @@ public class UserDAO extends DBContext {
         // SQL vẫn phải JOIN bảng role để lấy tên Role
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
-                + "INNER JOIN role r ON u.role_id = r.id "
+                + "INNER JOIN roles r ON u.role_id = r.id "
                 + "WHERE u.id = ?";
 
         try {
