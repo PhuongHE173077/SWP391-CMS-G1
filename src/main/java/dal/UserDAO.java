@@ -1,4 +1,3 @@
-
 package dal;
 
 import java.sql.PreparedStatement;
@@ -27,8 +26,7 @@ public class UserDAO extends DBContext {
     public List<Users> getAllUser() {
         List<Users> listUser = new ArrayList<>();
         String query = "SELECT * FROM _user";
-        try (PreparedStatement ps = connection.prepareStatement(query);
-                ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 listUser.add(mapResultSetToUser(rs));
             }
@@ -126,7 +124,6 @@ public class UserDAO extends DBContext {
          * => offset bỏ qua 5 người từ 1->5(vì đã lấy ở pageIndex =1 rồi)
          * Công thức: (2 - 1) * 5 = 5.
          */
-
         int offset = (pageIndex - 1) * pageSize;
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
@@ -303,6 +300,35 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        String checkSql = "SELECT * FROM _user WHERE id = ? AND password = ?";
+        try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
+            checkPs.setInt(1, userId);
+            checkPs.setString(2, oldPassword);
+
+            try (ResultSet rs = checkPs.executeQuery()) {
+                if (!rs.next()) {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        String updateSql = "UPDATE _user SET password = ? WHERE id = ?";
+        try (PreparedStatement updatePs = connection.prepareStatement(updateSql)) {
+            updatePs.setString(1, newPassword);
+            updatePs.setInt(2, userId);
+
+            return updatePs.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public static void main(String[] args) {
