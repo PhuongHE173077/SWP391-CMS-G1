@@ -257,6 +257,28 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public boolean updateUser(Users user) {
+        String sql = "UPDATE _user SET displayname = ?, email = ?, phone = ?, "
+                + "address = ?, gender = ?, active = ?, role_id = ? WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getDisplayname());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPhone());
+            ps.setString(4, user.getAddress());
+            ps.setBoolean(5, user.isGender());
+            ps.setBoolean(6, user.isActive());
+            ps.setInt(7, user.getRoles().getId());
+            ps.setInt(8, user.getId());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     // 1. Hàm đếm tổng số kết quả tìm được (Để tính số trang)
     public int countUsers(String keyword, String roleId, String status, String gender) {
         String sql = "SELECT COUNT(*) FROM _user u WHERE 1=1 and u.role_id != 1";
