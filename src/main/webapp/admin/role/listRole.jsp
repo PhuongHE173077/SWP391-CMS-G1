@@ -41,17 +41,26 @@
                                 <td>
                                     <a href="RoleDetail?id=${role.id}" class="btn btn-primary btn-sm">View detail</a>
                                     <a href="EditRole?id=${role.id}" class="btn btn-warning btn-sm">Update</a>
-                                    <a href="DeleteRole?id=${role.id}" class="btn btn-danger btn-sm">
 
+                                    <form action="change-role-status" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="${role.id}"/>
                                         <c:choose>
                                             <c:when test="${role.status}">
-                                                <span>Deactive role</span>
+                                                <input type="hidden" name="status" value="0"/>
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Bạn có chắc muốn vô hiệu hóa role này?');">
+                                                    Deactive role
+                                                </button>
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="">Active role</span>
+                                                <input type="hidden" name="status" value="1"/>
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                        onclick="return confirm('Bạn có chắc muốn kích hoạt role này?');">
+                                                    Active role
+                                                </button>
                                             </c:otherwise>
                                         </c:choose>
-                                    </a>
+                                    </form>
                                 </td>
                             </tr>
                         </c:forEach>
