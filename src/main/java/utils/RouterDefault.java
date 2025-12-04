@@ -31,7 +31,16 @@ public class RouterDefault {
         // Manage Role
         addRouterGroup("Quản lý role", Arrays.asList(
                 new Routers("Xem role", "/ViewRole"),
-                new Routers("Xem chi tiết role", "/RoleDetail")));
+                new Routers("Xem chi tiết role", "/RoleDetail"),
+                 new Routers("Update role", "/EditRole")
+        ));
+        
+        // Manage device
+        addRouterGroup("Quản lý thiết bị", Arrays.asList(
+                new Routers("Xem thiết bị", "/ViewDevice"),
+                new Routers("Xem chi tiết thiết bị", "/DeviceDetail"),
+                new Routers("Update thiết bị", "/EditDevice")
+        ));
 
     }
 
