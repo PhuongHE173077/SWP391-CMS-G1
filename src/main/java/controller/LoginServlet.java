@@ -79,7 +79,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     session.setAttribute("user", a);
 
     // Redirect vào servlet Home
-    response.sendRedirect("HomePage.jsp");
+    response.sendRedirect("/ViewRole");
 }
 
     /** 
