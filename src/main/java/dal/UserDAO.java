@@ -67,6 +67,27 @@ public class UserDAO extends DBContext {
     }
     return null;
 }
+    
+    public boolean editProfile(int id, Users updatedUser) {
+    String sql = "UPDATE _user SET displayname = ?, email = ?, phone = ?, "
+               + "address = ?, gender = ? WHERE id = ?";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, updatedUser.getDisplayname());
+        ps.setString(2, updatedUser.getEmail());
+        ps.setString(3, updatedUser.getPhone());
+        ps.setString(4, updatedUser.getAddress());
+        ps.setBoolean(5, updatedUser.isGender());
+        ps.setInt(6, id);
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
 
     public boolean insertUser(Users user) {
         String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id) "

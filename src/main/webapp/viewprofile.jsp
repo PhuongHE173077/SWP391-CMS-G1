@@ -104,29 +104,10 @@
                         <div class="item">
                             <div class="label">Address</div>
                             <div class="value">${user.address}</div>
-                        </div>
-
-                        <div class="item">
-                            <div class="label">Role</div>
-                            <div class="value">${user.roles.rolename}</div>
-                        </div>
-
-                        <div class="item">
-                            <div class="label">Status</div>
-                            <div class="value">
-                                <c:choose>
-                                    <c:when test="${user.active}">
-                                        Active
-                                    </c:when>
-                                    <c:otherwise>
-                                        Inactive
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                        </div>
+                        </div>                     
 
                         <div class="actions">
-                            <a href="editprofile.jsp" class="btn">Edit Profile</a>
+                            <a href="EditProfile?id=${user.id}" class="btn">Edit Profile</a>
                         </div>
 
                     </c:when>
