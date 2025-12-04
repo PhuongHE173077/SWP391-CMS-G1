@@ -18,21 +18,21 @@
             <div class="filter-box">
 
                 <select name="gender">
-                    <option value="">-- All Gender --</option>
+                    <option value="">All Gender</option>
                     <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
                     <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
                 </select>
 
                 <select name="role">
-                    <option value="">-- All Role --</option>
-                    <option value="1" ${roleValue == '1' ? 'selected' : ''}>Admin</option>
-                    <option value="2" ${roleValue == '2' ? 'selected' : ''}>Manager</option>
-                    <option value="3" ${roleValue == '3' ? 'selected' : ''}>Sale Staff</option>
-                    <option value="4" ${roleValue == '4' ? 'selected' : ''}>Customer</option>
+                    <option value="">All Roles</option>
+                    <c:forEach items="${roleList}" var="r"> 
+                        <option value="${r.id}" ${roleValue == r.id ? 'selected' : ''}>${r.name}
+                        </option>
+                    </c:forEach>
                 </select>
 
                 <select name="status">
-                    <option value="">-- All Status --</option>
+                    <option value="">All Status</option>
                     <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
                     <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
                 </select>
@@ -86,9 +86,17 @@
                             <c:if test="${u.active}">
                                 <form action="change-user-status" method="post" style="display: inline;">
                                     <input type="hidden" name="id" value="${u.id}">
-                                    <input type="hidden" name="status" value="0"> <button type="submit" 
-                                                                                          style="background-color: red; color: white"
-                                                                                          onclick="return confirm('Are you sure to Deactive this user?')">
+                                    <input type="hidden" name="status" value="0">
+                                   <input type="hidden" name="page" value="${currentPage}">
+                                    <input type="hidden" name="search" value="${searchValue}">
+                                    <input type="hidden" name="role" value="${roleValue}">
+                                    <input type="hidden" name="gender" value="${genderValue}">
+                                    <input type="hidden" name="lastStatus" value="${statusValue}">
+
+
+                                    <button type="submit" 
+                                            style="background-color: red; color: white"
+                                            onclick="return confirm('Are you sure to Deactive this user?')">
                                         Deactivate
                                     </button>
                                 </form>
@@ -97,9 +105,16 @@
                             <c:if test="${!u.active}">
                                 <form action="change-user-status" method="post" style="display: inline;">
                                     <input type="hidden" name="id" value="${u.id}">
-                                    <input type="hidden" name="status" value="1"> <button type="submit" 
-                                                                                          style="background-color: green; color: white"
-                                                                                          onclick="return confirm('Are you sure to Activate this user?')">
+                                    <input type="hidden" name="status" value="1"> 
+                                    <input type="hidden" name="page" value="${currentPage}">
+                                    <input type="hidden" name="search" value="${searchValue}">
+                                    <input type="hidden" name="role" value="${roleValue}">
+                                    <input type="hidden" name="gender" value="${genderValue}">
+                                    <input type="hidden" name="lastStatus" value="${statusValue}">
+
+                                    <button type="submit" 
+                                            style="background-color: green; color: white"
+                                            onclick="return confirm('Are you sure to Activate this user?')">
                                         Activate
                                     </button>
                                 </form>
