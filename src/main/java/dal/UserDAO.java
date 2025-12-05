@@ -127,7 +127,7 @@ public class UserDAO extends DBContext {
         int offset = (pageIndex - 1) * pageSize;
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
-                + "INNER JOIN role r ON u.role_id = r.id "
+                + "INNER JOIN roles r ON u.role_id = r.id "
                 + "WHERE 1=1 and u.role_id != 1";
 
         // 2. Nếu user chọn filter nào thì nối thêm câu SQL đó
@@ -223,7 +223,7 @@ public class UserDAO extends DBContext {
         // SQL vẫn phải JOIN bảng role để lấy tên Role
         String sql = "SELECT u.*, r.name as role_name "
                 + "FROM _user u "
-                + "INNER JOIN role r ON u.role_id = r.id "
+                + "INNER JOIN roles r ON u.role_id = r.id "
                 + "WHERE u.id = ?";
 
         try {
@@ -255,6 +255,28 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean updateUser(Users user) {
+        String sql = "UPDATE _user SET displayname = ?, email = ?, phone = ?, "
+                + "address = ?, gender = ?, active = ?, role_id = ? WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getDisplayname());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPhone());
+            ps.setString(4, user.getAddress());
+            ps.setBoolean(5, user.isGender());
+            ps.setBoolean(6, user.isActive());
+            ps.setInt(7, user.getRoles().getId());
+            ps.setInt(8, user.getId());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     // 1. Hàm đếm tổng số kết quả tìm được (Để tính số trang)
@@ -330,7 +352,6 @@ public class UserDAO extends DBContext {
 
         return false;
     }
-
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
         Users user = u.login("vana@example.com", "hashedpass1");

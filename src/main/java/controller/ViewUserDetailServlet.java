@@ -38,11 +38,11 @@ public class ViewUserDetailServlet extends HttpServlet {
             // 3. Đóng gói và gửi sang JSP
             request.setAttribute("user", user);
             
-            request.getRequestDispatcher("user-detail.jsp").forward(request, response);
+            request.getRequestDispatcher("admin/user/user-detail.jsp").forward(request, response);
             
         } catch (Exception e) {
             // Nếu có lỗi (ví dụ id không phải số), quay về trang list
-            response.sendRedirect("user-list");
+            response.sendRedirect("admin/user/user-list");
         }
     } 
  
