@@ -352,6 +352,34 @@ public class UserDAO extends DBContext {
 
         return false;
     }
+
+    public Users getUserByEmail(String email) {
+        String sql = "SELECT * FROM _user WHERE email = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToUser(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updatePassword(String email, String newPass) {
+        String sql = "UPDATE _user SET password=? WHERE email=?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, newPass);
+            st.setString(2, email);
+            st.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
         Users user = u.login("vana@example.com", "hashedpass1");
