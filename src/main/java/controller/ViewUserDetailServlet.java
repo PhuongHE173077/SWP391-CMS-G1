@@ -27,21 +27,13 @@ public class ViewUserDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
-            // 1. Lấy ID từ trên URL xuống
             String idRaw = request.getParameter("id");
-            int id = Integer.parseInt(idRaw);
-            
-            // 2. Gọi DAO lấy thông tin chi tiết
+            int id = Integer.parseInt(idRaw);          
             UserDAO dao = new UserDAO();
-            Users user = dao.getUserById(id);
-            
-            // 3. Đóng gói và gửi sang JSP
-            request.setAttribute("user", user);
-            
-            request.getRequestDispatcher("admin/user/user-detail.jsp").forward(request, response);
-            
+            Users user = dao.getUserById(id);         
+            request.setAttribute("user", user);           
+            request.getRequestDispatcher("admin/user/user-detail.jsp").forward(request, response);         
         } catch (Exception e) {
-            // Nếu có lỗi (ví dụ id không phải số), quay về trang list
             response.sendRedirect("admin/user/user-list");
         }
     } 
