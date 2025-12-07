@@ -141,7 +141,5 @@
             </c:forEach>
         </c:if>
     </div>
-    <p>Tổng số trang nhận được: ${totalPages}</p>
-    <p>Trang hiện tại: ${currentPage}</p>
 </body>
 <jsp:include page="../adminFooter.jsp" />
