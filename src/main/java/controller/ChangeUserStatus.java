@@ -36,7 +36,7 @@ public class ChangeUserStatus extends HttpServlet {
             UserDAO dao = new UserDAO();
             dao.changeStatus(id, status);
             
-            // --- PHẦN 2: LẤY THAM SỐ ĐỂ GIỮ TRẠNG THÁI ---
+            // LẤY THAM SỐ ĐỂ GIỮ TRẠNG THÁI cho User list jsp
             String page = request.getParameter("page");
             String search = request.getParameter("search");
             String role = request.getParameter("role");
@@ -56,7 +56,8 @@ public class ChangeUserStatus extends HttpServlet {
                     + "page=" + page
                     + "&role=" + role
                     + "&gender=" + gender
-                    + "&status=" + lastStatus // Trả lại tên biến là 'status' cho UserListServlet hiểu
+                    + "&status=" + lastStatus 
+                  // Trả lại tên biến là 'status' cho UserListServlet hiểu
                     + "&search=" + URLEncoder.encode(search, StandardCharsets.UTF_8);
 
             // Chuyển hướng về trang cũ với đầy đủ tham số
