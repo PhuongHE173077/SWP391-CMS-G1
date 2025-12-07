@@ -26,8 +26,8 @@ public class ViewUserList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // 1. Lấy thông tin người dùng nhập từ ô tìm kiếm/filter
-        String search = request.getParameter("search");
+        //Lấy từ Jsp user-list
+         String search = request.getParameter("search");
         String role = request.getParameter("role");
         String status = request.getParameter("status");
         String gender = request.getParameter("gender");
@@ -36,7 +36,6 @@ public class ViewUserList extends HttpServlet {
             indexPage = "1";
         }
         int pageIndex = Integer.parseInt(indexPage);
-        // 2. Gọi hàm search bên DAO
         UserDAO dao = new UserDAO();
         int pageSize = 5;
         int totalRecords = dao.countUsers(search, role, status, gender);
