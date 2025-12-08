@@ -12,7 +12,8 @@ public class DBContext {
             String url = "jdbc:mysql://localhost:3306/SWP391?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             String username = "root";
 
-            String password = "123456";
+            String password = "123456";  
+
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, username, password);
