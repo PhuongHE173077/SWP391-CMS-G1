@@ -5,12 +5,17 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
         
-        <class>model.device</class>
-        <class>model.device_category</class>
+        <class>model.Device</class>
+        <class>model.DeviceCategory</class>
+        <class>model.SubDevice</class>
         <class>model.Users</class>
         <class>model.Roles</class>
         <class>model.RolePermission</class>
+        <class>model.Contract</class>
+        <class>model.ContractItem</class>
+        <class>model.MaintanceRequest</class>
         <class>utils.BaseEntity</class>
+
         
         <properties>
             
