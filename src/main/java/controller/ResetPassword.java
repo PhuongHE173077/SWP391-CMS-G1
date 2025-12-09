@@ -13,15 +13,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Users;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author Dell
  */
-@WebServlet(name = "ChangePassword", urlPatterns = {"/ChangePassword"})
-public class ChangePassword extends HttpServlet {
+@WebServlet(name = "ResetPassword", urlPatterns = {"/ResetPassword"})
+public class ResetPassword extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +38,10 @@ public class ChangePassword extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePassword</title>");
+            out.println("<title>Servlet ResetPassword</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePassword at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ResetPassword at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,18 +59,7 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-
-        // Kiểm tra đăng nhập
-        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
-
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -86,37 +73,28 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         HttpSession session = request.getSession();
-        Users currentUser = (Users) session.getAttribute("user");
+        String email = (String) session.getAttribute("email");
 
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+        String newPass = request.getParameter("newPass");
+        String confirmPass = request.getParameter("confirmPass");
 
-        int userId = currentUser.getId();
-        String oldPass = request.getParameter("oldPassword");
-        String newPass = request.getParameter("newPassword");
-        String confirmNewPass = request.getParameter("confirmPassword");
-
-        if (!newPass.equals(confirmNewPass)) {
-            request.setAttribute("error", "Mật khẩu mới không trùng khớp!");
-            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+        if (!newPass.equals(confirmPass)) {
+            request.setAttribute("error", "Mật khẩu không trùng khớp!");
+            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
             return;
         }
 
         UserDAO dao = new UserDAO();
-        
-        boolean success = dao.changePassword(userId, oldPass, newPass);
+        dao.updatePassword(email, newPass);
 
-        if (success) {
-            request.setAttribute("success", "Đổi mật khẩu thành công!");
-        } else {
-            request.setAttribute("error", "Mật khẩu cũ không đúng!");
-        }
+        // Xoá session OTP
+        session.removeAttribute("otp");
+        session.removeAttribute("email");
 
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+        request.setAttribute("success", "Đổi mật khẩu thành công! Hãy đăng nhập.");
+        request.getRequestDispatcher("login.jsp").forward(request, response);
+
     }
 
     /**

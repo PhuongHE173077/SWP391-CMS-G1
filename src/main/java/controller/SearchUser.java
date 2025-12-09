@@ -4,33 +4,40 @@
  */
 package controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
+
 import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import model.Users;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
- * @author Dell
+ * @author admin
  */
-@WebServlet(name = "ChangePassword", urlPatterns = {"/ChangePassword"})
-public class ChangePassword extends HttpServlet {
+@WebServlet(name = "SearchUser", urlPatterns = { "/search-user" })
+public class SearchUser extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,83 +47,60 @@ public class ChangePassword extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePassword</title>");
+            out.println("<title>Servlet SearchUser</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePassword at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SearchUser at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
+        String keyword = request.getParameter("keyword");
 
-        // Kiểm tra đăng nhập
-        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+        UserDAO dao = new UserDAO();
+        List<Users> users = dao.searchUsersByKeyword(keyword);
 
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(OffsetDateTime.class,
+                        (JsonSerializer<OffsetDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+                .registerTypeAdapter(LocalDateTime.class,
+                        (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+                .create();
+
+        String json = gson.toJson(users);
+        response.getWriter().write(json);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession();
-        Users currentUser = (Users) session.getAttribute("user");
-
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        int userId = currentUser.getId();
-        String oldPass = request.getParameter("oldPassword");
-        String newPass = request.getParameter("newPassword");
-        String confirmNewPass = request.getParameter("confirmPassword");
-
-        if (!newPass.equals(confirmNewPass)) {
-            request.setAttribute("error", "Mật khẩu mới không trùng khớp!");
-            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
-            return;
-        }
-
-        UserDAO dao = new UserDAO();
-        
-        boolean success = dao.changePassword(userId, oldPass, newPass);
-
-        if (success) {
-            request.setAttribute("success", "Đổi mật khẩu thành công!");
-        } else {
-            request.setAttribute("error", "Mật khẩu cũ không đúng!");
-        }
-
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

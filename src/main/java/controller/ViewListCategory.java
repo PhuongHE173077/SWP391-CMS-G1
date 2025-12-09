@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+
 package controller;
 
-import dal.UserDAO;
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,47 +13,41 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Users;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author Dell
  */
-@WebServlet(name = "ChangePassword", urlPatterns = {"/ChangePassword"})
-public class ChangePassword extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+@WebServlet(name="ViewListCategory", urlPatterns={"/ViewListCategory"})
+public class ViewListCategory extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePassword</title>");
+            out.println("<title>Servlet ViewListCategory</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePassword at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ViewListCategory at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -60,24 +55,45 @@ public class ChangePassword extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
+        // ---- Nhận tham số từ request ----
+        String search = request.getParameter("search");
+        String pageRaw = request.getParameter("page");
 
-        HttpSession session = request.getSession(false);
+        int page = 1;
+        int pageSize = 5;   // Số bản ghi mỗi trang, có thể chỉnh
 
-        // Kiểm tra đăng nhập
-        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
-
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
+        if (pageRaw != null) {
+            try {
+                page = Integer.parseInt(pageRaw);
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
         }
 
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
-    }
+        // ---- Gọi DAO ----
+        CategoryDAO dao = new CategoryDAO();
 
-    /**
+        // Lấy danh sách category có phân trang + tìm kiếm
+        request.setAttribute("listCategory",
+                dao.getCategoryWithFilter(search, page, pageSize)
+        );
+
+        // Tổng số category để tính phân trang
+        int totalRecord = dao.countCategory(search);
+        int totalPage = (int) Math.ceil((double) totalRecord / pageSize);
+
+        // ---- Trả về JSP ----
+        request.setAttribute("page", page);
+        request.setAttribute("search", search);
+        request.setAttribute("totalPage", totalPage);
+
+        request.getRequestDispatcher("manager/ViewListCategory.jsp")
+                .forward(request, response);
+    } 
+
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -85,43 +101,12 @@ public class ChangePassword extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        HttpSession session = request.getSession();
-        Users currentUser = (Users) session.getAttribute("user");
-
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        int userId = currentUser.getId();
-        String oldPass = request.getParameter("oldPassword");
-        String newPass = request.getParameter("newPassword");
-        String confirmNewPass = request.getParameter("confirmPassword");
-
-        if (!newPass.equals(confirmNewPass)) {
-            request.setAttribute("error", "Mật khẩu mới không trùng khớp!");
-            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
-            return;
-        }
-
-        UserDAO dao = new UserDAO();
-        
-        boolean success = dao.changePassword(userId, oldPass, newPass);
-
-        if (success) {
-            request.setAttribute("success", "Đổi mật khẩu thành công!");
-        } else {
-            request.setAttribute("error", "Mật khẩu cũ không đúng!");
-        }
-
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+    throws ServletException, IOException {
+        processRequest(request, response);
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override

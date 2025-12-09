@@ -151,7 +151,7 @@
                         </span>
                     </div>
 
-                    <a href="#" class="forgot-password">Forgot password</a>
+                    <a href="ForgotPassword" class="forgot-password">Forgot password</a>
 
                     <button type="submit" class="sign-in-button">Sign In</button>                 
 
