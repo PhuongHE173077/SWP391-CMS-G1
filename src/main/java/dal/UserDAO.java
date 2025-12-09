@@ -358,6 +358,39 @@ public class UserDAO extends DBContext {
         }
     }
 
+    public boolean checkEmailExists(String email) {
+        String sql = "SELECT COUNT(*) FROM _user WHERE email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean checkPhoneExists(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false; // Phone là optional, nếu null hoặc empty thì không cần check
+        }
+        String sql = "SELECT COUNT(*) FROM _user WHERE phone = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Users getUserByEmail(String email) {
         String sql = "SELECT * FROM _user WHERE email = ?";
         try {
