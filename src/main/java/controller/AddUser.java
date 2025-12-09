@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.Roles;
 import model.Users;
 
-@WebServlet(name = "AddUser", urlPatterns = { "/AddUser" })
 public class AddUser extends HttpServlet {
 
     private UserDAO userDAO;
@@ -86,7 +85,7 @@ public class AddUser extends HttpServlet {
             Users user = new Users();
             user.setDisplayname(displayname.trim());
             user.setEmail(email.trim());
-            user.setPassword(password.trim()); 
+
             user.setPhone(phone != null ? phone.trim() : null);
             user.setAddress(address != null ? address.trim() : null);
             user.setGender(gender);

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Users;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -60,7 +61,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     String password = request.getParameter("password");
 
     UserDAO udao = new UserDAO();
-    Users a = udao.login(username, password);
+    Users a = udao.getUserByEmail(username);
 
     if (a == null) {
         request.setAttribute("mess", "User does not exist");
@@ -68,7 +69,14 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         return;
     }
 
-    if (!a.isActive()) {
+    boolean match = BCrypt.checkpw(password, a.getPassword());
+    if (!match) {
+        request.setAttribute("mess", "Wrong password");
+        request.getRequestDispatcher("login.jsp").forward(request, response);
+        return;
+    }
+    
+     if (!a.isActive()) {
         request.setAttribute("messdie", "Account is inactive");
         request.getRequestDispatcher("login.jsp").forward(request, response);
         return;
