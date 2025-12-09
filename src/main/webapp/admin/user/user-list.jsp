@@ -13,9 +13,9 @@
     <div class="d-flex align-items-start justify-content-between">
         <h1>User management</h1>
         <a href="/AddUser">
-        <div class="btn-primary btn">
-            Add Người dùng
-        </div>
+            <div class="btn-primary btn">
+                Add Người dùng
+            </div>
         </a>
     </div>
     <form action="user-list" method="get">
@@ -42,6 +42,10 @@
             </select>
 
             <input type="text" name="search" placeholder="Search name..." value="${searchValue}">
+
+            <button type="button" onclick="window.location.href = 'user-list'">
+                Reset Filter
+            </button>
 
             <button type="submit">Search</button>
         </div>
