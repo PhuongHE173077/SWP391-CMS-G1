@@ -108,7 +108,8 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex,
+            int pageSize) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
 
@@ -150,6 +151,28 @@ public class UserDAO extends DBContext {
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
+        // default khi hiện list là order by user Id
+        String listSort = " ORDER BY u.id DESC";
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
+
+            switch (sortBy) {
+                case "fullname":
+                    listSort = " ORDER BY u.displayname " + orderBy;
+                    break;
+                case "email":
+                    listSort = " ORDER BY u.email " + orderBy;
+                    break;
+                case "id":
+                    listSort = " ORDER BY u.id " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY u.id DESC"; // Mặc định
+                    break;
+            }
+        }
+        sql += listSort;
         sql += " LIMIT ? OFFSET ?";
 
         try {
@@ -172,6 +195,7 @@ public class UserDAO extends DBContext {
             if (gender != null && !gender.isEmpty()) {
                 ps.setBoolean(index++, gender.equals("1"));
             }
+
             ps.setInt(index++, pageSize); // Lấy 5 người
             ps.setInt(index++, offset); // Bỏ qua offset người
 
@@ -194,14 +218,12 @@ public class UserDAO extends DBContext {
                 user.setRoles(role);
                 list.add(user);
             }
-
         } catch (SQLException e) {
-            System.out.println("Lỗi lấy danh sách User: " + e.getMessage());
+            System.out.println("Error when get User List: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
     }
-    
 
     public void changeStatus(int id, int status) {
         // status: 1 là Active, 0 là Inactive
