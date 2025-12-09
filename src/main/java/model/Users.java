@@ -29,13 +29,13 @@ public class Users extends BaseEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "active")
+    @Column(name = "active", columnDefinition = "TINYINT(1)")
     private boolean active;
 
     @Column(name = "address")
     private String address;
 
-    @Column(name = "gender")
+    @Column(name = "gender", columnDefinition = "TINYINT(1)")
     private boolean gender;
 
     @NotNull

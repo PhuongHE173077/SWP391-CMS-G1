@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Roles;
 import model.Users;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDAO extends DBContext {
 
@@ -323,34 +324,38 @@ public class UserDAO extends DBContext {
         return 0;
     }
 
-    public boolean changePassword(int userId, String oldPassword, String newPassword) {
-        String checkSql = "SELECT * FROM _user WHERE id = ? AND password = ?";
-        try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
-            checkPs.setInt(1, userId);
-            checkPs.setString(2, oldPassword);
+public boolean changePassword(int userId, String oldPassword, String newPassword) {
+    try {
+        // 1️⃣ Lấy mật khẩu hiện tại (đang hash trong DB)
+        String sql = "SELECT password FROM _user WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, userId);
 
-            try (ResultSet rs = checkPs.executeQuery()) {
-                if (!rs.next()) {
-                    return false;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+            return false; // Không tìm thấy user
         }
+
+        String hashedPassword = rs.getString("password");
+
+        if (!BCrypt.checkpw(oldPassword, hashedPassword)) {
+            return false; 
+        }
+
+        String newHashed = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
 
         String updateSql = "UPDATE _user SET password = ? WHERE id = ?";
-        try (PreparedStatement updatePs = connection.prepareStatement(updateSql)) {
-            updatePs.setString(1, newPassword);
-            updatePs.setInt(2, userId);
+        PreparedStatement ps2 = connection.prepareStatement(updateSql);
+        ps2.setString(1, newHashed);
+        ps2.setInt(2, userId);
 
-            return updatePs.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return ps2.executeUpdate() > 0;
 
+    } catch (Exception e) {
+        e.printStackTrace();
         return false;
     }
+}
 
     public Users getUserByEmail(String email) {
         String sql = "SELECT * FROM _user WHERE email = ?";

@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+
 package controller;
 
-import dal.UserDAO;
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,47 +13,41 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Users;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author Dell
  */
-@WebServlet(name = "ChangePassword", urlPatterns = {"/ChangePassword"})
-public class ChangePassword extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+@WebServlet(name="AddCategory", urlPatterns={"/AddCategory"})
+public class AddCategory extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePassword</title>");
+            out.println("<title>Servlet AddCategory</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePassword at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddCategory at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -60,24 +55,12 @@ public class ChangePassword extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
+        request.getRequestDispatcher("manager/AddCategory.jsp").forward(request, response);
+    } 
 
-        HttpSession session = request.getSession(false);
-
-        // Kiểm tra đăng nhập
-        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
-
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
-    }
-
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -85,43 +68,24 @@ public class ChangePassword extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
+        String name = request.getParameter("name");
+        CategoryDAO dao = new CategoryDAO();
 
-        HttpSession session = request.getSession();
-        Users currentUser = (Users) session.getAttribute("user");
+        boolean result = dao.addCategory(name);
 
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        int userId = currentUser.getId();
-        String oldPass = request.getParameter("oldPassword");
-        String newPass = request.getParameter("newPassword");
-        String confirmNewPass = request.getParameter("confirmPassword");
-
-        if (!newPass.equals(confirmNewPass)) {
-            request.setAttribute("error", "Mật khẩu mới không trùng khớp!");
-            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
-            return;
-        }
-
-        UserDAO dao = new UserDAO();
-        
-        boolean success = dao.changePassword(userId, oldPass, newPass);
-
-        if (success) {
-            request.setAttribute("success", "Đổi mật khẩu thành công!");
+        if (result) {
+            request.setAttribute("success", "Thêm thành công!");
         } else {
-            request.setAttribute("error", "Mật khẩu cũ không đúng!");
+            request.setAttribute("error", "Lỗi! Không thể thêm.");
         }
 
-        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/AddCategory.jsp").forward(request, response);
+    
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override

@@ -334,9 +334,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/admin/permissions" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/device/listDevice.jsp" class="nav-link">
                                     <i class="fas fa-key"></i>
-                                    <span class="nav-text">Phân quyền</span>
+                                    <span class="nav-text">Quản lý Device</span>
                                 </a>
                             </li>
                         </ul>

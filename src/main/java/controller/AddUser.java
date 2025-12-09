@@ -11,8 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Roles;
 import model.Users;
+import org.mindrot.jbcrypt.BCrypt;
 
-@WebServlet(name = "AddUser", urlPatterns = { "/AddUser" })
+@WebServlet(name = "AddUser", urlPatterns = {"/AddUser"})
 public class AddUser extends HttpServlet {
 
     private UserDAO userDAO;
@@ -72,7 +73,7 @@ public class AddUser extends HttpServlet {
 
         try {
             int roleId = Integer.parseInt(roleIdParam);
-            boolean gender = "true".equals(genderParam); 
+            boolean gender = "true".equals(genderParam);
             boolean active = activeParam == null ? false : "true".equals(activeParam);
 
             Roles role = roleDAO.getRoleById(roleId);
@@ -86,7 +87,9 @@ public class AddUser extends HttpServlet {
             Users user = new Users();
             user.setDisplayname(displayname.trim());
             user.setEmail(email.trim());
-            user.setPassword(password.trim()); 
+            String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+            user.setPassword(hashed);
+
             user.setPhone(phone != null ? phone.trim() : null);
             user.setAddress(address != null ? address.trim() : null);
             user.setGender(gender);
@@ -115,5 +118,3 @@ public class AddUser extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 }
-
-
