@@ -108,10 +108,9 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
- 
         /*
          * Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
          * Trang 1 (pageIndex = 1):
@@ -150,6 +149,28 @@ public class UserDAO extends DBContext {
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
+        //default khi hiện list là order by user Id
+        String listSort = " ORDER BY u.id DESC";
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
+
+            switch (sortBy) {
+                case "fullname":
+                    listSort = " ORDER BY u.displayname " + orderBy;
+                    break;
+                case "email":
+                    listSort = " ORDER BY u.email " + orderBy;
+                    break;
+                case "id":
+                    listSort = " ORDER BY u.id " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY u.id DESC"; // Mặc định
+                    break;
+            }
+        }
+        sql += listSort;
         sql += " LIMIT ? OFFSET ?";
 
         try {
@@ -172,6 +193,7 @@ public class UserDAO extends DBContext {
             if (gender != null && !gender.isEmpty()) {
                 ps.setBoolean(index++, gender.equals("1"));
             }
+
             ps.setInt(index++, pageSize); // Lấy 5 người
             ps.setInt(index++, offset); // Bỏ qua offset người
 
@@ -194,9 +216,8 @@ public class UserDAO extends DBContext {
                 user.setRoles(role);
                 list.add(user);
             }
-
         } catch (SQLException e) {
-            System.out.println("Lỗi lấy danh sách User: " + e.getMessage());
+            System.out.println("Error when get User List: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
@@ -324,38 +345,38 @@ public class UserDAO extends DBContext {
         return 0;
     }
 
-public boolean changePassword(int userId, String oldPassword, String newPassword) {
-    try {
-        // 1️⃣ Lấy mật khẩu hiện tại (đang hash trong DB)
-        String sql = "SELECT password FROM _user WHERE id = ?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, userId);
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        try {
+            // 1️⃣ Lấy mật khẩu hiện tại (đang hash trong DB)
+            String sql = "SELECT password FROM _user WHERE id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userId);
 
-        ResultSet rs = ps.executeQuery();
-        if (!rs.next()) {
-            return false; // Không tìm thấy user
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                return false; // Không tìm thấy user
+            }
+
+            String hashedPassword = rs.getString("password");
+
+            if (!BCrypt.checkpw(oldPassword, hashedPassword)) {
+                return false;
+            }
+
+            String newHashed = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
+
+            String updateSql = "UPDATE _user SET password = ? WHERE id = ?";
+            PreparedStatement ps2 = connection.prepareStatement(updateSql);
+            ps2.setString(1, newHashed);
+            ps2.setInt(2, userId);
+
+            return ps2.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-
-        String hashedPassword = rs.getString("password");
-
-        if (!BCrypt.checkpw(oldPassword, hashedPassword)) {
-            return false; 
-        }
-
-        String newHashed = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
-
-        String updateSql = "UPDATE _user SET password = ? WHERE id = ?";
-        PreparedStatement ps2 = connection.prepareStatement(updateSql);
-        ps2.setString(1, newHashed);
-        ps2.setInt(2, userId);
-
-        return ps2.executeUpdate() > 0;
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
     }
-}
 
     public Users getUserByEmail(String email) {
         String sql = "SELECT * FROM _user WHERE email = ?";

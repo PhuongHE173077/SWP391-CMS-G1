@@ -32,35 +32,47 @@
     </c:if>
     <form action="user-list" method="get">
         <div class="filter-box">
+            <div class="filter-box">
+                <div style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 5px;">
+                    <strong>Sort By: </strong>
+                    <label><input type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}> ID</label>
+                    <label><input type="radio" name="sortBy" value="fullname" ${sortBy == 'fullname' ? 'checked' : ''}> Full Name</label>
+                    <label><input type="radio" name="sortBy" value="email" ${sortBy == 'email' ? 'checked' : ''}> Email</label>
 
-            <select name="gender">
-                <option value="">All Gender</option>
-                <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
-                <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
-            </select>
+                    <span style="margin: 0 10px;">|</span>
 
-            <select name="role">
-                <option value="">All Roles</option>
-                <c:forEach items="${roleList}" var="r"> 
-                    <option value="${r.id}" ${roleValue == r.id ? 'selected' : ''}>${r.name}
-                    </option>
-                </c:forEach>
-            </select>
+                    <strong>Order: </strong>
+                    <label><input type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}> Asc (A-Z)</label>
+                    <label><input type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}> Desc (Z-A)</label>
+                </div>
+                <select name="gender">
+                    <option value="">All Gender</option>
+                    <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
+                    <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
+                </select>
 
-            <select name="status">
-                <option value="">All Status</option>
-                <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
-                <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
-            </select>
+                <select name="role">
+                    <option value="">All Roles</option>
+                    <c:forEach items="${roleList}" var="r"> 
+                        <option value="${r.id}" ${roleValue == r.id ? 'selected' : ''}>${r.name}
+                        </option>
+                    </c:forEach>
+                </select>
 
-            <input type="text" name="search" placeholder="Search name..." value="${searchValue}">
+                <select name="status">
+                    <option value="">All Status</option>
+                    <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
+                    <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
+                </select>
 
-            <button type="button" onclick="window.location.href = 'user-list'">
-                Reset Filter
-            </button>
+                <input type="text" name="search" placeholder="Search name..." value="${searchValue}">
 
-            <button type="submit">Search</button>
-        </div>
+                <button type="button" onclick="window.location.href = 'user-list'">
+                    Reset Filter
+                </button>
+
+                <button type="submit">Search</button>
+            </div>
     </form>
 
     <table style="border: 1px solid black">
@@ -141,12 +153,19 @@
                     </td>
                 </tr>
             </c:forEach>
+            <c:if test="${empty userList}">
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 20px; font-weight: bold; color: #666;">
+                        No users found matching your criteria.
+                    </td>
+                </tr>
+            </c:if>
         </tbody>
     </table>
     <div style="margin-top: 20px; text-align: center;">
         <c:if test="${totalPages > 0}">
             <c:forEach begin="1" end="${totalPages}" var="i">
-                <a href="user-list?page=${i}&search=${searchValue}&role=${roleValue}&status=${statusValue}&gender=${genderValue}" 
+                <a href="user-list?page=${i}&search=${searchValue}&role=${roleValue}&status=${statusValue}&gender=${genderValue}&sortBy=${sortBy}&sortOrder=${sortOrder}" 
                    style="${i == currentPage ? 'background-color: blue; color: white;' : ''}
                    padding: 8px 16px;
                    text-decoration: none;
