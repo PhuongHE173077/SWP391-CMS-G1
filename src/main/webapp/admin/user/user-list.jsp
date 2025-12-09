@@ -18,6 +18,18 @@
             </div>
         </a>
     </div>
+
+    <c:if test="${not empty msg}">
+        <div class="alert alert-success" style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            ${msg}
+        </div>
+    </c:if>
+
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            ${error}
+        </div>
+    </c:if>
     <form action="user-list" method="get">
         <div class="filter-box">
 
@@ -98,7 +110,7 @@
                                 <input type="hidden" name="search" value="${searchValue}">
                                 <input type="hidden" name="role" value="${roleValue}">
                                 <input type="hidden" name="gender" value="${genderValue}">
-                                <input type="hidden" name="lastStatus" value="${statusValue}">
+                                <input type="hidden" name="currentStatus" value="${currentStatusValue}">
 
 
                                 <button type="submit" 
@@ -117,7 +129,7 @@
                                 <input type="hidden" name="search" value="${searchValue}">
                                 <input type="hidden" name="role" value="${roleValue}">
                                 <input type="hidden" name="gender" value="${genderValue}">
-                                <input type="hidden" name="lastStatus" value="${statusValue}">
+                                <input type="hidden" name="currentStatus" value="${currentStatusValue}">
 
                                 <button type="submit" 
                                         style="background-color: green; color: white"
