@@ -107,11 +107,10 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
-        int pageSize = 5;
-
+ 
         /*
          * Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
          * Trang 1 (pageIndex = 1):
