@@ -13,7 +13,7 @@ import utils.BaseEntity;
  * @author admin
  */
 @Entity
-@Table(name = "maintance_request")
+@Table(name = "maintenance_request")
 public class MaintanceRequest extends BaseEntity {
 
     @Column(name = "content")
