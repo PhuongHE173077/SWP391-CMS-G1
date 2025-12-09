@@ -30,6 +30,30 @@ public class AddUser extends HttpServlet {
         request.setAttribute("listRoles", listRoles);
     }
 
+    private boolean isValidPassword(String password) {
+        if (password == null || password.length() < 6) {
+            return false;
+        }
+
+        boolean hasUpperCase = false;
+        boolean hasDigit = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUpperCase = true;
+            }
+            if (Character.isDigit(c)) {
+                hasDigit = true;
+            }
+            // Nếu đã tìm thấy cả chữ hoa và số thì return true 
+            if (hasUpperCase && hasDigit) {
+                return true;
+            }
+        }
+
+        return hasUpperCase && hasDigit;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,22 +77,52 @@ public class AddUser extends HttpServlet {
         String activeParam = request.getParameter("active");
         String roleIdParam = request.getParameter("roleId");
 
-        //Validate
+        // Validate required fields
         if (displayname == null || displayname.trim().isEmpty()
                 || email == null || email.trim().isEmpty()
                 || password == null || password.trim().isEmpty()
-                || confirmPassword == null || !password.equals(confirmPassword)
+                || confirmPassword == null || confirmPassword.trim().isEmpty()
                 || roleIdParam == null || roleIdParam.trim().isEmpty()) {
-
-            if (confirmPassword == null || !password.equals(confirmPassword)) {
-                request.setAttribute("error", "Mật khẩu và xác nhận mật khẩu không khớp.");
-            } else {
-                request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
-            }
-
+            request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
             loadRoles(request);
             request.getRequestDispatcher("admin/user/addUser.jsp").forward(request, response);
             return;
+        }
+
+        // Validate password match
+        if (!password.equals(confirmPassword)) {
+            request.setAttribute("error", "Mật khẩu và xác nhận mật khẩu không khớp.");
+            loadRoles(request);
+            request.getRequestDispatcher("admin/user/addUser.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate password strength: >= 6 ký tự, có chữ hoa và số
+        if (!isValidPassword(password)) {
+            request.setAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa và số.");
+            loadRoles(request);
+            request.getRequestDispatcher("admin/user/addUser.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate email exists
+        String emailTrimmed = email.trim();
+        if (userDAO.checkEmailExists(emailTrimmed)) {
+            request.setAttribute("error", "Email này đã tồn tại trong hệ thống.");
+            loadRoles(request);
+            request.getRequestDispatcher("admin/user/addUser.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate phone exists (if phone is provided)
+        String phoneTrimmed = phone != null ? phone.trim() : null;
+        if (phoneTrimmed != null && !phoneTrimmed.isEmpty()) {
+            if (userDAO.checkPhoneExists(phoneTrimmed)) {
+                request.setAttribute("error", "Số điện thoại này đã tồn tại trong hệ thống.");
+                loadRoles(request);
+                request.getRequestDispatcher("admin/user/addUser.jsp").forward(request, response);
+                return;
+            }
         }
 
         try {
@@ -86,11 +140,11 @@ public class AddUser extends HttpServlet {
 
             Users user = new Users();
             user.setDisplayname(displayname.trim());
-            user.setEmail(email.trim());
+            user.setEmail(emailTrimmed);
             String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
             user.setPassword(hashed);
 
-            user.setPhone(phone != null ? phone.trim() : null);
+            user.setPhone(phoneTrimmed);
             user.setAddress(address != null ? address.trim() : null);
             user.setGender(gender);
             user.setActive(active);
