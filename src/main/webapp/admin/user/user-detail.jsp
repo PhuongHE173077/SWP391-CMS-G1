@@ -3,66 +3,104 @@
     Created on : Dec 3, 2025, 9:01:17 PM
     Author     : ADMIN
 --%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+ <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <jsp:include page="../adminLayout.jsp">
-    <jsp:param name="pageTitle" value="Chi tiết 1 người dùng" />
+    <jsp:param name="pageTitle" value="User Details" />
 </jsp:include>
-<div class="detail-card">
-    <h2 style="text-align: center;">User Information</h2>
 
-    <div class="row">
-        <span class="label">ID:</span>
-        <span class="value">${user.id}</span>
+<body class="bg-light">
+    <div class="container mt-5 mb-5">
+        <div class="card shadow-sm" style="max-width: 1000px; margin: 0 auto;">
+            
+            <div class="card-header bg-white py-3 border-bottom">
+                <h4 class="m-0 text-center text-uppercase fw-bold text-secondary">User Detail</h4>
+            </div>
+            
+            <div class="card-body p-4">
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">ID</label>
+                        <div class="p-2 border rounded bg-light text-dark fw-bold">
+                            ${user.id}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Full Name</label>
+                        <div class="p-2 border rounded bg-light text-dark fw-bold">
+                            ${user.displayname}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Email</label>
+                        <div class="p-2 border rounded bg-white text-dark">
+                            ${user.email}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Phone Number</label>
+                        <div class="p-2 border rounded bg-white text-dark">
+                            ${user.phone}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Password</label>
+                        <div class="p-2 border rounded bg-white text-muted">
+                            ${user.password}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Address</label>
+                        <div class="p-2 border rounded bg-white text-dark">
+                            ${user.address != null ? user.address : '-'}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Role</label>
+                        <div class="p-2 border rounded bg-light text-primary fw-bold">
+                            ${user.roles.name}
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Gender</label>
+                        <div class="p-2 border rounded bg-white text-dark">
+                            ${user.gender ? "Male" : "Female"}
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Status</label>
+                        <div class="p-2 border rounded bg-white fw-bold" 
+                             style="color: ${user.active ? '#198754' : '#dc3545'};"> ${user.active ? "Active" : "Inactive"}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
+                    <a href="user-list" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded hover-bg-gray">
+                        Back to List
+                    </a>
+                    
+                   
+                </div>
+
+            </div>
+        </div>
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
-    <div class="row">
-        <span class="label">Full Name:</span>
-        <span class="value">${user.displayname}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Email:</span>
-        <span class="value">${user.email}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Password:</span>
-        <span class="value">${user.password}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Phone Number:</span>
-        <span class="value">${user.phone}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Address:</span>
-        <span class="value">${user.address}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Role:</span>
-        <span class="value">${user.roles.name}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Gender:</span>
-        <span class="value">
-            ${user.gender ? "Male" : "Female"}
-        </span>
-    </div>
-
-    <div class="row">
-        <span class="label">Status:</span>
-        <span class="value" style="color: ${user.active ? 'green' : 'red'}; font-weight: bold;">
-            ${user.active ? "Active" : "Inactive"}
-        </span>
-    </div>
-
-    <a href="user-list" class="btn-back">Back to List</a>
-</div>
 <jsp:include page="../adminFooter.jsp" />
-
