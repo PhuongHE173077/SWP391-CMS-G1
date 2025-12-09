@@ -108,10 +108,9 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
-        int pageSize = 5;
 
         /*
          * Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
@@ -202,6 +201,7 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+    
 
     public void changeStatus(int id, int status) {
         // status: 1 là Active, 0 là Inactive
@@ -325,38 +325,38 @@ public class UserDAO extends DBContext {
         return 0;
     }
 
-public boolean changePassword(int userId, String oldPassword, String newPassword) {
-    try {
-        // 1️⃣ Lấy mật khẩu hiện tại (đang hash trong DB)
-        String sql = "SELECT password FROM _user WHERE id = ?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, userId);
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        try {
+            // 1️⃣ Lấy mật khẩu hiện tại (đang hash trong DB)
+            String sql = "SELECT password FROM _user WHERE id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userId);
 
-        ResultSet rs = ps.executeQuery();
-        if (!rs.next()) {
-            return false; // Không tìm thấy user
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                return false; // Không tìm thấy user
+            }
+
+            String hashedPassword = rs.getString("password");
+
+            if (!BCrypt.checkpw(oldPassword, hashedPassword)) {
+                return false;
+            }
+
+            String newHashed = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
+
+            String updateSql = "UPDATE _user SET password = ? WHERE id = ?";
+            PreparedStatement ps2 = connection.prepareStatement(updateSql);
+            ps2.setString(1, newHashed);
+            ps2.setInt(2, userId);
+
+            return ps2.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-
-        String hashedPassword = rs.getString("password");
-
-        if (!BCrypt.checkpw(oldPassword, hashedPassword)) {
-            return false; 
-        }
-
-        String newHashed = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
-
-        String updateSql = "UPDATE _user SET password = ? WHERE id = ?";
-        PreparedStatement ps2 = connection.prepareStatement(updateSql);
-        ps2.setString(1, newHashed);
-        ps2.setInt(2, userId);
-
-        return ps2.executeUpdate() > 0;
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
     }
-}
 
     public Users getUserByEmail(String email) {
         String sql = "SELECT * FROM _user WHERE email = ?";
@@ -383,6 +383,48 @@ public boolean changePassword(int userId, String oldPassword, String newPassword
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Users> searchUsersByKeyword(String keyword) {
+        List<Users> list = new ArrayList<>();
+        String sql = "SELECT u.*, r.name as role_name "
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE (u.email LIKE ? OR u.displayname LIKE ? OR u.phone LIKE ?) "
+                + "AND u.active = 1 "
+                + "LIMIT 10";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Roles role = new Roles();
+                role.setId(rs.getInt("role_id"));
+                role.setName(rs.getString("role_name"));
+
+                Users user = new Users();
+                user.setId(rs.getInt("id"));
+                user.setDisplayname(rs.getString("displayname"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setPhone(rs.getString("phone"));
+                user.setActive(rs.getBoolean("active"));
+                user.setAddress(rs.getString("address"));
+                user.setGender(rs.getBoolean("gender"));
+                user.setRoles(role);
+
+                list.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching users: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public static void main(String[] args) {
