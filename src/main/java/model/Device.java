@@ -39,8 +39,8 @@ public class Device extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private DeviceCategory category;
 
-    @Column(name = "maintaince_time")
-    private String maintainceTime;
+    @Column(name = "maintenance_time")
+    private String maintenanceTime;
 
     @NotNull
     @Column(name = "isDelete", nullable = false)
@@ -52,13 +52,12 @@ public class Device extends BaseEntity {
     public Device() {
     }
 
-    public Device(String image, String name, String description, DeviceCategory category, String maintainceTime,
-            boolean isDelete) {
+    public Device(String image, String name, String description, DeviceCategory category, String maintenanceTime, boolean isDelete) {
         this.image = image;
         this.name = name;
         this.description = description;
         this.category = category;
-        this.maintainceTime = maintainceTime;
+        this.maintenanceTime = maintenanceTime;
         this.isDelete = isDelete;
     }
 
@@ -94,12 +93,12 @@ public class Device extends BaseEntity {
         this.category = category;
     }
 
-    public String getMaintainceTime() {
-        return maintainceTime;
+    public String getMaintenanceTime() {
+        return maintenanceTime;
     }
 
-    public void setMaintainceTime(String maintainceTime) {
-        this.maintainceTime = maintainceTime;
+    public void setMaintenanceTime(String maintenanceTime) {
+        this.maintenanceTime = maintenanceTime;
     }
 
     public boolean isIsDelete() {
@@ -117,4 +116,6 @@ public class Device extends BaseEntity {
     public void setSubDevices(Set<SubDevice> subDevices) {
         this.subDevices = subDevices;
     }
+
+   
 }
