@@ -3,160 +3,211 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Device Category List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            padding: 40px;
-        }
+    <head>
+        <title>Device Category List</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #f2f2f2;
+                padding: 40px;
+            }
 
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 25px;
-        }
+            h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 25px;
+            }
 
-        /* Search Box */
-        .search-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+            /* Search Box */
+            .search-box {
+                text-align: center;
+                margin-bottom: 20px;
+            }
 
-        .search-box input[type=text] {
-            width: 300px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+            .search-box input[type=text] {
+                width: 300px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
 
-        .search-box button {
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+            .search-box button {
+                padding: 10px 15px;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
 
-        .search-box button:hover {
-            background: #0056b3;
-        }
+            .search-box button:hover {
+                background: #0056b3;
+            }
 
-        /* Add button */
-        .add-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            background: #28a745;
-            padding: 10px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: 0.2s;
-        }
+            /* Add button */
+            .add-btn {
+                display: inline-block;
+                margin-bottom: 20px;
+                background: #28a745;
+                padding: 10px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: 0.2s;
+            }
 
-        .add-btn:hover {
-            background: #1e7e34;
-        }
+            .add-btn:hover {
+                background: #1e7e34;
+            }
 
-        /* Table */
-        table {
-            width: 70%;
-            margin: auto;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
+            /* Table */
+            table {
+                width: 70%;
+                margin: auto;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            }
 
-        th {
-            background: #007bff;
-            color: white;
-            padding: 12px;
-        }
+            th {
+                background: #007bff;
+                color: white;
+                padding: 12px;
+            }
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
+            td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
 
-        tr:hover {
-            background: #f1f7ff;
-        }
+            tr:hover {
+                background: #f1f7ff;
+            }
 
-        /* Pagination */
-        .pagination {
-            text-align: center;
-            margin-top: 25px;
-        }
+            /* Delete button */
+            .delete-btn {
+                color: red;
+                cursor: pointer;
+                text-decoration: none;
+                margin-left: 10px;
+            }
 
-        .pagination a {
-            margin: 0 5px;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid #007bff;
-            color: #007bff;
-            transition: 0.2s;
-        }
+            /* Pagination */
+            .pagination {
+                text-align: center;
+                margin-top: 25px;
+            }
 
-        .pagination a:hover {
-            background: #007bff;
-            color: white;
-        }
+            .pagination a {
+                margin: 0 5px;
+                text-decoration: none;
+                padding: 6px 12px;
+                border-radius: 6px;
+                border: 1px solid #007bff;
+                color: #007bff;
+                transition: 0.2s;
+            }
 
-        .active-page {
-            background: #007bff !important;
-            color: white !important;
-        }
+            .pagination a:hover {
+                background: #007bff;
+                color: white;
+            }
 
-    </style>
-</head>
+            .active-page {
+                background: #007bff !important;
+                color: white !important;
+            }
 
-<body>
-    
+            /* Alert messages */
+            .msg {
+                text-align: center;
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            .success {
+                color: green;
+            }
+            .error {
+                color: red;
+            }
 
-    <h2>Danh sách danh mục sản phẩm</h2>
+        </style>
 
-    <!-- SEARCH FORM -->
-    <div class="search-box">
-        <form action="ViewListCategory" method="get">
-            <input type="text" name="search" value="${search}" placeholder="Tìm theo tên...">
-            <button type="submit">Search</button>
-        </form>
-    </div>
+        <script>
+            function confirmDelete(id) {
+                if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+                    window.location.href = "DeleteCategory?id=" + id;
+                }
+            }
+        </script>
 
-    <div style="text-align:center;">
-        <a href="AddCategory" class="add-btn">Thêm danh mục mới</a>
-    </div>
+    </head>
 
-    <!-- TABLE -->
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Tên danh mục</th>
-        </tr>
+    <body>
 
-        <c:forEach items="${listCategory}" var="c">
+        <h2>Danh sách danh mục sản phẩm</h2>
+
+        <!-- MESSAGE -->
+        <c:if test="${not empty success}">
+            <p class="msg success">${success}</p>
+        </c:if>
+
+        <c:if test="${not empty error}">
+            <p class="msg error">${error}</p>
+        </c:if>
+
+        <!-- SEARCH FORM -->
+        <div class="search-box">
+            <form action="ViewListCategory" method="get">
+                <input type="text" name="search" value="${search}" placeholder="Tìm theo tên...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <div style="text-align:center;">
+            <a href="AddCategory" class="add-btn">Thêm danh mục mới</a>
+        </div>
+
+        <!-- TABLE -->
+        <table>
             <tr>
-                <td>${c.id}</td>
-                <td>${c.name}</td>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Actions</th>
             </tr>
-        </c:forEach>
-    </table>
 
-    <!-- PAGINATION -->
-    <div class="pagination">
-        <c:forEach begin="1" end="${totalPage}" var="p">
-            <a href="ViewListCategory?page=${p}&search=${search}"
-               class="${p == page ? 'active-page' : ''}">
-                ${p}
-            </a>
-        </c:forEach>
-    </div>
+            <c:forEach items="${listCategory}" var="c">
+                <tr>
+                    <td>${c.id}</td>
+                    <td>${c.name}</td>
+                    <td>
+                        <a href="UpdateCategory?id=${c.id}" 
+                           style="color: #007bff; text-decoration:none; margin-right:10px;">
+                             Sửa
+                        </a>
 
-</body>
+                        <!-- DELETE BUTTON -->
+                        <a href="DeleteCategory?id=${c.id}" 
+                           style="color: red; text-decoration:none; margin-right:10px;">
+                             Xóa
+                        </a>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+            <c:forEach begin="1" end="${totalPage}" var="p">
+                <a href="ViewListCategory?page=${p}&search=${search}"
+                   class="${p == page ? 'active-page' : ''}">
+                    ${p}
+                </a>
+            </c:forEach>
+        </div>
+
+    </body>
 </html>

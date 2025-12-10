@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import model.DeviceCategory;
 
-public class CategoryDAO extends DBContext {  
-    
+public class CategoryDAO extends DBContext {
+
     // ===================== GET LIST with FILTER + SEARCH + PAGINATION =====================
     public List<DeviceCategory> getCategoryWithFilter(String search, int page, int pageSize) {
         List<DeviceCategory> list = new ArrayList<>();
@@ -75,8 +75,7 @@ public class CategoryDAO extends DBContext {
         List<DeviceCategory> listCategory = new ArrayList<>();
         String query = "SELECT * FROM device_category";
 
-        try (PreparedStatement ps = connection.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 DeviceCategory category = new DeviceCategory();
@@ -90,6 +89,74 @@ public class CategoryDAO extends DBContext {
         }
 
         return listCategory;
+    }
+
+    public boolean updateCategory(int id, String name) {
+        String sql = "UPDATE Category SET name = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, name);
+            ps.setInt(2, id);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public DeviceCategory getCategoryById(int id) {
+        String sql = "SELECT * FROM device_category WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                DeviceCategory dc = new DeviceCategory();
+                dc.setId(rs.getInt("id"));     // nằm trong BaseEntity
+                dc.setName(rs.getString("name"));
+
+                return dc;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isCategoryInUse(int categoryId) {
+        String sql = "SELECT COUNT(*) FROM device WHERE category_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // true = đang được sử dụng
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true; // lỗi thì coi như đang được dùng -> tránh xóa nhầm
+    }
+
+
+    public boolean deleteCategory(int id) {
+        String sql = "DELETE FROM device_category WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
