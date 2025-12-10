@@ -36,7 +36,7 @@ public class ViewUserList extends HttpServlet {
         // 2. Nếu có, lấy ra nhét vào request để JSP hiện
         if (msg != null) {
             request.setAttribute("msg", msg);
-            session.removeAttribute("msg"); // QUAN TRỌNG: Xóa ngay để F5 không hiện lại
+            session.removeAttribute("msg");
         }
 
         if (error != null) {
@@ -50,6 +50,16 @@ public class ViewUserList extends HttpServlet {
         String status = request.getParameter("status");
         String gender = request.getParameter("gender");
         String indexPage = request.getParameter("page");
+        String sortBy = request.getParameter("sortBy");
+        String sortOrder = request.getParameter("sortOrder");
+
+        // Xử lý null (Mặc định sort theo ID và DESC)
+        if (sortBy == null) {
+            sortBy = "id";
+        }
+        if (sortOrder == null) {
+            sortOrder = "DESC";
+        }
         if (indexPage == null) {
             indexPage = "1";
         }
@@ -59,19 +69,19 @@ public class ViewUserList extends HttpServlet {
             int pageSize = 5;
             int totalUsers = dao.countUsers(search, role, status, gender);
             int totalPages = (totalUsers % pageSize == 0) ? (totalUsers / pageSize) : (totalUsers / pageSize + 1);
-            List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex, pageSize);
-
+            List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex, pageSize, sortBy, sortOrder);
             RoleDAO roleDAO = new RoleDAO();
             List<Roles> roleList = roleDAO.getAllRoleses();
             request.setAttribute("userList", userList);
             request.setAttribute("roleList", roleList);
-
             request.setAttribute("totalPages", totalPages); // Gửi tổng số trang
             request.setAttribute("currentPage", pageIndex); // Gửi trang đang xem
             request.setAttribute("searchValue", search);
             request.setAttribute("roleValue", role);
             request.setAttribute("statusValue", status);
             request.setAttribute("genderValue", gender);
+            request.setAttribute("sortBy", sortBy);
+            request.setAttribute("sortOrder", sortOrder);
             request.getRequestDispatcher("admin/user/user-list.jsp").forward(request, response);
         } catch (Exception e) {
             // Nếu người dùng nhập page=abc thì quay về trang 1

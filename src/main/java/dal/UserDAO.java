@@ -133,21 +133,25 @@ public class UserDAO extends DBContext {
 
         // 2. Nếu user chọn filter nào thì nối thêm câu SQL đó
         // Nếu có nhập từ khóa (Search)
+        //1
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND u.displayname LIKE ? ";
         }
 
         // Nếu có chọn Role (Khác rỗng)
+        //2
         if (roleId != null && !roleId.isEmpty()) {
             sql += " AND u.role_id = ? ";
         }
 
         // Nếu có chọn Status
+        //3
         if (status != null && !status.isEmpty()) {
             sql += " AND u.active = ? ";
         }
 
         // Nếu có chọn Gender
+        //4
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
@@ -177,29 +181,27 @@ public class UserDAO extends DBContext {
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-
-            // 3. Điền giá trị vào các dấu hỏi chấm (?)
-            // Ta dùng biến 'index' để đếm thứ tự dấu hỏi
             int index = 1;
 
+            //? của search Keyword
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%"); // Dấu ? thứ 1
+                ps.setString(index++, "%" + keyword + "%");
             }
             if (roleId != null && !roleId.isEmpty()) {
-                ps.setInt(index++, Integer.parseInt(roleId)); // Dấu ? tiếp theo
+                ps.setInt(index++, Integer.parseInt(roleId));
             }
+            // ? của status, Nếu status="1" -> set true (Active), ngược lại set false (Inactive)
             if (status != null && !status.isEmpty()) {
-                // Chuyển chuỗi "1"/"0" thành boolean true/false
                 ps.setBoolean(index++, status.equals("1"));
             }
             if (gender != null && !gender.isEmpty()) {
+                // Giải thích: Nếu gender="1" -> set true (Male), ngược lại set false (Female)
                 ps.setBoolean(index++, gender.equals("1"));
-            }
-
-            ps.setInt(index++, pageSize); // Lấy 5 người
-            ps.setInt(index++, offset); // Bỏ qua offset người
-
-            // 4. Chạy câu lệnh và lấy kết quả (Giống hệt hàm getAll cũ)
+            }   
+             //? của pageSize, lấy 3 người/ 1 page
+            ps.setInt(index++, pageSize);
+             //? của offset, Bỏ qua offset người
+            ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Roles role = new Roles();
