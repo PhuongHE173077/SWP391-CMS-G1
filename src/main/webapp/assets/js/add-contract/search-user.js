@@ -11,6 +11,8 @@ document.getElementById("searchUser").addEventListener("input", function () {
     }, 300);
 });
 
+ document.getElementById("myText").value = "Máy phát điện được bảo hành ……… tháng kể từ ngày nghiệm thu, theo tiêu chuẩn của nhà sản xuất; Bên A chịu trách nhiệm sửa chữa, thay thế các lỗi kỹ thuật phát sinh không do lỗi của Bên B.";
+
 function searchUser(query) {
     if (query.trim() === "") {
         document.getElementById("userResult").innerHTML = "";
@@ -44,7 +46,7 @@ function renderUserResult(users) {
         li.className = "list-group-item list-group-item-action user-item";
         
         li.innerHTML = `
-            <div class="user-info">
+            <div class="user-info cursor-pointer">
                 <div class="user-name">${u.displayname}</div>
                 <div class="user-phone">${u.phone}</div>
             </div>
@@ -58,8 +60,11 @@ function selectUser(u) {
     const nameSpan = document.querySelector(".name");
     nameSpan.textContent = u.displayname;
     nameSpan.classList.remove('warning');
+    
+    const phoneSpan = document.querySelector(".phone")
+    phoneSpan.textContent = u.phone;
 
     document.getElementById("userResult").innerHTML = "";
 
-    document.getElementById("searchUser").value = u.displayname;
+    document.getElementById("searchUser").value = "";
 }

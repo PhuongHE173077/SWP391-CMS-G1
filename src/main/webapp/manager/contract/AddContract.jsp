@@ -61,20 +61,24 @@
         </style>
     </head>
 
-    <body class="bg-light py-4">
-        <div class="container-xl">
+    <body class="bg-light py-4 position-relative"> 
+        <div class="position-absolute d-flex justify-content-between align-items-center bg-white"
+             style="top: 10px; left: 10px;">
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm"
+                        onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </button>
+            </div>
+        </div>
+        <div class="container-xl "> 
+
             <div class="row g-3">
                 <!-- Left Panel -->
                 <div class="col-lg-8 h-90vh">
                     <div class="border p-2 shadow-sm h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center bg-white">
-                            <div class="d-flex align-items-center gap-2">
-                                <button type="button" class="btn btn-outline-secondary btn-sm"
-                                        onclick="window.history.back()">
-                                    <i class="fas fa-arrow-left"></i>
-                                </button>
-                            </div>
-                        </div>
+
 
                         <div class="card-body">
                             <!-- Search Bar -->
@@ -189,16 +193,13 @@
                                 </div>
 
                                 <div class="mb-2 small d-flex">
-                                    <span class="me-2 text-muted" style="width: 110px;">Số điện thoại:</span>
-                                    <span class="flex-grow-1"></span>
+                                    <h6 class="me-2" style="width: 110px;">Số đ.thoại:</h6>
+                                    <h6 class="phone flex-grow-1"></h6>
                                 </div>
+
                                 <div class="mb-2 small d-flex">
-                                    <span class="me-2 text-muted" style="width: 110px;">Số đ.thoại khác:</span>
-                                    <span class="flex-grow-1"></span>
-                                </div>
-                                <div class="mb-2 small d-flex">
-                                    <span class="me-2 text-muted" style="width: 110px;">Địa chỉ:</span>
-                                    <span class="flex-grow-1">123, Xã Cốc Pàng, Cao Bằng</span>
+                                    <h6 class="me-2 text-muted" style="width: 110px;">Địa chỉ:</h6>
+                                    <h6 class="flex-grow-1"></h6>
                                 </div>
 
                                 <div class="d-flex gap-2 mt-2">
@@ -217,7 +218,7 @@
                             <!-- Payment Section -->
                             <div class="mb-3">
                                 <label class="form-label mb-1">Nội dung hợp đồng</label>
-                                <textarea class="form-control" rows="3"></textarea>
+                                <textarea id="myText" class="form-control" rows="6"></textarea>
                             </div>
 
                             <!-- Submit Button -->
