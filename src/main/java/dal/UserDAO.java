@@ -461,7 +461,6 @@ public class UserDAO extends DBContext {
                 Roles role = new Roles();
                 role.setId(rs.getInt("role_id"));
                 role.setName(rs.getString("role_name"));
-
                 Users user = new Users();
                 user.setId(rs.getInt("id"));
                 user.setDisplayname(rs.getString("displayname"));

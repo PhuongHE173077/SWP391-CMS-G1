@@ -9,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<jsp:include page="../adminLayout.jsp">
+<jsp:include page="../admin/adminLayout.jsp">
     <jsp:param name="pageTitle" value="Contract Management" />
 </jsp:include>
 
@@ -84,8 +84,8 @@
                         <div class="col-md-2">
                             <select name="role" class="form-select">
                                 <option value="">All Created By</option>
-                                <c:forEach items="${roleList}" var="r"> 
-                                    <option value="${r.id}" ${roleValue == r.id ? 'selected' : ''}>${r.name}</option>
+                                <c:forEach items="${lstSaleStaff}" var="s"> 
+                                    <option value="${s.id}" ${createdByValue == s.id ? 'selected' : ''}>${s.name}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -225,4 +225,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-<jsp:include page="../adminFooter.jsp" />
+<jsp:include page="../admin/adminFooter.jsp" />

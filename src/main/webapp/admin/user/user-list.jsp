@@ -41,7 +41,7 @@
                 <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Filter & Sort</h5>
             </div>
             <div class="card-body">
-                <form action="user-list" method="get">
+                <form action="contract-list" method="get">
 
                     <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
                         <div class="col-md-6 d-flex align-items-center gap-3">
