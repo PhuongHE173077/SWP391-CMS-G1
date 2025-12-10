@@ -1,205 +1,297 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List Device </title>
-    <style>
-        /* CSS cơ bản để tạo kiểu */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Danh sách Thiết bị</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+            body {
+                font-family: 'Poppins', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f0f2f5;
+                color: #333;
+            }
 
-        /* Phần tiêu đề và nút Add Device */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 30px;
+                background-color: #fff;
+                border-radius: 8px; /* Bo góc nhẹ */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
 
-        .header h1 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 25px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #e0e0e0;
+            }
 
-        .add-device-btn {
-            padding: 8px 15px;
-            background-color: #ddd; /* Màu xám nhạt */
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            cursor: pointer;
-            text-decoration: none;
-            color: #333;
-            font-size: 14px;
-        }
+            .header h1 {
+                font-size: 28px;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin: 0;
+            }
 
-        .add-device-btn:hover {
-            background-color: #ccc;
-        }
+            .add-device-btn {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                text-decoration: none;
+                font-size: 15px;
+                font-weight: 600;
+                transition: background-color 0.3s, transform 0.2s;
+            }
 
-        /* Phần thanh lọc/tìm kiếm */
-        .filter-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+            .add-device-btn:hover {
+                background-color: #0056b3;
+                transform: translateY(-1px);
+            }
 
-        .filter-bar select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            background-color: #fff;
-            appearance: none; /* Ẩn mũi tên mặc định của select */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#333" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.018 2.305 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            padding-right: 25px;
-        }
+            .filter-bar {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 25px;
+                background-color: #f9f9f9;
+                padding: 15px;
+                border-radius: 6px;
+                border: 1px solid #eee;
+            }
 
-        /* Phần bảng */
-        .device-table {
-            width: 100%;
-            border-collapse: collapse;
-            /* Tạo kiểu màu kem cho bảng */
-            background-color: #f7f3ed; /* Màu nền giống như hình ảnh */
-            border: 1px solid #bba078; /* Viền nâu nhạt */
-        }
+            .filter-bar select {
+                flex-grow: 1;
+                max-width: 250px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background-color: #fff;
+                font-size: 14px;
+                color: #555;
 
-        .device-table th, .device-table td {
-            border: 1px solid #bba078;
-            padding: 10px;
-            text-align: left;
-        }
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#555" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.018 2.305 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                padding-right: 30px;
+                transition: border-color 0.3s;
+            }
 
-        .device-table th {
-            background-color: #e8e4dc; /* Màu nền cho tiêu đề */
-            font-weight: bold;
-            color: #333;
-        }
+            .filter-bar select:focus {
+                outline: none;
+                border-color: #007bff;
+            }
 
-        .device-table .action-col {
-            text-align: center;
-            width: 380px;
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center;
-            padding: 19px;
-            padding-left: 0px;
-        }
+            .device-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+                background-color: #fff;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                border-radius: 6px;
+                overflow: hidden;
+            }
 
-        .action-col button {
-            display: inline-block; 
-            width: auto; 
-            padding: 5px 10px;
-            margin: 0 3px;
-            background-color: #e0e0e0; /* Nền nút xám nhạt */
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #333;
-            white-space: nowrap;
-        }
+            .device-table th, .device-table td {
+                padding: 12px 15px;
+                text-align: left;
+                border-bottom: 1px solid #f0f0f0;
+                color: #333;
+                font-size: 14px;
+            }
 
-        .action-col button:hover {
-            background-color: #d0d0d0;
-        }
+            .device-table th {
+                background-color: #eef1f6;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: #555;
+                border-bottom: 2px solid #ddd;
+            }
 
-        /* Phân trang */
-        .pagination {
-            margin-top: 20px;
-            text-align: left;
-        }
+            .device-table tbody tr:last-child td {
+                border-bottom: none;
+            }
 
-        .pagination a {
-            margin-right: 5px;
-            text-decoration: none;
-            color: #007bff; /* Màu xanh */
-            font-size: 14px;
-        }
+            .device-table tbody tr:hover {
+                background-color: #f5f5f5;
+            }
 
-        .pagination a:nth-child(1) { /* Trang 1 hiện tại */
-             font-weight: bold;
-             color: #333; /* Màu đậm hơn cho trang hiện tại */
-        }
-        
-    </style>
-</head>
-<body>
+            .device-table img {
+                display: block;
+                border-radius: 4px;
+                object-fit: cover;
+                width: 80px;
+                height: 60px;
+            }
 
-    <div class="container">
-        
-        <div class="header">
-            <h1>List Device</h1>
-            <button class="add-device-btn">Add Device</button>
-        </div>
+            .device-table .action-col {
+                text-align: center;
+                width: 280px;
+                padding: 8px;
+            }
 
-        <div class="filter-bar">
-            <select name="name">
-                <option value="">Name</option>
+            .action-col-wrapper {
+                display: flex;
+                justify-content: space-around;
+                gap: 5px;
+                padding: 0;
+                margin: 0;
+            }
+
+
+            .action-col button {
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 13px;
+                font-weight: 500;
+                transition: all 0.2s;
+                white-space: nowrap;
+            }
+
+            .action-col button:nth-child(1) {
+                background-color: #e9ecef;
+                color: #333;
+            }
+
+            .action-col button:nth-child(2) {
+                background-color: #ffc107;
+                color: #212529;
+                border-color: #ffc107;
+            }
+            .action-col button:nth-child(2):hover {
+                background-color: #e0a800;
+            }
+
+            .action-col button:nth-child(3) {
+                background-color: #dc3545;
+                color: #fff;
+                border-color: #dc3545;
+            }
+            .action-col button:nth-child(3):hover {
+                background-color: #c82333;
+            }
+
+            .pagination {
+                margin-top: 25px;
+                text-align: right;
+            }
+
+            .pagination a {
+                display: inline-block;
+                padding: 8px 14px;
+                margin-left: 5px;
+                text-decoration: none;
+                color: #007bff;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                transition: background-color 0.2s;
+            }
+
+            .pagination a:hover {
+                background-color: #e9ecef;
+            }
+
+            .pagination a:nth-child(1) {
+                font-weight: 600;
+                color: #fff;
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+
+            .description-cell {
+                max-width: 200px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div class="container">
+
+            <div class="header">
+                <h1>🛠️ Danh sách Thiết bị</h1>
+                <a href="device/AddDevice.jsp" class="add-device-btn">➕ Thêm Thiết bị</a> 
+            </div>
+
+            <div class="filter-bar">
+                <select name="name">
+                    <option value="">Lọc theo Tên</option>
                 </select>
-            <select name="maintenance_time">
-                <option value="">Maintance_time</option>
+                <select name="maintenance_time">
+                    <option value="">Tìm kiếm theo tên....</option>
                 </select>
-            <select name="category">
-                <option value="">Category</option>
+                <select name="category">
+                    <option value="">Danh mục</option>
                 </select>
-        </div>
+            </div>
 
-        <table class="device-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Image</th>
-                    <th>Maintance_time</th>
-                    <th>Created At</th>
-                    <th class="action-col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="action-col">
-                        <button>View Detail</button>
-                        <button>Edit Device</button>
-                        <button>Delete Device</button>
-                    </td>
-                </tr>
+            <table class="device-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Mô tả</th>
+                        <th>Thương hiệu</th>
+                        <th>Thời gian Bảo trì</th>
+                        <th>Ngày Tạo </th>
+                        <th class="action-col">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="d" items="${devices}">
+                        <tr>
+                            <td>${d.id}</td>
+                            <td>${d.name}</td>
+                            <td class="description-cell">${d.description}</td>
+                            <td>${d.category.name}</td>
+                            <td>${d.maintenanceTime}</td>
+                            <td >
+                                ${d.createdAt}
+                            </td>
+                            <td>
+                                <div class="action-col-wrapper">
+                                    <button>Xem Chi tiết</button>
+                                    <button>Sửa Sản Phẩm</button>
+                                    <button>Xóa Sản Phẩm</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+
                 </tbody>
-        </table>
+            </table>
 
-        <div class="pagination">
-            <a href="#">1</a>
-            <a href="#">&gt;</a>
-            <a href="#">2</a>
-            <a href="#">&gt;</a>
-            <a href="#">3</a>
+
+            <div class="pagination">
+                <c:forEach begin="1" end="${maxp}" var="i">
+                    <a href="ViewListDevice?index=${i}">${i}</a>
+                </c:forEach>
+
+            </div>
+
         </div>
 
-    </div>
-
-</body>
+    </body>
 </html>
