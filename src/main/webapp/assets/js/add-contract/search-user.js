@@ -39,14 +39,21 @@ function renderUserResult(users) {
     }
 
     users.forEach(u => {
+     
         const li = document.createElement("li");
-        li.className = "list-group-item list-group-item-action";
-        li.textContent = String(u.displayname);
+        li.className = "list-group-item list-group-item-action user-item";
+        
+        li.innerHTML = `
+            <div class="user-info">
+                <div class="user-name">${u.displayname}</div>
+                <div class="user-phone">${u.phone}</div>
+            </div>
+        `;
+        
         li.onclick = () => selectUser(u);
         list.appendChild(li);
     });
 }
-
 function selectUser(u) {
     const nameSpan = document.querySelector(".name");
     nameSpan.textContent = u.displayname;

@@ -66,7 +66,7 @@
             <div class="row g-3">
                 <!-- Left Panel -->
                 <div class="col-lg-8 h-90vh">
-                    <div class="card shadow-sm h-100">
+                    <div class="border p-2 shadow-sm h-100">
                         <div class="card-header d-flex justify-content-between align-items-center bg-white">
                             <div class="d-flex align-items-center gap-2">
                                 <button type="button" class="btn btn-outline-secondary btn-sm"
@@ -165,7 +165,8 @@
 
                 <!-- Right Panel -->
                 <div class="col-lg-4">
-                    <div class="card shadow-sm h-100">
+                    <div class="border p-2
+                         shadow-sm h-100">
                         <div class="card-body d-flex flex-column">
                             <!-- Customer Info -->
                             <div class="mb-3">
@@ -180,7 +181,7 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="mb-0">
-                                        Họ &amp; Tên:
+                                        Họ &amp; Tên: 
                                         <span class="name warning">Chưa có thông tin</span>
                                     </h6>
                                     <button type="button" class="btn btn-link text-danger p-0"><i
