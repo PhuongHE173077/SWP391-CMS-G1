@@ -58,7 +58,7 @@ public class AddContract extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("manager/AddContract.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/contract/AddContract.jsp").forward(request, response);
     }
 
     /**
