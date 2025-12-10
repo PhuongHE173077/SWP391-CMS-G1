@@ -115,7 +115,5 @@ public class Device extends BaseEntity {
 
     public void setSubDevices(Set<SubDevice> subDevices) {
         this.subDevices = subDevices;
-    }
-
-   
+    }  
 }
