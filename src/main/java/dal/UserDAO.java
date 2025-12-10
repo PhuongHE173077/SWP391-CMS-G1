@@ -195,10 +195,10 @@ public class UserDAO extends DBContext {
             if (gender != null && !gender.isEmpty()) {
                 // Giải thích: Nếu gender="1" -> set true (Male), ngược lại set false (Female)
                 ps.setBoolean(index++, gender.equals("1"));
-            }   
-             //? của pageSize, lấy 3 người/ 1 page
+            }
+            //? của pageSize, lấy 3 người/ 1 page
             ps.setInt(index++, pageSize);
-             //? của offset, Bỏ qua offset người
+            //? của offset, Bỏ qua offset người
             ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -224,6 +224,7 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+
     public void changeStatus(int id, int status) {
         // status: 1 là Active, 0 là Inactive
         String sql = "UPDATE _user SET active = ? WHERE id = ?";
@@ -481,6 +482,28 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public List<Users> getAllSaleStaff() {
+        List<Users> list = new ArrayList<>();
+        String sql = " SELECT u.displayName\n"
+                + "                FROM swp391._user u \n"
+                + "                INNER JOIN swp391.roles r ON u.role_id = r.id \n"
+                + "                WHERE  u.role_id = 2";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users user = new Users();
+                user.setDisplayname(rs.getString("displayname"));
+                list.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting User: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
         Users user = u.login("vana@example.com", "hashedpass1");
@@ -488,7 +511,7 @@ public class UserDAO extends DBContext {
             System.out.println("Login success: " + user.getDisplayname());
         } else {
             System.out.println("Login failed");
-        }
+        }  
     }
 
 }

@@ -117,7 +117,7 @@
                                 <th class="py-3">Content</th>
                                 <th class="py-3">Customer Name</th>
                                 <th class="py-3 text-center">Url contract</th>
-                                <th class="py-3 text-center">Role</th>
+                                <th class="py-3 text-center">Created By</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 250px;">Action</th> </tr>
                         </thead>
