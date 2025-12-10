@@ -108,11 +108,9 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex,
-            int pageSize) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
-
         /*
          * Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
          * Trang 1 (pageIndex = 1):
@@ -155,7 +153,7 @@ public class UserDAO extends DBContext {
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
-        // default khi hiện list là order by user Id
+        //default khi hiện list là order by user Id
         String listSort = " ORDER BY u.id DESC";
 
         if (sortBy != null && !sortBy.isEmpty()) {
@@ -226,7 +224,6 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-
     public void changeStatus(int id, int status) {
         // status: 1 là Active, 0 là Inactive
         String sql = "UPDATE _user SET active = ? WHERE id = ?";

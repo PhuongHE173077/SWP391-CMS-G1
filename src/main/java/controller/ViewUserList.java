@@ -93,7 +93,7 @@ public class ViewUserList extends HttpServlet {
         int pageSize = 5;
         int totalRecords = dao.countUsers(search, role, status, gender);
         int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
-        List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex,pageSize);
+        List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex,pageSize, sortBy, sortOrder);
         
         RoleDAO roleDAO = new RoleDAO();
         List<Roles> roleList = roleDAO.getAllRoleses();
