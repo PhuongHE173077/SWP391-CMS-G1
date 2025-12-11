@@ -144,6 +144,17 @@ public class ContractDAO extends DBContext {
         }
         return 0;
     }
+    public void changeContractStatus(int id, int status){
+        String sql = "UPDATE contract SET isDelete = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, status);
+            ps.setInt(2, id); //1 Active, 0: Inactive
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         ContractDAO dao = new ContractDAO();

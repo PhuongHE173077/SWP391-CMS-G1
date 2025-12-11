@@ -52,11 +52,11 @@
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
-                                <label class="form-check-label">Name</label>
+                                <label class="form-check-label">Content</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customerName" ${sortBy == 'customerName' ? 'checked' : ''}>
-                                <label class="form-check-label">Email</label>
+                                <label class="form-check-label">Customer Name</label>
                             </div>
                         </div>
 
