@@ -140,6 +140,116 @@ public class ContractDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    //
+    public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate, int pageIndex, int pageSize) {
+        List<ContractItem> list = new ArrayList<>();
+        int offset = (pageIndex - 1) * pageSize;
+
+        // SQL Join 3 bảng: contract_item -> sub_device -> device (để lấy tên máy)
+        String sql = "SELECT ci.*, sd.seri_id, d.name as device_name, d.id as device_real_id "
+                   + "FROM contract_item ci "
+                   + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id " // Chú ý: sub_devicel_id
+                   + "INNER JOIN device d ON sd.device_id = d.id "
+                   + "WHERE ci.contract_id = ? ";
+
+        // --- FILTER ---
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            sql += " AND ci.startAt >= ? ";
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            sql += " AND ci.endDate <= ? ";
+        }
+
+        sql += " ORDER BY ci.id DESC LIMIT ? OFFSET ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int index = 1;
+            ps.setInt(index++, contractId);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+                ps.setString(index++, "%" + keyword + "%");
+            }
+            if (startDate != null && !startDate.isEmpty()) {
+                ps.setString(index++, startDate + " 00:00:00"); // Ép kiểu về Timestamp
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                ps.setString(index++, endDate + " 23:59:59");
+            }
+
+            ps.setInt(index++, pageSize);
+            ps.setInt(index++, offset);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ContractItem item = new ContractItem();
+                item.setId(rs.getInt("id"));
+                item.setStartAt(rs.getTimestamp("startAt"));
+                item.setEndDate(rs.getTimestamp("endDate"));
+
+                // Map SubDevice & Device Info
+                SubDevice sd = new SubDevice();
+                sd.setId(rs.getInt("sub_devicel_id"));
+                sd.setSeriId(rs.getString("seri_id"));
+                
+                // Giả sử SubDevice có thuộc tính Device
+                Device d = new Device();
+                d.setId(rs.getInt("device_real_id"));
+                d.setName(rs.getString("device_name"));
+                sd.setDevice(d); // Bạn cần đảm bảo Model SubDevice có hàm setDevice
+                item.setSubDevice(sd);
+                list.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    // Hàm đếm tổng số Item (Để phân trang)
+    public int countItems(int contractId, String keyword, String startDate, String endDate) {
+        String sql = "SELECT COUNT(*) FROM contract_item ci "
+                   + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                   + "INNER JOIN device d ON sd.device_id = d.id "
+                   + "WHERE ci.contract_id = ? ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            sql += " AND ci.startAt >= ? ";
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            sql += " AND ci.endDate <= ? ";
+        }
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int index = 1;
+            ps.setInt(index++, contractId);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+                ps.setString(index++, "%" + keyword + "%");
+            }
+            if (startDate != null && !startDate.isEmpty()) {
+                ps.setString(index++, startDate + " 00:00:00");
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                ps.setString(index++, endDate + " 23:59:59");
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
 
     public static void main(String[] args) {
         ContractDAO dao = new ContractDAO();
