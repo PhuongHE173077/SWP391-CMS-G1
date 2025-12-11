@@ -52,6 +52,46 @@ public class SubDeviceDAO extends DBContext {
     }
 
     
+    // Tìm kiếm SubDevice theo số seri trong một device cụ thể
+    public List<SubDevice> searchRemainingSubDevicesBySeriId(int deviceId, String seriKeyword) {
+        List<SubDevice> subDevices = new ArrayList<>();
+        String query = "SELECT sd.*, d.name AS device_name "
+                + "FROM sub_device sd "
+                + "INNER JOIN device d ON sd.device_id = d.id "
+                + "WHERE sd.device_id = ? AND sd.isDelete = 0 AND sd.seri_id LIKE ? "
+                + "ORDER BY sd.id";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, deviceId);
+            ps.setString(2, "%" + seriKeyword + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    SubDevice subDevice = new SubDevice();
+                    subDevice.setId(rs.getInt("id"));
+                    subDevice.setSeriId(rs.getString("seri_id"));
+                    subDevice.setIsDelete(rs.getBoolean("isDelete"));
+
+                    // Set device info
+                    Device device = new Device();
+                    device.setId(rs.getInt("device_id"));
+                    device.setName(rs.getString("device_name"));
+                    subDevice.setDevice(device);
+
+                    // Set created_at
+                    java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
+                    if (timestamp != null) {
+                        OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
+                        subDevice.setCreatedAt(odt);
+                    }
+
+                    subDevices.add(subDevice);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return subDevices;
+    }
+    
      //Đếm số lượng SubDevice còn lại của một device
    
     public int countRemainingSubDevicesByDeviceId(int deviceId) {
@@ -88,6 +128,22 @@ public class SubDeviceDAO extends DBContext {
         return false;
     }
 
+    
+    // Kiểm tra seri_id đã tồn tại trong hệ thống chưa
+    public boolean checkSeriIdExists(String seriId) {
+        String query = "SELECT COUNT(*) FROM sub_device WHERE seri_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, seriId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     
       //Thêm nhiều SubDevice cùng lúc (batch insert)
      

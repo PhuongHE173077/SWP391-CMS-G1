@@ -70,9 +70,7 @@
                     <h4 class="mb-0">
                         <i class="fas fa-info-circle me-2"></i>Chi tiết Thiết bị
                     </h4>
-                    <a href="ViewListDevice" class="btn btn-light btn-sm">
-                        <i class="fas fa-arrow-left me-1"></i>Quay lại
-                    </a>
+                    
                 </div>
             </div>
             

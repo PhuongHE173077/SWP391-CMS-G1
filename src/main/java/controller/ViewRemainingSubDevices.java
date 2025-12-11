@@ -42,7 +42,18 @@ public class ViewRemainingSubDevices extends HttpServlet {
                 return;
             }
 
-            List<SubDevice> remainingSubDevices = subDeviceDAO.getRemainingSubDevicesByDeviceId(deviceId);
+            // Lấy parameter search nếu có
+            String searchKeyword = request.getParameter("search");
+            List<SubDevice> remainingSubDevices;
+            
+            if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+                // Tìm kiếm theo số seri
+                remainingSubDevices = subDeviceDAO.searchRemainingSubDevicesBySeriId(deviceId, searchKeyword.trim());
+                request.setAttribute("searchKeyword", searchKeyword.trim());
+            } else {
+                // Lấy tất cả
+                remainingSubDevices = subDeviceDAO.getRemainingSubDevicesByDeviceId(deviceId);
+            }
 
             request.setAttribute("device", device);
             request.setAttribute("remainingSubDevices", remainingSubDevices);
