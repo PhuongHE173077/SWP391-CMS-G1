@@ -62,26 +62,26 @@ public class ViewListDevice extends HttpServlet {
             throws ServletException, IOException {
         DeviceDAO dev = new DeviceDAO();
 
-        String indexPage = request.getParameter("index");
-        int index = 1; 
+        String indexPage = request.getParameter("page");
+        int PageSize = 7;
+        int Page = 1;
 
         if (indexPage != null && !indexPage.isEmpty()) {
             try {
-                index = Integer.parseInt(indexPage);
+                Page = Integer.parseInt(indexPage);
             } catch (NumberFormatException e) {
-
             }
         }
 
         int count = dev.getTotalAccount();
-        int maxPage = count / 3;
-        if (count % 3 != 0) {
+        int maxPage = count / PageSize;
+        if (count % PageSize != 0) {
             maxPage++;
         }
 
-        List<Device> devicePart = dev.pagingDevice(index);
+        List<Device> devicePart = dev.pagingDevice(Page, PageSize);
         request.setAttribute("devices", devicePart);
-
+        request.setAttribute("crPage", Page);
         request.setAttribute("maxp", maxPage);
         request.getRequestDispatcher("device/listDevice.jsp").forward(request, response);
     }
