@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,19 +15,19 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author admin
+ * @author Dell
  */
-@WebServlet(name = "AddContract", urlPatterns = { "/AddContract" })
-public class AddContract extends HttpServlet {
+@WebServlet(name = "DeleteCategory", urlPatterns = {"/DeleteCategory"})
+public class DeleteCategory extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -36,38 +37,58 @@ public class AddContract extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddContract</title>");
+            out.println("<title>Servlet DeleteCategory</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddContract at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteCategory at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("manager/contract/AddContract.jsp").forward(request, response);
+        int id = Integer.parseInt(request.getParameter("id"));
+        CategoryDAO dao = new CategoryDAO();
+
+        // Kiểm tra có đang được gắn với Device không
+        if (dao.isCategoryInUse(id)) {
+            request.getSession().setAttribute("error",
+                    "Không thể xóa! Danh mục đang được sử dụng bởi thiết bị.");
+            response.sendRedirect("ViewListCategory");
+            return;
+        }
+
+        // Nếu không được dùng, cho phép xóa
+        boolean deleted = dao.deleteCategory(id);
+
+        if (deleted) {
+            request.getSession().setAttribute("success", "Xóa danh mục thành công!");
+        } else {
+            request.getSession().setAttribute("error", "Xóa thất bại, vui lòng thử lại.");
+        }
+
+        response.sendRedirect("ViewListCategory");
+
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
