@@ -27,67 +27,64 @@ public class ViewContractListServlet extends HttpServlet {
     String URL_CONTRACT_LIST_DIRECTION = "manager/contract/contract-list.jsp";
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // 1. Xử lý Message từ Session (Flash Attribute)
+        
+        // 1. KIỂM TRA ĐĂNG NHẬP (QUAN TRỌNG)
         HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user"); 
+        
+        if (user == null) {
+            response.sendRedirect("login.jsp"); // Chưa đăng nhập thì đá về login
+            return;
+        }
+
+        // 2. Xử lý thông báo (Flash Message)
         String msg = (String) session.getAttribute("msg");
         String error = (String) session.getAttribute("error");
+        if (msg != null) { request.setAttribute("msg", msg); session.removeAttribute("msg"); }
+        if (error != null) { request.setAttribute("error", error); session.removeAttribute("error"); }
 
-        if (msg != null) {
-            request.setAttribute("msg", msg);
-            session.removeAttribute("msg");
-        }
-        if (error != null) {
-            request.setAttribute("error", error);
-            session.removeAttribute("error");
-        }
-
-        ContractDAO contractDAO = new ContractDAO();
-        // 2. Lấy tham số
+        // 3. Lấy tham số Filter/Sort từ JSP
         String search = request.getParameter("search");
         String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
         String indexPage = request.getParameter("page");
-        String createByIdRaw = request.getParameter("createById");
-        int createById = 0;
-  
-        if (indexPage == null) {
-            indexPage = "1";
-        }
-        if (sortBy == null) {
-            sortBy = "id";
-        }
-        if (sortOrder == null) {
-            sortOrder = "DESC";
-        }
+
+        if (indexPage == null) indexPage = "1";
+        if (sortBy == null) sortBy = "id";
+        if (sortOrder == null) sortOrder = "DESC";
 
         try {
             int pageIndex = Integer.parseInt(indexPage);
-            int pageSize = 20;
-
-            int totalRecords = contractDAO.countContracts(search, status, createById);
-            int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
-
-            List<Contract> list = contractDAO.searchContracts(search, createById, status, pageIndex, pageSize, sortBy, sortOrder);
+            int pageSize = 2;
+            ContractDAO dao = new ContractDAO();
             
+            // Lấy ID của người đang đăng nhập
+            int currentStaffId = user.getId(); 
 
-            // 3. Gửi data sang JSP
+            // Gọi hàm DAO mới (Truyền currentStaffId vào)
+            int totalRecords = dao.countContractsByStaff(search, status,currentStaffId);
+            int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
+            
+            List<Contract> list = dao.getContractsByStaff(search,currentStaffId, status, pageIndex, pageSize, sortBy, sortOrder);
+
+            // Gửi dữ liệu sang JSP
             request.setAttribute("contractList", list);
- //            request.setAttribute("totalPages", totalPages);
-//            request.setAttribute("currentPage", pageIndex);
-//            
-//            // Giữ lại giá trị filter
-//            request.setAttribute("searchValue", search);
-//            request.setAttribute("statusValue", status);
-//            request.setAttribute("sortBy", sortBy);
-//            request.setAttribute("sortOrder", sortOrder);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", pageIndex);
+            
+            // Giữ lại trạng thái Filter
+            request.setAttribute("searchValue", search);
+            request.setAttribute("statusValue", status);
+            request.setAttribute("sortBy", sortBy);
+            request.setAttribute("sortOrder", sortOrder);
+
             request.getRequestDispatcher(URL_CONTRACT_LIST_DIRECTION).forward(request, response);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-//            response.sendRedirect("contract-list");
+        } catch (NumberFormatException e) {
+            response.sendRedirect("contract-list");
         }
     }
 

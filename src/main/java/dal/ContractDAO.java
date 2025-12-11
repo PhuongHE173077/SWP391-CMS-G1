@@ -14,7 +14,7 @@ import model.*;
 
 public class ContractDAO extends DBContext {
 
-    public List<Contract> searchContracts(String keyword, int createById, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+    public List<Contract> getContractsByStaff(String keyword, int createById, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -23,7 +23,7 @@ public class ContractDAO extends DBContext {
                 + "left join _user u1 on c.user_id = u1.id "
                 + "left join _user u2 on c.createBy = u2.id "
                 + "where c.createBy = ? "
-                + "WHERE 1=1 ";
+                ;
                 
 
         // --- FILTER ---
@@ -66,9 +66,7 @@ public class ContractDAO extends DBContext {
                 // status = "1" -> isDelete = 1 (Active), 0 là inactive
                 ps.setBoolean(index++, status.equals("1"));
             }
-            if (createById > 0) {
-                ps.setInt(index++, createById);
-            }
+            
             ps.setInt(index++, pageSize);
             ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
@@ -97,10 +95,10 @@ public class ContractDAO extends DBContext {
     }
 
   // Hàm đếm tổng số bản ghi (Để chia trang)
-    public int countContracts(String keyword, String status, int createById) {
+    public int countContractsByStaff(String keyword, String status, int staffId) {
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
-                + "WHERE 1=1 ";
+                + "where c.createBy = ? ";
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
@@ -108,13 +106,11 @@ public class ContractDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
-        if (createById > 0) {
-            sql += " AND c.createBy = ? ";
-        }
-
+        
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
+            ps.setInt(index++, staffId);
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");
@@ -122,9 +118,7 @@ public class ContractDAO extends DBContext {
             if (status != null && !status.isEmpty()) {
                 ps.setBoolean(index++, status.equals("1"));
             }
-            if (createById > 0) {
-                    ps.setInt(index++, createById);
-            }
+            
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -149,10 +143,9 @@ public class ContractDAO extends DBContext {
 
     public static void main(String[] args) {
         ContractDAO dao = new ContractDAO();
-//        List<Contract> lst = dao.searchContracts("","", "", 1, 3, "", "");
-//        for (Contract ls : lst) {
-//            System.out.println(ls);
-//        }
+        int lst = dao.countContractsByStaff("","",5);
+        
+        System.out.println(lst);
 
        
     }
@@ -263,5 +256,5 @@ public class ContractDAO extends DBContext {
         }
         return null;
     }
-
+    
 }

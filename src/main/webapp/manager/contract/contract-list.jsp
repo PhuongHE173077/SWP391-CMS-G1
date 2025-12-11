@@ -6,70 +6,42 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <jsp:include page="../../admin/adminLayout.jsp">
-    <jsp:param name="pageTitle" value="Contract Management" />
+    <jsp:param name="pageTitle" value="My Contracts" />
 </jsp:include>
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-users-cog me-2"></i>Contract Management</h2>
+            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contracts</h2>
             <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
-                <i class="fas fa-plus me-2"></i>Add New Contract
+                <i class="fas fa-plus me-2"></i>Create New Contract
             </a>
         </div>
 
         <c:if test="${not empty msg}">
-            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                <i class="fas fa-check-circle me-2"></i>${msg}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </c:if>
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>${error}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                ${msg} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         </c:if>
 
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Filter & Sort</h5>
-            </div>
             <div class="card-body">
-                <form action="user-list" method="get">
+                <form action="contract-list" method="get">
 
-                    <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
-                        <div class="col-md-6 d-flex align-items-center gap-3">
-                            <span class="fw-bold text-dark">Sort by:</span>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}>
-                                <label class="form-check-label">ID</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
-                                <label class="form-check-label">Content</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="customerName" ${sortBy == 'customerName' ? 'checked' : ''}>
-                                <label class="form-check-label">Customer Name</label>
-                            </div>
+                    <div class="d-flex gap-3 mb-3 bg-light p-2 rounded">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-dark">Sort:</span>
+                            <label><input type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}> ID</label>
+                            <label><input type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}> Content</label>
+                            <label><input type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}> Customer</label>
                         </div>
-
-                        <div class="col-md-6 d-flex align-items-center gap-3">
+                        <div class="vr"></div>
+                        <div class="d-flex align-items-center gap-2">
                             <span class="fw-bold text-dark">Order:</span>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label>
-                            </div>
+                            <label><input type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}> Ascending</label>
+                            <label><input type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}> Descending</label>
                         </div>
                     </div>
 
@@ -82,17 +54,15 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search by Id, Content, Customer Name, Url Content, Created By" value="${searchValue}">
+                                <input type="text" name="search" class="form-control" placeholder="Search content or customer name..." value="${searchValue}">
                             </div>
                         </div>
                         <div class="col-md-2 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
-                            <a href="contract-list" class="btn btn-outline-secondary w-100" title="Reset Filter">
-                                Reset Filter
-                            </a>
+                            <a href="contract-list" class="btn btn-outline-secondary w-100">Reset Filter</a>
                         </div>
                     </div>
                 </form>
@@ -105,83 +75,50 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="py-3 ps-3">ID</th>
-                                <th class="py-3">Content</th>
-                                <th class="py-3">Customer Name</th>
-                                <th class="py-3 text-center">Url contract</th>
-                                <th class="py-3 text-center">Created By</th>
-                                <th class="py-3 text-center">Status</th>
-                                <th class="py-3 text-center" style="width: 250px;">Action</th> </tr>
+                                <th class="ps-3">ID</th>
+                                <th>Content</th>
+                                <th>Customer</th>
+                                <th class="text-center">PDF filed</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center" style="width: 200px;">Action</th>
+                            </tr>
                         </thead>
                         <tbody>
-
-                            <c:forEach items="${contractList}" var="contract">
+                            <c:forEach items="${contractList}" var="c">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">#${contract.id}</td>
-                                    <td><span class="fw-bold text-dark">${contract.content}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="fw-bold text-dark">${contract.user.displayname}</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <c:if test="${not empty contract.urlContract}">
-                                            <a href="${c.urlContract}" target="_blank" class="btn btn-sm btn-outline-info" title="View PDF">
-                                                <i class="fas fa-external-link-alt"></i> View File
-                                            </a>
-                                        </c:if>
-                                        <c:if test="${empty contract.urlContract}">
-                                            <span class="text-muted small">No file</span>
-                                        </c:if>
-                                    </td>
+                                    <td class="ps-3 fw-bold text-secondary">#${c.id}</td>
+                                    <td><span class="fw-bold text-dark">${c.content}</span></td>
+                                    <td class="text-primary">${c.user.displayname}</td>
 
                                     <td class="text-center">
-                                        <span class="fw-bold text-dark">${contract.createBy.displayname}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <c:if test="${contract.isDelete}">
-                                            <span class="badge bg-success">Active</span>
-                                        </c:if>
-                                        <c:if test="${!contract.isDelete}">
-                                            <span class="badge bg-secondary">Inactive</span>
-                                        </c:if>
-                                    </td>
+                                        <c:if test="${not empty c.urlContract}">
+                                            <a href="${c.urlContract}" target="_blank" class="text-info"><i class="fas fa-file-pdf fa-lg"></i></a>
+                                            </c:if>
+                                            <c:if test="${empty c.urlContract}">-</c:if>
+                                        </td>
 
-                                    <td class="text-center">
-                                        <div class="d-flex justify-content-center gap-2">
+                                        <td class="text-center">
+                                        <c:if test="${c.isDelete}"><span class="badge bg-success">Active</span></c:if>
+                                        <c:if test="${!c.isDelete}"><span class="badge bg-secondary">Inactive</span></c:if>
+                                        </td>
 
-                                            <a href="user-detail?id=${u.id}" class="btn btn-sm btn-outline-primary fw-bold" style="min-width: 60px;">
-                                                View
-                                            </a>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
+                                            <a href="edit-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
 
-                                            <a href="edit?id=${u.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark" style="min-width: 60px;">
-                                                Edit
-                                            </a>
-
-                                            <form action="change-user-status" method="post" style="display: inline;">
-                                                <input type="hidden" name="id" value="${u.id}">
+                                            <form action="change-contract-status" method="post" style="display: inline;">
+                                                <input type="hidden" name="id" value="${c.id}">
+                                                <input type="hidden" name="status" value="${c.isDelete ? '0' : '1'}">
                                                 <input type="hidden" name="page" value="${currentPage}">
                                                 <input type="hidden" name="search" value="${searchValue}">
-                                                <input type="hidden" name="role" value="${roleValue}">
-                                                <input type="hidden" name="gender" value="${genderValue}">
-                                                <input type="hidden" name="status" value="${u.active ? '0' : '1'}"> 
-                                                <input type="hidden" name="lastStatus" value="${statusValue}">
+                                                <input type="hidden" name="statusFilter" value="${statusValue}">
 
-                                                <c:if test="${u.active}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" 
-                                                            style="min-width: 80px;"
-                                                            onclick="return confirm('Are you sure you want to Deactivate this contract?')">
-                                                        Deactivate
-                                                    </button>
+                                                <c:if test="${c.isDelete}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Deactivate?')">Deactivate</button>
                                                 </c:if>
-
-                                                <c:if test="${!u.active}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success fw-bold" 
-                                                            style="min-width: 80px;"
-                                                            onclick="return confirm('Are you sure you want to Activate this contract?')">
-                                                        Activate
-                                                    </button>
+                                                <c:if test="${!c.isDelete}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-success fw-bold" onclick="return confirm('Activate?')">Activate</button>
                                                 </c:if>
                                             </form>
                                         </div>
@@ -190,33 +127,30 @@
                             </c:forEach>
 
                             <c:if test="${empty contractList}">
-                                <tr>
-                                    <td colspan="7" class="text-center py-5 text-muted">
-                                        <h5>No contracts found</h5>
-                                    </td>
-                                </tr>
+                                <tr><td colspan="6" class="text-center py-4 text-muted">No contracts found.</td></tr>
                             </c:if>
                         </tbody>
                     </table>
                 </div>
             </div>
 
+
             <div class="card-footer bg-white d-flex justify-content-center py-3">
                 <c:if test="${totalPages > 0}">
                     <nav aria-label="Page navigation">
                         <ul class="pagination m-0">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="user-list?page=${currentPage - 1}&search=${searchValue}&role=${roleValue}&status=${statusValue}&gender=${genderValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
                             </li>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="user-list?page=${i}&search=${searchValue}&role=${roleValue}&status=${statusValue}&gender=${genderValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="user-list?page=${currentPage + 1}&search=${searchValue}&role=${roleValue}&status=${statusValue}&gender=${genderValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -224,8 +158,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
 </body>
-
 <jsp:include page="../../admin/adminFooter.jsp" />
