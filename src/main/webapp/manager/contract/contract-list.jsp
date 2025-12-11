@@ -85,7 +85,7 @@
                             <select name="createById" class="form-select">
                                 <option value="">All Created By</option>
                                 <c:forEach items="${lstSaleStaff}" var="s"> 
-                                    <option value="${s.id}" ${createdByValue == s.id ? 'selected' : ''}>${s.displayname}</option>
+                                    <option value="${s.id}" ${createByValue == s.id ? 'selected' : ''}>${s.displayname}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -122,20 +122,32 @@
                                 <th class="py-3 text-center" style="width: 250px;">Action</th> </tr>
                         </thead>
                         <tbody>
-                     
+
                             <c:forEach items="${contractList}" var="contract">
                                 <tr>
                                     <td class="ps-3 fw-bold text-secondary">#${contract.id}</td>
+                                    <td><span class="fw-bold text-dark">${contract.content}</spa    n>
+                                    </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <span class="fw-bold text-dark">${contract.user.displayName}</span>
                                         </div>
                                     </td>
-                                    <td class="text-muted">${contract.urlContract}</td>
                                     <td class="text-center">
-                                            <span class="fw-bold text-dark">${contract.createBy}</span>
+                                        <c:if test="${not empty contract.urlContract}">
+                                            <a href="${c.urlContract}" target="_blank" class="btn btn-sm btn-outline-info" title="View PDF">
+                                                <i class="fas fa-external-link-alt"></i> View File
+                                            </a>
+                                        </c:if>
+                                        <c:if test="${empty contract.urlContract}">
+                                            <span class="text-muted small">No file</span>
+                                        </c:if>
                                     </td>
-                                     <td class="text-center">
+
+                                    <td class="text-center">
+                                        <span class="fw-bold text-dark">${contract.createBy.displayName}</span>
+                                    </td>
+                                    <td class="text-center">
                                         <c:if test="${contract.isDelete}">
                                             <span class="badge bg-success">Active</span>
                                         </c:if>
@@ -167,7 +179,7 @@
                                                 <c:if test="${u.active}">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" 
                                                             style="min-width: 80px;"
-                                                            onclick="return confirm('Are you sure you want to Deactivate this user?')">
+                                                            onclick="return confirm('Are you sure you want to Deactivate this contract?')">
                                                         Deactivate
                                                     </button>
                                                 </c:if>
@@ -175,7 +187,7 @@
                                                 <c:if test="${!u.active}">
                                                     <button type="submit" class="btn btn-sm btn-outline-success fw-bold" 
                                                             style="min-width: 80px;"
-                                                            onclick="return confirm('Are you sure you want to Activate this user?')">
+                                                            onclick="return confirm('Are you sure you want to Activate this contract?')">
                                                         Activate
                                                     </button>
                                                 </c:if>
@@ -185,10 +197,10 @@
                                 </tr>
                             </c:forEach>
 
-                            <c:if test="${empty userList}">
+                            <c:if test="${empty contractList}">
                                 <tr>
                                     <td colspan="7" class="text-center py-5 text-muted">
-                                        <h5>No users found</h5>
+                                        <h5>No contracts found</h5>
                                     </td>
                                 </tr>
                             </c:if>
