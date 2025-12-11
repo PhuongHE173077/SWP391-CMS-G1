@@ -16,19 +16,16 @@ import model.*;
  * @author ADMIN
  */
 public class ContractDAO extends DBContext {
-    
-    public List<Contract> searchContracts(String keyword, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+
+    public List<Contract> searchContracts(String keyword, String status, int pageIndex, int pageSize, String sortBy,
+            String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
-        
-    
-    
+
         return null;
-        
-    
-    
+
     }
-    
+
     public int addContract(int userId, int createById, String content) {
         String sql = "INSERT INTO contract (user_id, createBy, content, isDelete, created_at) VALUES (?, ?, ?, 0, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -104,5 +101,36 @@ public class ContractDAO extends DBContext {
         return false;
     }
 
-    
+    public boolean updateContractUrl(int contractId, String urlContract) {
+        String sql = "UPDATE contract SET url_contract = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, urlContract);
+            ps.setInt(2, contractId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public String[] getUserInfoById(int userId) {
+        String sql = "SELECT displayname, email, phone, address FROM _user WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new String[] {
+                            rs.getString("displayname"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("address")
+                    };
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

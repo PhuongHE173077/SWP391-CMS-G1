@@ -6,6 +6,8 @@ package controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +20,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dal.ContractDAO;
 import model.Users;
+import utils.CloudinaryUtil;
+import utils.ContractPdfGenerator;
 
 /**
  *
@@ -106,7 +110,7 @@ public class AddContract extends HttpServlet {
 
                 int subDeviceId = subDeviceObj.get("id").getAsInt();
 
-                int maintenanceTime = 12;
+                int maintenanceTime = 0;
 
                 // Lấy maintenance time từ device nếu có
                 if (subDeviceObj.has("device") && subDeviceObj.get("device").isJsonObject()) {
@@ -119,7 +123,7 @@ public class AddContract extends HttpServlet {
                             maintenanceTime = Integer.parseInt(deviceObj.get("maintenanceTime").getAsString());
 
                         } catch (NumberFormatException e) {
-                            maintenanceTime = 12;
+                            maintenanceTime = 0;
                         }
                     }
                 }
@@ -133,14 +137,74 @@ public class AddContract extends HttpServlet {
                 }
             }
 
+            // Generate PDF and upload to Cloudinary
+            String pdfUrl = null;
+            try {
+                // Lấy thông tin khách hàng
+                String[] customerInfo = contractDAO.getUserInfoById(userId);
+                String customerName = customerInfo != null ? customerInfo[0] : "N/A";
+                String customerEmail = customerInfo != null ? customerInfo[1] : "N/A";
+                String customerPhone = customerInfo != null ? customerInfo[2] : "N/A";
+                String customerAddress = customerInfo != null ? customerInfo[3] : "N/A";
+
+                // Tạo danh sách thiết bị cho PDF
+                List<String[]> deviceList = new ArrayList<>();
+                for (int i = 0; i < subDevicesArray.size(); i++) {
+                    JsonObject subDeviceObj = subDevicesArray.get(i).getAsJsonObject();
+                    String deviceName = "N/A";
+                    String serialId = subDeviceObj.has("seriId") ? subDeviceObj.get("seriId").getAsString() : "N/A";
+                    String maintenanceTime = "0";
+
+                    if (subDeviceObj.has("device") && subDeviceObj.get("device").isJsonObject()) {
+                        JsonObject deviceObj = subDeviceObj.getAsJsonObject("device");
+                        if (deviceObj.has("name") && !deviceObj.get("name").isJsonNull()) {
+                            deviceName = deviceObj.get("name").getAsString();
+                        }
+                        if (deviceObj.has("maintenanceTime") && !deviceObj.get("maintenanceTime").isJsonNull()) {
+                            maintenanceTime = deviceObj.get("maintenanceTime").getAsString();
+                        }
+                    }
+
+                    deviceList.add(new String[] { deviceName, serialId, maintenanceTime });
+                }
+
+                // Generate PDF
+                byte[] pdfBytes = ContractPdfGenerator.generateContractPdf(
+                        contractId,
+                        customerName,
+                        customerEmail,
+                        customerPhone,
+                        customerAddress,
+                        currentUser.getDisplayname(),
+                        content,
+                        deviceList);
+
+                // Upload to Cloudinary
+                if (pdfBytes != null) {
+                    pdfUrl = CloudinaryUtil.uploadContractPdfBytes(pdfBytes, contractId);
+                    if (pdfUrl != null) {
+                        contractDAO.updateContractUrl(contractId, pdfUrl);
+                    }
+                }
+            } catch (Exception pdfEx) {
+                pdfEx.printStackTrace();
+                // Không fail toàn bộ request nếu PDF generation thất bại
+            }
+
             if (allItemsAdded) {
                 jsonResponse.addProperty("success", true);
                 jsonResponse.addProperty("message", "Tạo hợp đồng thành công");
                 jsonResponse.addProperty("contractId", contractId);
+                if (pdfUrl != null) {
+                    jsonResponse.addProperty("pdfUrl", pdfUrl);
+                }
             } else {
                 jsonResponse.addProperty("success", true);
                 jsonResponse.addProperty("message", "Tạo hợp đồng thành công nhưng một số thiết bị không được thêm");
                 jsonResponse.addProperty("contractId", contractId);
+                if (pdfUrl != null) {
+                    jsonResponse.addProperty("pdfUrl", pdfUrl);
+                }
             }
 
         } catch (Exception e) {
