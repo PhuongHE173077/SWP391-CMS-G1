@@ -14,13 +14,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Device;
+import model.DeviceCategory;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name = "ViewListDevice", urlPatterns = {"/ViewListDevice"})
-public class ViewListDevice extends HttpServlet {
+@WebServlet(name = "AddDevice", urlPatterns = {"/AddDevice"})
+public class AddDevice extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +40,10 @@ public class ViewListDevice extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewListDevice</title>");
+            out.println("<title>Servlet AddDevice</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewListDevice at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddDevice at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,29 +62,10 @@ public class ViewListDevice extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         DeviceDAO dev = new DeviceDAO();
+        List<DeviceCategory> deviceCategoryList = dev.getAllDeviceCategory();
+        request.setAttribute("deviceCategory", deviceCategoryList);
+        request.getRequestDispatcher("device/AddDevice.jsp").forward(request, response);
 
-        String indexPage = request.getParameter("page");
-        int PageSize = 7;
-        int Page = 1;
-
-        if (indexPage != null && !indexPage.isEmpty()) {
-            try {
-                Page = Integer.parseInt(indexPage);
-            } catch (NumberFormatException e) {
-            }
-        }
-
-        int count = dev.getTotalAccount();
-        int maxPage = count / PageSize;
-        if (count % PageSize != 0) {
-            maxPage++;
-        }
-
-        List<Device> devicePart = dev.pagingDevice(Page, PageSize);
-        request.setAttribute("devices", devicePart);
-        request.setAttribute("crPage", Page);
-        request.setAttribute("maxp", maxPage);
-        request.getRequestDispatcher("device/listDevice.jsp").forward(request, response);
     }
 
     /**
@@ -97,6 +79,25 @@ public class ViewListDevice extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String image = request.getParameter("image");
+        String maintenance_time = request.getParameter("maintenance_time");
+        String description = request.getParameter("description");
+        String categoryId = request.getParameter("category_id");
+        int categoryID = Integer.parseInt(categoryId);
+
+        DeviceDAO dev = new DeviceDAO();
+        Device d = new Device();
+        d.setName(name);
+        d.setImage(image);
+        d.setDescription(description);
+        d.setMaintenanceTime(maintenance_time);
+        DeviceCategory dc = new DeviceCategory();
+        dc.setId(categoryID);
+        d.setCategory(dc);
+
+        dev.insertDevice(d);
+        response.sendRedirect("ViewListDevice");
 
     }
 

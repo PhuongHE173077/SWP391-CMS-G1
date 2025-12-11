@@ -65,7 +65,7 @@
                 border-color: #007bff;
                 box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
             }
-            
+
             .form-group textarea {
                 resize: vertical;
                 min-height: 100px;
@@ -90,7 +90,7 @@
                 background-color: #1e7e34;
                 transform: translateY(-2px);
             }
-            
+
             .message {
                 margin-bottom: 15px;
                 padding: 10px;
@@ -118,15 +118,15 @@
             <div class="header">
                 <h1>➕ Thêm Thiết bị Mới</h1>
             </div>
-            
+
             <c:if test="${not empty requestScope.message}">
                 <div class="message ${requestScope.success ? 'success' : 'error'}">
                     ${requestScope.message}
                 </div>
             </c:if>
 
-            <form action="AddDeviceController" method="POST">
-                
+            <form action="AddDevice" method="POST">
+
                 <div class="form-group">
                     <label for="name">Tên Thiết bị (*):</label>
                     <input type="text" id="name" name="name" required placeholder="Nhập tên thiết bị...">
@@ -136,17 +136,17 @@
                     <label for="category_id">Danh mục (*):</label>
                     <select id="category_id" name="category_id" required>
                         <option value="" disabled selected>-- Chọn Danh mục --</option>
-                        <c:forEach var="c" items="${requestScope.categories}">
-                            <option value="${c.id}">${c.name}</option>
+                        <c:forEach var="dc" items="${deviceCategory}"> 
+                            <option value="${dc.id}">${dc.name}</option>
                         </c:forEach>
                     </select>
-                    </div>
+                </div>
 
                 <div class="form-group">
                     <label for="image">URL Hình ảnh:</label>
                     <input type="url" id="image" name="image" placeholder="Ví dụ: https://example.com/device_img.jpg">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="maintenance_time">Thời gian Bảo trì (ví dụ: 6 tháng):</label>
                     <input type="text" id="maintenance_time" name="maintenance_time" placeholder="Nhập chu kỳ bảo trì...">
@@ -156,7 +156,7 @@
                     <label for="description">Mô tả:</label>
                     <textarea id="description" name="description" placeholder="Nhập mô tả chi tiết về thiết bị..."></textarea>
                 </div>
-                
+
                 <button type="submit" class="btn-submit">💾 Lưu Thiết bị Mới</button>
             </form>
 

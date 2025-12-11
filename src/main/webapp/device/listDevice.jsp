@@ -144,47 +144,66 @@
                 padding: 8px;
             }
 
+            .device-table .action-col {
+                text-align: center;
+                width: 300px; /* Tăng chiều rộng để các nút vừa vặn */
+                padding: 8px;
+            }
+
             .action-col-wrapper {
                 display: flex;
-                justify-content: space-around;
-                gap: 5px;
+                justify-content: center; /* Căn giữa các nút */
+                gap: 8px; /* Tăng khoảng cách giữa các nút */
                 padding: 0;
                 margin: 0;
             }
 
-
-            .action-col button {
-                padding: 8px 12px;
-                border: 1px solid #ccc;
+            /* Đảm bảo style cho cả thẻ <a> và <button> */
+            .action-col-wrapper a, .action-col-wrapper button {
+                padding: 6px 10px; /* Giảm nhẹ padding */
+                border: none; /* Bỏ border để trông hiện đại hơn */
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 13px;
                 font-weight: 500;
-                transition: all 0.2s;
+                transition: background-color 0.2s, box-shadow 0.2s;
                 white-space: nowrap;
+                text-decoration: none;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Thêm đổ bóng nhẹ */
             }
 
-            .action-col button:nth-child(1) {
-                background-color: #e9ecef;
-                color: #333;
+            /* Xem Chi tiết (Info/Màu xám) */
+            .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
+                background-color: #f8f9fa; /* Màu xám nhạt */
+                color: #495057;
+            }
+            .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
+                background-color: #e2e6ea;
             }
 
-            .action-col button:nth-child(2) {
+            /* Sửa Sản Phẩm (Warning/Màu vàng) */
+            .action-col-wrapper a:nth-child(2), .action-col-wrapper button:nth-child(2) {
                 background-color: #ffc107;
-                color: #212529;
-                border-color: #ffc107;
+                color: #343a40;
             }
-            .action-col button:nth-child(2):hover {
+            .action-col-wrapper a:nth-child(2):hover, .action-col-wrapper button:nth-child(2):hover {
                 background-color: #e0a800;
             }
 
-            .action-col button:nth-child(3) {
+            /* Xóa Sản Phẩm (Danger/Màu đỏ) */
+            .action-col-wrapper a:nth-child(3), .action-col-wrapper button:nth-child(3) {
                 background-color: #dc3545;
                 color: #fff;
-                border-color: #dc3545;
             }
-            .action-col button:nth-child(3):hover {
+            .action-col-wrapper a:nth-child(3):hover, .action-col-wrapper button:nth-child(3):hover {
                 background-color: #c82333;
+            }
+            .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
+                background-color: #f8f9fa; /* Màu xám nhạt */
+                color: #495057;
+            }
+            .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
+                background-color: #e2e6ea;
             }
 
             .pagination {
@@ -197,23 +216,28 @@
                 padding: 8px 14px;
                 margin-left: 5px;
                 text-decoration: none;
-                color: #007bff;
+                color: #007bff; /* Màu chữ mặc định */
                 background-color: #fff;
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 font-size: 14px;
-                transition: background-color 0.2s;
+                font-weight: 500;
+                transition: background-color 0.2s, color 0.2s, border-color 0.2s;
             }
 
-            .pagination a:hover {
-                background-color: #e9ecef;
-            }
-
-            .pagination a:nth-child(1) {
+            /* Kiểu cho trang hiện tại (active) - BÔI XANH Ở ĐÂY */
+            .pagination a.active {
                 font-weight: 600;
-                color: #fff;
-                background-color: #007bff;
+                color: #fff; /* Chữ trắng */
+                background-color: #007bff; /* Nền xanh */
                 border-color: #007bff;
+                cursor: default; /* Thay đổi con trỏ chuột */
+            }
+
+            /* Hover chỉ áp dụng cho các trang KHÔNG phải trang hiện tại */
+            .pagination a:hover:not(.active) {
+                background-color: #e9ecef;
+                border-color: #c9c9c9;
             }
 
 
@@ -232,19 +256,17 @@
 
             <div class="header">
                 <h1>🛠️ Danh sách Thiết bị</h1>
-                <a href="device/AddDevice.jsp" class="add-device-btn">➕ Thêm Thiết bị</a> 
+                <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a> 
             </div>
 
             <div class="filter-bar">
                 <select name="name">
-                    <option value="">Lọc theo Tên</option>
+                    <option value="">Lọc theo thương hiệu</option>
                 </select>
                 <select name="maintenance_time">
                     <option value="">Tìm kiếm theo tên....</option>
                 </select>
-                <select name="category">
-                    <option value="">Danh mục</option>
-                </select>
+
             </div>
 
             <table class="device-table">
@@ -272,9 +294,9 @@
                             </td>
                             <td>
                                 <div class="action-col-wrapper">
-                                    <button>Xem Chi tiết</button>
-                                    <button>Sửa Sản Phẩm</button>
-                                    <button>Xóa Sản Phẩm</button>
+                                    <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
+                                    <a href="EditDevice?id=${d.id}">Sửa Sản Phẩm</a>
+                                    <a href="#" onClick= " showMess(${d.id})">Xóa Sản Phẩm</a>
                                 </div>
                             </td>
                         </tr>
@@ -285,8 +307,18 @@
 
 
             <div class="pagination">
+
                 <c:forEach begin="1" end="${maxp}" var="i">
-                    <a href="ViewListDevice?index=${i}">${i}</a>
+                    <c:choose>
+                        <c:when test="${crPage == i}">
+                            <%-- Trang hiện tại: Thêm class "active" --%>
+                            <a href="ViewListDevice?page=${i}" class="active">${i}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <%-- Các trang khác: Giữ nguyên link --%>
+                            <a href="ViewListDevice?page=${i}">${i}</a>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
 
             </div>
@@ -294,4 +326,12 @@
         </div>
 
     </body>
+    <script>
+        function showMess(id){
+            var option = confirm("Are you sure to delete ?");
+            if(option === true){
+                window.location.href = "DeleteDevice?id="+id;
+            }
+        }
+    </script>
 </html>
