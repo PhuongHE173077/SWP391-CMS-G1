@@ -52,13 +52,7 @@ public class ViewContractListServlet extends HttpServlet {
         String indexPage = request.getParameter("page");
         String createByIdRaw = request.getParameter("createById");
         int createById = 0;
-        if (createByIdRaw != null && !createByIdRaw.isEmpty()) {
-            try {
-                createById = Integer.parseInt(createByIdRaw);
-            } catch (NumberFormatException e) {
-                createById = 0;
-            }
-        }
+  
         if (indexPage == null) {
             indexPage = "1";
         }
@@ -77,13 +71,11 @@ public class ViewContractListServlet extends HttpServlet {
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
             List<Contract> list = contractDAO.searchContracts(search, createById, status, pageIndex, pageSize, sortBy, sortOrder);
-            UserDAO userDAO = new UserDAO();
-            List<Users> lstSaleStaff = userDAO.getUsersByRoleId(3);
+            
 
             // 3. Gửi data sang JSP
             request.setAttribute("contractList", list);
-            request.setAttribute("lstSaleStaff", lstSaleStaff);
-//            request.setAttribute("totalPages", totalPages);
+ //            request.setAttribute("totalPages", totalPages);
 //            request.setAttribute("currentPage", pageIndex);
 //            
 //            // Giữ lại giá trị filter

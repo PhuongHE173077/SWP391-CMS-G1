@@ -81,14 +81,6 @@
                                 <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <select name="createById" class="form-select">
-                                <option value="">All Created By</option>
-                                <c:forEach items="${lstSaleStaff}" var="s"> 
-                                    <option value="${s.id}" ${createByValue == s.id ? 'selected' : ''}>${s.displayname}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
 
                         <div class="col-md-4">
                             <div class="input-group">

@@ -481,23 +481,13 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-  
-    
-    
-
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-//        Users user = u.login("vana@example.com", "hashedpass1");
-//        if (user != null) {
-//            System.out.println("Login success: " + user.getDisplayname());
-//        } else {
-//            System.out.println("Login failed");
-//        }  
-        List<Users> us = u.getUsersByRoleId(3);
-        for (Users uu : us) {
-            System.out.println(uu);
+        Users user = u.login("vana@example.com", "hashedpass1");
+        if (user != null) {
+            System.out.println("Login success: " + user.getDisplayname());
+        } else {
+            System.out.println("Login failed");
         }
-
     }
-
 }
