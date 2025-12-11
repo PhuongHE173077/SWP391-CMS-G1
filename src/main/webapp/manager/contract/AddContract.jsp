@@ -187,29 +187,9 @@
 
                                     <!-- Submit Button -->
                                     <div class="mt-auto">
-                                        <button type="button" class="btn btn-primary w-100">Tạo hợp đồng</button>
+                                        <button type="button" id="submit-button" class="btn btn-primary w-100">Tạo hợp đồng</button>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Order Summary -->
-                            <div class="border-top pt-3 mb-3">
-                                <div class="d-flex justify-content-between mb-2 small">
-                                    <span class="summary-label">Tổng sản phẩm:</span>
-                                    <span class="summary-value">10 sp</span>
-                                </div>
-                            </div>
-
-                            <!-- Payment Section -->
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Nội dung hợp đồng</label>
-                                <textarea id="myText" class="form-control" rows="6"></textarea>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <div class="mt-auto">
-                                <button type="button" class="btn btn-primary w-100">Tạo hợp đồng</button>
-
                             </div>
                         </div>
                     </div>
