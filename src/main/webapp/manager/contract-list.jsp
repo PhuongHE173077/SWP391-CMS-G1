@@ -1,6 +1,6 @@
 <%-- 
-    Document   : user-list
-    Created on : Dec 3, 2025, 7:14:52 PM
+    Document   : contract-list
+    Created on : Dec 10, 2025, 10:44:22 AM
     Author     : ADMIN
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -9,17 +9,17 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<jsp:include page="../adminLayout.jsp">
-    <jsp:param name="pageTitle" value="User Management" />
+<jsp:include page="../admin/adminLayout.jsp">
+    <jsp:param name="pageTitle" value="Contract Management" />
 </jsp:include>
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-users-cog me-2"></i>User Management</h2>
-            <a href="AddUser" class="btn btn-primary shadow-sm fw-bold">
-                <i class="fas fa-plus me-2"></i>Add New User
+            <h2 class="text-primary fw-bold"><i class="fas fa-users-cog me-2"></i>Contract Management</h2>
+            <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
+                <i class="fas fa-plus me-2"></i>Add New Contract
             </a>
         </div>
 
@@ -41,7 +41,7 @@
                 <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Filter & Sort</h5>
             </div>
             <div class="card-body">
-                <form action="contract-list" method="get">
+                <form action="user-list" method="get">
 
                     <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
                         <div class="col-md-6 d-flex align-items-center gap-3">
@@ -51,11 +51,11 @@
                                 <label class="form-check-label">ID</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="fullname" ${sortBy == 'fullname' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
                                 <label class="form-check-label">Name</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="email" ${sortBy == 'email' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="sortBy" value="customerName" ${sortBy == 'customerName' ? 'checked' : ''}>
                                 <label class="form-check-label">Email</label>
                             </div>
                         </div>
@@ -75,36 +75,30 @@
 
                     <div class="row g-3">
                         <div class="col-md-2">
-                            <select name="gender" class="form-select">
-                                <option value="">All Genders</option>
-                                <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
-                                <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <select name="role" class="form-select">
-                                <option value="">All Roles</option>
-                                <c:forEach items="${roleList}" var="r"> 
-                                    <option value="${r.id}" ${roleValue == r.id ? 'selected' : ''}>${r.name}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <select name="status" class="form-select">
+                              <select name="status" class="form-select">
                                 <option value="">All Status</option>
                                 <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
                                 <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <select name="role" class="form-select">
+                                <option value="">All Created By</option>
+                                <c:forEach items="${lstSaleStaff}" var="s"> 
+                                    <option value="${s.id}" ${createdByValue == s.id ? 'selected' : ''}>${s.displayname}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                     
                         <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search by name..." value="${searchValue}">
+                                <input type="text" name="search" class="form-control" placeholder="Search by Id, Content, Customer Name, Url Content, Created By..." value="${searchValue}">
                             </div>
                         </div>
                         <div class="col-md-2 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
-                            <a href="user-list" class="btn btn-outline-secondary w-100" title="Reset Filter">
+                            <a href="contract-list" class="btn btn-outline-secondary w-100" title="Reset Filter">
                                 Reset Filter
                             </a>
                         </div>
@@ -120,10 +114,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="py-3 ps-3">ID</th>
-                                <th class="py-3">Full Name</th>
-                                <th class="py-3">Email</th>
-                                <th class="py-3 text-center">Gender</th>
-                                <th class="py-3 text-center">Role</th>
+                                <th class="py-3">Content</th>
+                                <th class="py-3">Customer Name</th>
+                                <th class="py-3 text-center">Url contract</th>
+                                <th class="py-3 text-center">Created By</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 250px;">Action</th> </tr>
                         </thead>
@@ -231,4 +225,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-<jsp:include page="../adminFooter.jsp" />
+<jsp:include page="../admin/adminFooter.jsp" />
