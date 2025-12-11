@@ -113,6 +113,9 @@ public class ContractDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
+           if (createById != null && !createById.isEmpty()) {
+            sql += " AND c.createBy = ? ";
+        }
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -123,6 +126,14 @@ public class ContractDAO extends DBContext {
             }
             if (status != null && !status.isEmpty()) {
                 ps.setBoolean(index++, status.equals("1"));
+            }
+              if (createById != null && !createById.isEmpty()) {
+                try {
+                    ps.setInt(index++, Integer.parseInt(createById));
+                } catch (NumberFormatException | SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Lỗi: "+ e.getMessage());
+                }
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -136,10 +147,14 @@ public class ContractDAO extends DBContext {
 
     public static void main(String[] args) {
         ContractDAO dao = new ContractDAO();
-        List<Contract> lst = dao.searchContracts("","", "", 1, 3, "", "");
-        for (Contract ls : lst) {
-            System.out.println(ls);
-        }
+//        List<Contract> lst = dao.searchContracts("","", "", 1, 3, "", "");
+//        for (Contract ls : lst) {
+//            System.out.println(ls);
+//        }
+        
+        int count = dao.countContracts("", "", "");
+        System.out.println(count);
+     
     }
 
 }
