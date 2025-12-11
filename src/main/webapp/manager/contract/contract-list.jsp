@@ -9,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<jsp:include page="../admin/adminLayout.jsp">
+<jsp:include page="../../admin/adminLayout.jsp">
     <jsp:param name="pageTitle" value="Contract Management" />
 </jsp:include>
 
@@ -75,21 +75,21 @@
 
                     <div class="row g-3">
                         <div class="col-md-2">
-                              <select name="status" class="form-select">
+                            <select name="status" class="form-select">
                                 <option value="">All Status</option>
                                 <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
                                 <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <select name="role" class="form-select">
+                            <select name="createById" class="form-select">
                                 <option value="">All Created By</option>
                                 <c:forEach items="${lstSaleStaff}" var="s"> 
                                     <option value="${s.id}" ${createdByValue == s.id ? 'selected' : ''}>${s.displayname}</option>
                                 </c:forEach>
                             </select>
                         </div>
-                     
+
                         <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
@@ -122,25 +122,24 @@
                                 <th class="py-3 text-center" style="width: 250px;">Action</th> </tr>
                         </thead>
                         <tbody>
-                            <c:forEach items="${userList}" var="u">
+                     
+                            <c:forEach items="${contractList}" var="contract">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">#${u.id}</td>
+                                    <td class="ps-3 fw-bold text-secondary">#${contract.id}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <span class="fw-bold text-dark">${u.displayname}</span>
+                                            <span class="fw-bold text-dark">${contract.user.displayName}</span>
                                         </div>
                                     </td>
-                                    <td class="text-muted">${u.email}</td>
+                                    <td class="text-muted">${contract.urlContract}</td>
                                     <td class="text-center">
-                                        <c:if test="${u.gender}"><span class="badge bg-light text-primary border">Male</span></c:if>
-                                        <c:if test="${!u.gender}"><span class="badge bg-light text-danger border">Female</span></c:if>
-                                        </td>
-                                        <td class="text-center"><span class="badge bg-info text-dark border">${u.roles.name}</span></td>
-                                    <td class="text-center">
-                                        <c:if test="${u.active}">
+                                            <span class="fw-bold text-dark">${contract.createBy}</span>
+                                    </td>
+                                     <td class="text-center">
+                                        <c:if test="${contract.isDelete}">
                                             <span class="badge bg-success">Active</span>
                                         </c:if>
-                                        <c:if test="${!u.active}">
+                                        <c:if test="${!contract.isDelete}">
                                             <span class="badge bg-secondary">Inactive</span>
                                         </c:if>
                                     </td>
@@ -225,4 +224,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-<jsp:include page="../admin/adminFooter.jsp" />
+<jsp:include page="../../admin/adminFooter.jsp" />
