@@ -103,6 +103,14 @@
                 color: #155724;
                 border: 1px solid #c3e6cb;
             }
+            .back-link-top {
+                display: inline-block;
+                margin-bottom: 20px;
+                color: #007bff;
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.2s;
+            }
 
             .error {
                 background-color: #f8d7da;
@@ -114,7 +122,7 @@
     <body>
 
         <div class="container">
-
+            <a href="/ViewListDevice" class="back-link-top">← Quay lại Danh sách Thiết bị</a>
             <div class="header">
                 <h1>➕ Thêm Thiết bị Mới</h1>
             </div>
@@ -160,7 +168,7 @@
                 <button type="submit" class="btn-submit">💾 Lưu Thiết bị Mới</button>
             </form>
 
-            <a href="/ViewListDevice" style="display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none;">← Quay lại Danh sách Thiết bị</a>
+
 
         </div>
 

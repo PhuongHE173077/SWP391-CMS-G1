@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CategoryDAO;
 import dal.DeviceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Device;
+import model.DeviceCategory;
 
 /**
  *
@@ -79,11 +81,16 @@ public class ViewListDevice extends HttpServlet {
             maxPage++;
         }
 
+        CategoryDAO cate = new CategoryDAO();
+        List<DeviceCategory> dc = cate.getAllCategory();
+        request.setAttribute("deviceCategory", dc);
+        
+        
         List<Device> devicePart = dev.pagingDevice(Page, PageSize);
         request.setAttribute("devices", devicePart);
         request.setAttribute("crPage", Page);
         request.setAttribute("maxp", maxPage);
-        request.getRequestDispatcher("device/listDevice.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/device/listDevice.jsp").forward(request, response);
     }
 
     /**

@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CategoryDAO;
 import dal.DeviceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -61,10 +62,10 @@ public class AddDevice extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DeviceDAO dev = new DeviceDAO();
-        List<DeviceCategory> deviceCategoryList = dev.getAllDeviceCategory();
+        CategoryDAO cate = new CategoryDAO();
+        List<DeviceCategory> deviceCategoryList = cate.getAllCategory();
         request.setAttribute("deviceCategory", deviceCategoryList);
-        request.getRequestDispatcher("device/AddDevice.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/device/AddDevice.jsp").forward(request, response);
 
     }
 

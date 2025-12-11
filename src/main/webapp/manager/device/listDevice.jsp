@@ -259,9 +259,12 @@
                 <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a> 
             </div>
 
-            <div class="filter-bar">
-                <select name="name">
-                    <option value="">Lọc theo thương hiệu</option>
+            <div class="filter-bar">              
+                <select id="category_id" name="category_id" required>
+                    <option value="" disabled selected>-- Chọn Danh mục --</option>
+                    <c:forEach var="dc" items="${deviceCategory}"> 
+                        <option value="${dc.id}">${dc.name}</option>
+                    </c:forEach>
                 </select>
                 <select name="maintenance_time">
                     <option value="">Tìm kiếm theo tên....</option>
@@ -295,7 +298,7 @@
                             <td>
                                 <div class="action-col-wrapper">
                                     <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
-                                    <a href="EditDevice?id=${d.id}">Sửa Sản Phẩm</a>
+                                    <a href="manager/device/UpdateDevice.jsp">Sửa Sản Phẩm</a>
                                     <a href="#" onClick= " showMess(${d.id})">Xóa Sản Phẩm</a>
                                 </div>
                             </td>
@@ -327,10 +330,10 @@
 
     </body>
     <script>
-        function showMess(id){
+        function showMess(id) {
             var option = confirm("Are you sure to delete ?");
-            if(option === true){
-                window.location.href = "DeleteDevice?id="+id;
+            if (option === true) {
+                window.location.href = "DeleteDevice?id=" + id;
             }
         }
     </script>
