@@ -16,7 +16,7 @@ import model.*;
  */
 public class ContractDAO extends DBContext {
 
-    public List<Contract> searchContracts(String keyword, String createById, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+    public List<Contract> searchContracts(String keyword, int createById, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -32,7 +32,7 @@ public class ContractDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
-        if (createById != null && !createById.isEmpty()) {
+        if (createById > 0) {
             sql += " AND c.createBy = ? ";
         }
 
@@ -66,13 +66,8 @@ public class ContractDAO extends DBContext {
                 // status = "1" -> isDelete = 1 (Active), 0 là inactive
                 ps.setBoolean(index++, status.equals("1"));
             }
-            if (createById != null && !createById.isEmpty()) {
-                try {
-                    ps.setInt(index++, Integer.parseInt(createById));
-                } catch (NumberFormatException | SQLException e) {
-                    e.printStackTrace();
-                    System.out.println("Lỗi: "+ e.getMessage());
-                }
+            if (createById > 0) {
+                ps.setInt(index++, createById);
             }
             ps.setInt(index++, pageSize);
             ps.setInt(index++, offset);
@@ -89,10 +84,10 @@ public class ContractDAO extends DBContext {
                 customer.setDisplayname(rs.getString("customer_name"));
                 c.setUser(customer);
                 // Map Creator Name
-                Users creator = new Users();
-                creator.setId(rs.getInt("createBy"));
-                creator.setDisplayname(rs.getString("saleStaff_name"));
-                c.setCreateBy(creator);
+                Users saleStaff = new Users();
+                saleStaff.setId(rs.getInt("createBy"));
+                saleStaff.setDisplayname(rs.getString("saleStaff_name"));
+                c.setCreateBy(saleStaff);
                 lst.add(c);
             }
         } catch (SQLException e) {
@@ -102,7 +97,7 @@ public class ContractDAO extends DBContext {
     }
 
     // Hàm đếm tổng số bản ghi (Để chia trang)
-    public int countContracts(String keyword, String status,  String createById) {
+    public int countContracts(String keyword, String status, int createById) {
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
                 + "WHERE 1=1 ";
@@ -113,7 +108,7 @@ public class ContractDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
-           if (createById != null && !createById.isEmpty()) {
+        if (createById > 0) {
             sql += " AND c.createBy = ? ";
         }
 
@@ -127,13 +122,8 @@ public class ContractDAO extends DBContext {
             if (status != null && !status.isEmpty()) {
                 ps.setBoolean(index++, status.equals("1"));
             }
-              if (createById != null && !createById.isEmpty()) {
-                try {
-                    ps.setInt(index++, Integer.parseInt(createById));
-                } catch (NumberFormatException | SQLException e) {
-                    e.printStackTrace();
-                    System.out.println("Lỗi: "+ e.getMessage());
-                }
+            if (createById > 0) {
+                    ps.setInt(index++, createById);
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -144,7 +134,8 @@ public class ContractDAO extends DBContext {
         }
         return 0;
     }
-    public void changeContractStatus(int id, int status){
+
+    public void changeContractStatus(int id, int status) {
         String sql = "UPDATE contract SET isDelete = ? WHERE id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -162,10 +153,10 @@ public class ContractDAO extends DBContext {
 //        for (Contract ls : lst) {
 //            System.out.println(ls);
 //        }
-        
+
         int count = dao.countContracts("", "", "");
         System.out.println(count);
-     
+
     }
 
 }

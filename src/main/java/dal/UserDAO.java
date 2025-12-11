@@ -481,13 +481,14 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public List<Users> getAllSaleStaff() {
+    public List<Users> getUsersByRoleId(int roleId) {
         List<Users> list = new ArrayList<>();
         String sql = "SELECT u.id, u.displayName FROM swp391._user u"
                 + " INNER JOIN swp391.roles r ON u.role_id = r.id"
-                + " WHERE  u.role_id = 2";
+                + " WHERE  u.role_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, roleId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Users user = new Users();
@@ -512,7 +513,7 @@ public class UserDAO extends DBContext {
 //        } else {
 //            System.out.println("Login failed");
 //        }  
-        List<Users> us = u.getAllSaleStaff();
+        List<Users> us = u.getUsersByRoleId(3);
         for (Users uu : us) {
             System.out.println(uu);
         }
