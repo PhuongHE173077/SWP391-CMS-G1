@@ -21,7 +21,10 @@ public class ContractDAO extends DBContext {
         String sql = "select c.*, u1.displayName as customer_name, u2.displayName as saleStaff_name "
                 + "from swp391.contract c "
                 + "left join _user u1 on c.user_id = u1.id "
-                + "left join _user u2 on c.createBy = u2.id WHERE 1=1 ";
+                + "left join _user u2 on c.createBy = u2.id "
+                + "where c.createBy = ? "
+                + "WHERE 1=1 ";
+                
 
         // --- FILTER ---
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -30,10 +33,6 @@ public class ContractDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
-        if (createById > 0) {
-            sql += " AND c.createBy = ? ";
-        }
-
         // --- SORT ---
         //default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id DESC";
@@ -56,6 +55,9 @@ public class ContractDAO extends DBContext {
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
+            if(createById > 0){
+                ps.setInt(index++, createById);
+            }
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");

@@ -126,11 +126,11 @@
                             <c:forEach items="${contractList}" var="contract">
                                 <tr>
                                     <td class="ps-3 fw-bold text-secondary">#${contract.id}</td>
-                                    <td><span class="fw-bold text-dark">${contract.content}</spa    n>
+                                    <td><span class="fw-bold text-dark">${contract.content}</span>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <span class="fw-bold text-dark">${contract.user.displayName}</span>
+                                            <span class="fw-bold text-dark">${contract.user.displayname}</span>
                                         </div>
                                     </td>
                                     <td class="text-center">
@@ -145,7 +145,7 @@
                                     </td>
 
                                     <td class="text-center">
-                                        <span class="fw-bold text-dark">${contract.createBy.displayName}</span>
+                                        <span class="fw-bold text-dark">${contract.createBy.displayname}</span>
                                     </td>
                                     <td class="text-center">
                                         <c:if test="${contract.isDelete}">

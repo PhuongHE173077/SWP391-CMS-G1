@@ -481,27 +481,7 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public List<Users> getUsersByRoleId(int roleId) {
-        List<Users> list = new ArrayList<>();
-        String sql = "SELECT u.id, u.displayName FROM swp391._user u"
-                + " INNER JOIN swp391.roles r ON u.role_id = r.id"
-                + " WHERE  u.role_id = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, roleId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Users user = new Users();
-                user.setId(rs.getInt("id"));
-                user.setDisplayname(rs.getString("displayname"));
-                list.add(user);
-            }
-        } catch (SQLException e) {
-            System.out.println("Error getting User: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return list;
-    }
+  
     
     
 

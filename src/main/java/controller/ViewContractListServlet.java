@@ -71,7 +71,7 @@ public class ViewContractListServlet extends HttpServlet {
 
         try {
             int pageIndex = Integer.parseInt(indexPage);
-            int pageSize = 2;
+            int pageSize = 20;
 
             int totalRecords = contractDAO.countContracts(search, status, createById);
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
