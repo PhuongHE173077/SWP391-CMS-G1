@@ -4,12 +4,25 @@
  */
 package dal;
 
+import java.util.*;
+import model.*;
+
 /**
  *
  * @author ADMIN
  */
 public class ContractDAO extends DBContext {
     
+    public List<Contract> searchContracts(String keyword, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+        List<Contract> lst = new ArrayList<>();
+        int offset = (pageIndex - 1) * pageSize;
+        
     
+    
+        return null;
+        
+    
+    
+    }
     
 }
