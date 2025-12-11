@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 import utils.BaseEntity;
@@ -42,5 +43,9 @@ public class DeviceCategory extends BaseEntity {
 
     public void setDevices(Set<Device> devices) {
         this.devices = devices;
+    }
+
+    public void setUpdatedAt(Timestamp timestamp) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
