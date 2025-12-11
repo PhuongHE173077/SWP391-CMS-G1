@@ -51,15 +51,16 @@ public class DeviceDAO extends DBContext {
         return 0;
     }
 
-    public List<Device> pagingDevice(int indexPage) {
+    public List<Device> pagingDevice(int indexPage, int PageSize) {
         List<Device> dev = new ArrayList<>();
         String query = "SELECT d.*,  c.name AS category_name \n"
                 + "FROM swp391.device d INNER JOIN swp391.device_category c \n"
                 + "ON d.category_id = c.id \n"
-                + "ORDER BY d.id LIMIT 3 OFFSET ?";
+                + "ORDER BY d.id LIMIT ? OFFSET ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
-            ps.setInt(1, (indexPage - 1) * 3);
+            ps.setInt(1, PageSize);
+            ps.setInt(2, (indexPage - 1) * PageSize);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Device device = new Device();
@@ -70,11 +71,11 @@ public class DeviceDAO extends DBContext {
                 device.setImage(rs.getString("image"));
                 device.setMaintenanceTime(rs.getString("maintenance_time"));
                 device.setIsDelete(rs.getBoolean("isDelete"));
-                
+
                 DeviceCategory dc = new DeviceCategory();
                 String categoryName = rs.getString("category_name");
                 dc.setName(categoryName);
-              
+
                 device.setCategory(dc);
 
                 java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
@@ -90,6 +91,61 @@ public class DeviceDAO extends DBContext {
             e.printStackTrace();
         }
         return dev;
+    }
+
+    public void insertDevice(Device dev) {
+
+        String query = " INSERT INTO swp391.device (created_at,description, image, name, maintenance_time,isDelete, category_id) \n"
+                + " VALUES (now(),?,?,?,?,0,?)";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+
+            ps.setString(1, dev.getDescription());
+            ps.setString(2, dev.getImage());
+            ps.setString(3, dev.getName());
+            ps.setString(4, dev.getMaintenanceTime());
+
+            int categoryId = dev.getCategory().getId();
+            ps.setInt(5, categoryId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDevice(String id) {
+        String query = "delete from swp391.device\n"
+                + "where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, id);
+            ps.executeUpdate();          
+        } catch (Exception e) {
+            e.printStackTrace();
+        }   
+    }
+    
+    public List<DeviceCategory> getAllDeviceCategory() {
+        String query = "SELECT * FROM swp391.device_category";
+        List<DeviceCategory> dc = new ArrayList<>();
+     
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                DeviceCategory devc = new DeviceCategory();
+                devc.setId(rs.getInt("id"));
+                devc.setName(rs.getString("name"));
+                 java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
+                if (timestamp != null) {
+                    OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
+                    devc.setCreatedAt(odt);
+                } else {
+                    devc.setCreatedAt(null);
+                }
+              
+                dc.add(devc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dc;
     }
 
 }
