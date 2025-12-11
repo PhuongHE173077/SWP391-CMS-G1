@@ -73,28 +73,32 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered align-middle mb-0">
-                        <thead class="table-light">
+                        <thead class="table-light"  >
                             <tr>
-                                <th class="ps-3">ID</th>
-                                <th>Content</th>
-                                <th>Customer</th>
-                                <th class="text-center">PDF filed</th>
-                                <th class="text-center">Status</th>
+                                <th class="ps-3 text-center">ID</th>
+                                <th class="text-center">Content</th>
+                                <th class="text-center" style="width: 150px">Customer Name</th>
+                                <th class="text-center" style="width: 150px">URL Contract</th>
+                                <th class="text-center" style="width: 100px">Create By</th>
+                                <th class="text-center" style="width: 100px">Status</th>
                                 <th class="text-center" style="width: 200px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${contractList}" var="c">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">#${c.id}</td>
+                                    <td class="ps-3 fw-bold text-secondary">${c.id}</td>
                                     <td><span class="fw-bold text-dark">${c.content}</span></td>
-                                    <td class="text-primary">${c.user.displayname}</td>
+                                    <td class="text-primary text-center">${c.user.displayname}</td>
 
                                     <td class="text-center">
                                         <c:if test="${not empty c.urlContract}">
                                             <a href="${c.urlContract}" target="_blank" class="text-info"><i class="fas fa-file-pdf fa-lg"></i></a>
                                             </c:if>
                                             <c:if test="${empty c.urlContract}">-</c:if>
+                                        </td>
+                                        <td class="text-center">
+                                            ${c.createBy.displayname}
                                         </td>
 
                                         <td class="text-center">
@@ -106,7 +110,7 @@
                                             <div class="d-flex justify-content-center gap-2">
                                                 <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
                                             <a href="edit-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
-                                            
+
                                             <form action="change-contract-status" method="post" style="display: inline;">
                                                 <input type="hidden" name="id" value="${c.id}">
                                                 <input type="hidden" name="status" value="${c.isDelete ? '0' : '1'}">
@@ -115,10 +119,10 @@
                                                 <input type="hidden" name="statusFilter" value="${statusValue}">
 
                                                 <c:if test="${c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Deactivate?')">Deactivate</button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
                                                 </c:if>
                                                 <c:if test="${!c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success fw-bold" onclick="return confirm('Activate?')">Activate</button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-success fw-bold" onclick="return confirm('Are you sure to Activate this contract?')">Activate</button>
                                                 </c:if>
                                             </form>
                                         </div>

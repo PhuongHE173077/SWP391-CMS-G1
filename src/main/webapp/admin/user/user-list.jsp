@@ -130,7 +130,7 @@
                         <tbody>
                             <c:forEach items="${userList}" var="u">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">#${u.id}</td>
+                                    <td class="ps-3 fw-bold text-secondary">${u.id}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <span class="fw-bold text-dark">${u.displayname}</span>
