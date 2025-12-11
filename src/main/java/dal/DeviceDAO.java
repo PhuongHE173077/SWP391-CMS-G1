@@ -148,4 +148,46 @@ public class DeviceDAO extends DBContext {
         return dc;
     }
 
+    
+     // Lấy thông tin device theo ID
+     
+    public Device getDeviceById(int deviceId) {
+        String query = "SELECT d.*, c.id AS category_id, c.name AS category_name "
+                + "FROM device d "
+                + "INNER JOIN device_category c ON d.category_id = c.id "
+                + "WHERE d.id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, deviceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Device device = new Device();
+                    device.setId(rs.getInt("id"));
+                    device.setName(rs.getString("name"));
+                    device.setDescription(rs.getString("description"));
+                    device.setImage(rs.getString("image"));
+                    device.setMaintenanceTime(rs.getString("maintenance_time"));
+                    device.setIsDelete(rs.getBoolean("isDelete"));
+
+                    // Set category
+                    DeviceCategory category = new DeviceCategory();
+                    category.setId(rs.getInt("category_id"));
+                    category.setName(rs.getString("category_name"));
+                    device.setCategory(category);
+
+                    // Set created_at
+                    java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
+                    if (timestamp != null) {
+                        OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
+                        device.setCreatedAt(odt);
+                    }
+
+                    return device;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
