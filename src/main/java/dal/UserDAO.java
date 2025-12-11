@@ -108,10 +108,9 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
-
         /*
          * Tính toán số lượng records cần phải BỎ QUA trước khi bắt đầu lấy dữ liệu.
          * Trang 1 (pageIndex = 1):
@@ -132,50 +131,75 @@ public class UserDAO extends DBContext {
 
         // 2. Nếu user chọn filter nào thì nối thêm câu SQL đó
         // Nếu có nhập từ khóa (Search)
+        //1
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND u.displayname LIKE ? ";
         }
 
         // Nếu có chọn Role (Khác rỗng)
+        //2
         if (roleId != null && !roleId.isEmpty()) {
             sql += " AND u.role_id = ? ";
         }
 
         // Nếu có chọn Status
+        //3
         if (status != null && !status.isEmpty()) {
             sql += " AND u.active = ? ";
         }
 
         // Nếu có chọn Gender
+        //4
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
+        //default khi hiện list là order by user Id
+        String listSort = " ORDER BY u.id DESC";
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
+
+            switch (sortBy) {
+                case "fullname":
+                    listSort = " ORDER BY u.displayname " + orderBy;
+                    break;
+                case "email":
+                    listSort = " ORDER BY u.email " + orderBy;
+                    break;
+                case "id":
+                    listSort = " ORDER BY u.id " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY u.id DESC"; // Mặc định
+                    break;
+            }
+        }
+        sql += listSort;
         sql += " LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-
-            // 3. Điền giá trị vào các dấu hỏi chấm (?)
-            // Ta dùng biến 'index' để đếm thứ tự dấu hỏi
             int index = 1;
 
+            //? của search Keyword
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%"); // Dấu ? thứ 1
+                ps.setString(index++, "%" + keyword + "%");
             }
             if (roleId != null && !roleId.isEmpty()) {
-                ps.setInt(index++, Integer.parseInt(roleId)); // Dấu ? tiếp theo
+                ps.setInt(index++, Integer.parseInt(roleId));
             }
+            // ? của status, Nếu status="1" -> set true (Active), ngược lại set false (Inactive)
             if (status != null && !status.isEmpty()) {
-                // Chuyển chuỗi "1"/"0" thành boolean true/false
                 ps.setBoolean(index++, status.equals("1"));
             }
             if (gender != null && !gender.isEmpty()) {
+                // Giải thích: Nếu gender="1" -> set true (Male), ngược lại set false (Female)
                 ps.setBoolean(index++, gender.equals("1"));
-            }
-            ps.setInt(index++, pageSize); // Lấy 5 người
-            ps.setInt(index++, offset); // Bỏ qua offset người
-
-            // 4. Chạy câu lệnh và lấy kết quả (Giống hệt hàm getAll cũ)
+            }   
+             //? của pageSize, lấy 3 người/ 1 page
+            ps.setInt(index++, pageSize);
+             //? của offset, Bỏ qua offset người
+            ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Roles role = new Roles();
@@ -194,15 +218,12 @@ public class UserDAO extends DBContext {
                 user.setRoles(role);
                 list.add(user);
             }
-
         } catch (SQLException e) {
-            System.out.println("Lỗi lấy danh sách User: " + e.getMessage());
+            System.out.println("Error when get User List: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
     }
-    
-
     public void changeStatus(int id, int status) {
         // status: 1 là Active, 0 là Inactive
         String sql = "UPDATE _user SET active = ? WHERE id = ?";
@@ -356,6 +377,39 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public boolean checkEmailExists(String email) {
+        String sql = "SELECT COUNT(*) FROM _user WHERE email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean checkPhoneExists(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false; // Phone là optional, nếu null hoặc empty thì không cần check
+        }
+        String sql = "SELECT COUNT(*) FROM _user WHERE phone = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public Users getUserByEmail(String email) {
