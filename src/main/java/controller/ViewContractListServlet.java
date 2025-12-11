@@ -30,7 +30,7 @@ public class ViewContractListServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // 1. KIỂM TRA ĐĂNG NHẬP (QUAN TRỌNG)
+        //1. Lấy id sale staff đang đăng nhập
         HttpSession session = request.getSession();
         Users user = (Users) session.getAttribute("user"); 
         
@@ -39,17 +39,18 @@ public class ViewContractListServlet extends HttpServlet {
             return;
         }
 
-        // 2. Xử lý thông báo (Flash Message)
         String msg = (String) session.getAttribute("msg");
         String error = (String) session.getAttribute("error");
         if (msg != null) { request.setAttribute("msg", msg); session.removeAttribute("msg"); }
         if (error != null) { request.setAttribute("error", error); session.removeAttribute("error"); }
 
-        // 3. Lấy tham số Filter/Sort từ JSP
+        // Lấy tham số Filter/Sort từ JSP
         String search = request.getParameter("search");
         String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
+        
+        //page hiện tại lấy về từ jsp
         String indexPage = request.getParameter("page");
 
         if (indexPage == null) indexPage = "1";
@@ -58,6 +59,7 @@ public class ViewContractListServlet extends HttpServlet {
 
         try {
             int pageIndex = Integer.parseInt(indexPage);
+            //set 2 record trên 1 trang
             int pageSize = 2;
             ContractDAO dao = new ContractDAO();
             
