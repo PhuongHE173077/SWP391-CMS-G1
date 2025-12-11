@@ -10,7 +10,6 @@ import model.DeviceCategory;
 
 public class CategoryDAO extends DBContext {
 
-    // ===================== GET LIST with FILTER + SEARCH + PAGINATION =====================
     public List<DeviceCategory> getCategoryWithFilter(String search, int page, int pageSize) {
         List<DeviceCategory> list = new ArrayList<>();
 
@@ -38,7 +37,6 @@ public class CategoryDAO extends DBContext {
         return list;
     }
 
-    // ===================== COUNT for PAGINATION =====================
     public int countCategory(String search) {
         String query = "SELECT COUNT(*) FROM device_category WHERE name LIKE ? ";
 
@@ -56,7 +54,6 @@ public class CategoryDAO extends DBContext {
         return 0;
     }
 
-    // ===================== INSERT CATEGORY =====================
     public boolean addCategory(String name) {
         String query = "INSERT INTO device_category(name) VALUES (?)";
 
@@ -70,7 +67,6 @@ public class CategoryDAO extends DBContext {
         return false;
     }
 
-    // ===================== GET ALL (Bạn đã có) =====================
     public List<DeviceCategory> getAllCategory() {
         List<DeviceCategory> listCategory = new ArrayList<>();
         String query = "SELECT * FROM device_category";
