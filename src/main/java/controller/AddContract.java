@@ -4,13 +4,20 @@
  */
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import dal.ContractDAO;
+import model.Users;
 
 /**
  *
@@ -19,31 +26,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "AddContract", urlPatterns = { "/AddContract" })
 public class AddContract extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AddContract</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AddContract at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    private ContractDAO contractDAO = new ContractDAO();
+    private Gson gson = new Gson();
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
     // + sign on the left to edit the code.">
@@ -72,7 +56,100 @@ public class AddContract extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json;charset=UTF-8");
+        JsonObject jsonResponse = new JsonObject();
+
+        try {
+
+            BufferedReader reader = request.getReader();
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JsonObject jsonRequest = JsonParser.parseString(sb.toString()).getAsJsonObject();
+
+            int userId = jsonRequest.get("userId").getAsInt();
+            String content = jsonRequest.get("content").getAsString();
+            JsonArray subDevicesArray = jsonRequest.getAsJsonArray("subDevices");
+
+            HttpSession session = request.getSession();
+            Users currentUser = (Users) session.getAttribute("user");
+
+            if (currentUser == null) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Vui lòng đăng nhập để tạo hợp đồng");
+                response.getWriter().write(gson.toJson(jsonResponse));
+                return;
+            }
+
+            if (subDevicesArray == null || subDevicesArray.size() == 0) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Vui lòng chọn ít nhất một thiết bị");
+                response.getWriter().write(gson.toJson(jsonResponse));
+                return;
+            }
+
+            int contractId = contractDAO.addContract(userId, currentUser.getId(), content);
+
+            if (contractId == -1) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Lỗi khi tạo hợp đồng");
+                response.getWriter().write(gson.toJson(jsonResponse));
+                return;
+            }
+
+            boolean allItemsAdded = true;
+            for (int i = 0; i < subDevicesArray.size(); i++) {
+                JsonObject subDeviceObj = subDevicesArray.get(i).getAsJsonObject();
+
+                int subDeviceId = subDeviceObj.get("id").getAsInt();
+
+                int maintenanceTime = 12;
+
+                // Lấy maintenance time từ device nếu có
+                if (subDeviceObj.has("device") && subDeviceObj.get("device").isJsonObject()) {
+
+                    JsonObject deviceObj = subDeviceObj.getAsJsonObject("device");
+
+                    if (deviceObj.has("maintenanceTime") && !deviceObj.get("maintenanceTime").isJsonNull()) {
+                        try {
+
+                            maintenanceTime = Integer.parseInt(deviceObj.get("maintenanceTime").getAsString());
+
+                        } catch (NumberFormatException e) {
+                            maintenanceTime = 12;
+                        }
+                    }
+                }
+
+                boolean added = contractDAO.addContractItem(contractId, subDeviceId, maintenanceTime);
+
+                if (added) {
+                    contractDAO.updateSubDeviceIsDelete(subDeviceId, true);
+                } else {
+                    allItemsAdded = false;
+                }
+            }
+
+            if (allItemsAdded) {
+                jsonResponse.addProperty("success", true);
+                jsonResponse.addProperty("message", "Tạo hợp đồng thành công");
+                jsonResponse.addProperty("contractId", contractId);
+            } else {
+                jsonResponse.addProperty("success", true);
+                jsonResponse.addProperty("message", "Tạo hợp đồng thành công nhưng một số thiết bị không được thêm");
+                jsonResponse.addProperty("contractId", contractId);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Lỗi hệ thống: " + e.getMessage());
+        }
+
+        response.getWriter().write(gson.toJson(jsonResponse));
     }
 
     /**
