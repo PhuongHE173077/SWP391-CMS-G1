@@ -142,6 +142,50 @@ public class ContractDAO extends DBContext {
     }
     
     //
+    // Hàm lấy chi tiết 1 hợp đồng theo ID
+    public Contract getContractById(int id) {
+        String sql = "SELECT c.*, "
+                   + "u1.displayname AS customer_name, "
+                   + "u2.displayname AS saleStaff_name "
+                   + "FROM contract c "
+                   + "LEFT JOIN _user u1 ON c.user_id = u1.id "   // Join lấy khách hàng
+                   + "LEFT JOIN _user u2 ON c.createBy = u2.id "  // Join lấy nhân viên sale
+                   + "WHERE c.id = ?";
+                   
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                Contract c = new Contract();
+                c.setId(rs.getInt("id"));
+                c.setContent(rs.getString("content"));
+                c.setUrlContract(rs.getString("url_contract"));
+                c.setIsDelete(rs.getBoolean("isDelete"));
+
+                // --- MAP THÔNG TIN KHÁCH HÀNG (Customer) ---
+                Users customer = new Users();
+                customer.setId(rs.getInt("user_id"));
+                // Lấy tên từ cột giả (alias) customer_name
+                customer.setDisplayname(rs.getString("customer_name")); 
+                c.setUser(customer);
+
+                // --- MAP THÔNG TIN SALE STAFF (CreateBy) ---
+                Users saleStaff = new Users();
+                saleStaff.setId(rs.getInt("createBy"));
+                // Lấy tên từ cột giả (alias) saleStaff_name
+                saleStaff.setDisplayname(rs.getString("saleStaff_name")); 
+                c.setCreateBy(saleStaff);
+                
+                return c;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getContractById: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy hoặc lỗi
+    }
     public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate, int pageIndex, int pageSize) {
         List<ContractItem> list = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;

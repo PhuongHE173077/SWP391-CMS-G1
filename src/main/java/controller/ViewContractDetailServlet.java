@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.ContractDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.*;
 
 /**
  *
@@ -49,7 +52,7 @@ public class ViewContractDetailServlet extends HttpServlet {
             int pageSize = 5; // 5 máy mỗi trang
 
             // 4. Gọi DAO lấy danh sách Item
-            ContractItemDAO itemDAO = new ContractItemDAO();
+            ContractDAO itemDAO = new ContractDAO();
             int totalItems = itemDAO.countItems(contractId, searchItem, startDate, endDate);
             int totalPages = (totalItems % pageSize == 0) ? (totalItems / pageSize) : (totalItems / pageSize + 1);
             List<ContractItem> itemList = itemDAO.getItemsByContractId(contractId, searchItem, startDate, endDate, pageIndex, pageSize);
