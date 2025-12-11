@@ -85,7 +85,7 @@
                             <select name="role" class="form-select">
                                 <option value="">All Created By</option>
                                 <c:forEach items="${lstSaleStaff}" var="s"> 
-                                    <option value="${s.id}" ${createdByValue == s.id ? 'selected' : ''}>${s.name}</option>
+                                    <option value="${s.id}" ${createdByValue == s.id ? 'selected' : ''}>${s.displayname}</option>
                                 </c:forEach>
                             </select>
                         </div>
