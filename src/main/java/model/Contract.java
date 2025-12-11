@@ -22,6 +22,7 @@ public class Contract extends BaseEntity {
 
     @NotNull
     @Column(name = "content", nullable = false)
+    
     private String content;
 
     @NotNull
