@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     
-    const submitBtn = document.querySelector("submit-button");
+    const submitBtn = document.querySelector("#submit-button");
     if (submitBtn) {
         submitBtn.addEventListener("click", submitContract);
     }
