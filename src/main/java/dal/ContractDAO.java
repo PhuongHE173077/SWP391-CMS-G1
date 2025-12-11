@@ -15,7 +15,8 @@ import model.*;
  * @author ADMIN
  */
 public class ContractDAO extends DBContext {
-    public List<Contract> searchContracts(String keyword, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+
+    public List<Contract> searchContracts(String keyword, String createById, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -30,6 +31,9 @@ public class ContractDAO extends DBContext {
         }
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
+        }
+        if (createById != null && !createById.isEmpty()) {
+            sql += " AND c.createBy = ? ";
         }
 
         // --- SORT ---
@@ -62,6 +66,14 @@ public class ContractDAO extends DBContext {
                 // status = "1" -> isDelete = 1 (Active), 0 là inactive
                 ps.setBoolean(index++, status.equals("1"));
             }
+            if (createById != null && !createById.isEmpty()) {
+                try {
+                    ps.setInt(index++, Integer.parseInt(createById));
+                } catch (NumberFormatException | SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Lỗi: "+ e.getMessage());
+                }
+            }
             ps.setInt(index++, pageSize);
             ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
@@ -88,10 +100,44 @@ public class ContractDAO extends DBContext {
         }
         return lst;
     }
+
+    // Hàm đếm tổng số bản ghi (Để chia trang)
+    public int countContracts(String keyword, String status,  String createById) {
+        String sql = "SELECT COUNT(*) FROM contract c "
+                + "LEFT JOIN _user u1 ON c.user_id = u1.id "
+                + "WHERE 1=1 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
+        }
+        if (status != null && !status.isEmpty()) {
+            sql += " AND c.isDelete = ? ";
+        }
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int index = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+                ps.setString(index++, "%" + keyword + "%");
+            }
+            if (status != null && !status.isEmpty()) {
+                ps.setBoolean(index++, status.equals("1"));
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         ContractDAO dao = new ContractDAO();
-        List<Contract> lst =  dao.searchContracts("", "", 1, 3, "","");
-        for(Contract ls : lst){
+        List<Contract> lst = dao.searchContracts("","", "", 1, 3, "", "");
+        for (Contract ls : lst) {
             System.out.println(ls);
         }
     }
