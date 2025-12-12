@@ -1,7 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%><jsp:include page="../managerLayout.jsp">
-    
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<jsp:include page="../managerLayout.jsp">    
     <jsp:param name="pageTitle" value="Deleted Contract Management" />
 </jsp:include>
         <style>
