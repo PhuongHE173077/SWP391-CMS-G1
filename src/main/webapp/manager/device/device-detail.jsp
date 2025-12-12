@@ -135,7 +135,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="info-label">Thời gian bảo trì</div>
+                                <div class="info-label">Thời gian bảo trì (Tháng)</div>
                                 <div class="info-value">
                                     <i class="fas fa-clock me-2 text-warning"></i>
                                     ${device.maintenanceTime != null ? device.maintenanceTime : 'Chưa cập nhật'}

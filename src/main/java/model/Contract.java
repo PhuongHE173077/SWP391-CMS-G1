@@ -103,4 +103,11 @@ public class Contract extends BaseEntity {
     public void setContractItems(Set<ContractItem> contractItems) {
         this.contractItems = contractItems;
     }
+
+    @Override
+    public String toString() {
+        return "Contract{" + "content=" + content + ", user=" + user + ", urlContract=" + urlContract + ", createBy=" + createBy + ", isDelete=" + isDelete + ", contractItems=" + contractItems + '}';
+    }
+    
+    
 }
