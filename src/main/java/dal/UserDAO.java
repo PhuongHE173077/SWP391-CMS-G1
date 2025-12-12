@@ -481,42 +481,13 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public List<Users> getAllSaleStaff() {
-        List<Users> list = new ArrayList<>();
-        String sql = "SELECT u.id, u.displayName FROM swp391._user u"
-                + " INNER JOIN swp391.roles r ON u.role_id = r.id"
-                + " WHERE  u.role_id = 2";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Users user = new Users();
-                user.setId(rs.getInt("id"));
-                user.setDisplayname(rs.getString("displayname"));
-                list.add(user);
-            }
-        } catch (SQLException e) {
-            System.out.println("Error getting User: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return list;
-    }
-    
-    
-
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-//        Users user = u.login("vana@example.com", "hashedpass1");
-//        if (user != null) {
-//            System.out.println("Login success: " + user.getDisplayname());
-//        } else {
-//            System.out.println("Login failed");
-//        }  
-        List<Users> us = u.getAllSaleStaff();
-        for (Users uu : us) {
-            System.out.println(uu);
+        Users user = u.login("vana@example.com", "hashedpass1");
+        if (user != null) {
+            System.out.println("Login success: " + user.getDisplayname());
+        } else {
+            System.out.println("Login failed");
         }
-
     }
-
 }
