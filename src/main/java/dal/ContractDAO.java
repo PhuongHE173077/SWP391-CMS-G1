@@ -292,16 +292,6 @@ public class ContractDAO extends DBContext {
         return 0;
     }
     
-
-    public static void main(String[] args) {
-        ContractDAO dao = new ContractDAO();
-        int lst = dao.countContractsByStaff("","",5);
-        
-        System.out.println(lst);
-
-       
-    }
-    
     public int addContract(int userId, int createById, String content) {
         String sql = "INSERT INTO contract (user_id, createBy, content, isDelete, created_at) VALUES (?, ?, ?, 0, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
