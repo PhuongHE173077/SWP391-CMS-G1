@@ -15,83 +15,98 @@ import org.mindrot.jbcrypt.BCrypt;
  *
  * @author ADMIN
  */
-@WebServlet(name="LoginServlet", urlPatterns={"/Login"})
+@WebServlet(name = "LoginServlet", urlPatterns = { "/Login" })
 public class LoginServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-    } 
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
-   @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);
 
-    // Nếu đã login → vào trang Home
-    if (session != null && session.getAttribute("user") != null) {
-        response.sendRedirect("HomePage.jsp");
-    } else {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-    }
-}
-
-@Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
-    String username = request.getParameter("email");
-    String password = request.getParameter("password");
-
-    UserDAO udao = new UserDAO();
-    Users a = udao.getUserByEmail(username);
-
-    if (a == null) {
-        request.setAttribute("mess", "User does not exist");
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-        return;
+        // Nếu đã login → vào trang Home
+        if (session != null && session.getAttribute("user") != null) {
+            response.sendRedirect("HomePage.jsp");
+        } else {
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
     }
 
-    boolean match = BCrypt.checkpw(password, a.getPassword());
-    if (!match) {
-        request.setAttribute("mess", "Wrong password");
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-        return;
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String username = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        UserDAO udao = new UserDAO();
+        Users a = udao.getUserByEmail(username);
+
+        if (a == null) {
+            request.setAttribute("mess", "User does not exist");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        boolean match = BCrypt.checkpw(password, a.getPassword());
+        if (!match) {
+            request.setAttribute("mess", "Wrong password");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        if (!a.isActive()) {
+            request.setAttribute("messdie", "Account is inactive");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        // Đăng nhập thành công
+        HttpSession session = request.getSession(true);
+        session.setAttribute("user", a);
+        if (a.getRoles() != null) {
+            session.setAttribute("role", a.getRoles());
+            session.setAttribute("roleId", a.getRoles().getId());
+            session.setAttribute("roleName", a.getRoles().getName());
+        }
+
+        // Redirect vào servlet Home
+        if (a.getRoles() != null && a.getRoles().getId() == 1) {
+            response.sendRedirect("/ViewRole");
+        } else {
+            response.sendRedirect("/contract-list");
+        }
+
     }
-    
-     if (!a.isActive()) {
-        request.setAttribute("messdie", "Account is inactive");
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-        return;
-    }
 
-    // Đăng nhập thành công
-    HttpSession session = request.getSession(true);
-    session.setAttribute("user", a);
-
-    // Redirect vào servlet Home
-    response.sendRedirect("/ViewRole");
-}
-
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

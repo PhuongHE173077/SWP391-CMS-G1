@@ -5,9 +5,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thêm Thiết bị Mới</title>
+        <title>Cập nhật Thiết bị</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
         <style>
+            /* CSS Tương tự như trang Thêm Mới */
             body {
                 font-family: 'Poppins', sans-serif;
                 margin: 0;
@@ -73,7 +74,7 @@
 
             .btn-submit {
                 padding: 12px 25px;
-                background-color: #28a745;
+                background-color: #007bff; /* Đổi màu để phân biệt với thêm mới */
                 color: #fff;
                 border: none;
                 border-radius: 6px;
@@ -87,7 +88,7 @@
             }
 
             .btn-submit:hover {
-                background-color: #1e7e34;
+                background-color: #0056b3;
                 transform: translateY(-2px);
             }
 
@@ -103,66 +104,92 @@
                 color: #155724;
                 border: 1px solid #c3e6cb;
             }
+            .back-link-top {
+                display: inline-block;
+                margin-bottom: 20px;
+                color: #007bff;
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.2s;
+            }
 
             .error {
                 background-color: #f8d7da;
                 color: #721c24;
                 border: 1px solid #f5c6cb;
             }
+            /* Thêm CSS cho ảnh xem trước */
+            .image-preview {
+                margin-top: 10px;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            .image-preview img {
+                max-width: 100%;
+                height: auto;
+                max-height: 150px;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
         </style>
     </head>
     <body>
 
         <div class="container">
-
+            <a href="/ViewListDevice" class="back-link-top">← Quay lại Danh sách Thiết bị</a>
             <div class="header">
-                <h1>➕ Thêm Thiết bị Mới</h1>
+                <h1>️ Cập nhật Thiết bị</h1>
             </div>
 
+            <%-- Hiển thị thông báo (thành công/thất bại) --%>
             <c:if test="${not empty requestScope.message}">
                 <div class="message ${requestScope.success ? 'success' : 'error'}">
                     ${requestScope.message}
                 </div>
             </c:if>
 
-            <form action="AddDevice" method="POST">
+            <c:set var="device" value="${device}" />
+
+            <form action="EditDevice" method="POST">
+
+                <input type="hidden" name="id" value="${device.id}">
 
                 <div class="form-group">
                     <label for="name">Tên Thiết bị (*):</label>
-                    <input type="text" id="name" name="name" required placeholder="Nhập tên thiết bị...">
+                    <input type="text" id="name" name="name" required placeholder="Nhập tên thiết bị..." value="${device.name}">
                 </div>
 
                 <div class="form-group">
                     <label for="category_id">Danh mục (*):</label>
                     <select id="category_id" name="category_id" required>
                         <option value="" disabled selected>-- Chọn Danh mục --</option>
-                        <c:forEach var="dc" items="${deviceCategory}"> 
-                            <option value="${dc.id}">${dc.name}</option>
+
+                        <c:forEach var="dc" items="${deviceCategory}">
+                            <option value="${dc.id}" ${dc.id == device.category.id ? 'selected' : ''}>
+                                ${dc.name}
+                            </option>
                         </c:forEach>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="image">URL Hình ảnh:</label>
-                    <input type="url" id="image" name="image" placeholder="Ví dụ: https://example.com/device_img.jpg">
+                    <input type="url" id="image" name="image" placeholder="Ví dụ: https://example.com/device_img.jpg" value="${device.image}">
                 </div>
 
                 <div class="form-group">
-                    <label for="maintenance_time">Thời gian Bảo trì (ví dụ: 6 tháng):</label>
-                    <input type="text" id="maintenance_time" name="maintenance_time" placeholder="Nhập chu kỳ bảo trì...">
+                    <label for="maintenance_time">Thời gian Bảo trì :</label>
+                    <input type="text" id="maintenance_time" name="maintenance_time" placeholder="Nhập chu kỳ bảo trì..." value="${device.maintenanceTime}">
                 </div>
 
                 <div class="form-group">
                     <label for="description">Mô tả:</label>
-                    <textarea id="description" name="description" placeholder="Nhập mô tả chi tiết về thiết bị..."></textarea>
+                    <textarea id="description" name="description" placeholder="Nhập mô tả chi tiết về thiết bị...">${device.description}</textarea>
                 </div>
 
-                <button type="submit" class="btn-submit">💾 Lưu Thiết bị Mới</button>
+                <button type="submit" class="btn-submit">Cập nhật Thông tin Thiết bị</button>
             </form>
 
-            <a href="/ViewListDevice" style="display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none;">← Quay lại Danh sách Thiết bị</a>
-
         </div>
-
     </body>
-</html>
+</html
