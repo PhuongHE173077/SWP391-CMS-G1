@@ -41,24 +41,41 @@
             </div>     
             <div class="card-body">
                 <form action="contract-list" method="get">
-
-                    <div class="d-flex gap-3 mb-3 bg-light p-2 rounded">
-                        <div class="d-flex align-items-center gap-2">
+                    <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">           
+                        <div class="col-md-6 d-flex align-items-center gap-3">                            
                             <span class="fw-bold text-dark">Sort:</span>
-                            <label><input type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}> ID</label>
-                            <label><input type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}> Content</label>
-                            <label><input type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}> Customer</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}>
+                                <label class="form-check-label">ID</label> 
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
+                                <label class="form-check-label">Content</label> 
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'content' ? 'checked' : ''}>
+                                <label class="form-check-label">Customer</label> 
+                            </div>
                         </div>
-                        <div class="vr"></div>
-                        <div class="d-flex align-items-center gap-2">
+
+                        <div class="col-md-6 d-flex align-items-center gap-3">                   
                             <span class="fw-bold text-dark">Order:</span>
-                            <label><input type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}> Ascending</label>
-                            <label><input type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}> Descending</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
+                                <label class="form-check-label">Ascending</label> 
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
+                                <label class="form-check-label">Descending</label> 
+                            </div>
                         </div>
                     </div>
 
                     <div class="row g-3">
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
                                 <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
@@ -66,13 +83,13 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
                                 <input type="text" name="search" class="form-control" placeholder="Search content or customer name..." value="${searchValue}">
                             </div>
                         </div>
-                        <div class="col-md-2 d-flex gap-2">
+                        <div class="col-md-4 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
                             <a href="contract-list" class="btn btn-outline-secondary w-100">Reset Filter</a>
                         </div>
@@ -85,15 +102,16 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered align-middle mb-0">
-                        <thead class="table-light"  >
+                        <thead class="table-light">
                             <tr>
-                                <th class="ps-3 text-center">ID</th>
-                                <th class="text-center">Content</th>
-                                <th class="text-center" style="width: 150px">Customer Name</th>
-                                <th class="text-center" style="width: 150px">URL Contract</th>
-                                <th class="text-center" style="width: 100px">Create By</th>
-                                <th class="text-center" style="width: 100px">Status</th>
-                                <th class="text-center" style="width: 200px;">Action</th>
+                                <th class="py-3 ps-3 text-center">ID</th>
+                                <th class="py-3 text-center">Content</th>
+                                <th class="py-3 text-center" style="width: 150px">Customer Name</th>
+                                <th class="py-3 text-center" style="width: 150px">URL Contract</th>
+                                <th class="py-3 text-center" style="width: 100px">Create By</th>
+                                <th class="py-3 text-center" style="width: 100px">Status</th>
+                                <!--chỉ lấy những contract có status là active-->
+                                <th class="py-3 text-center" style="width: 250px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>

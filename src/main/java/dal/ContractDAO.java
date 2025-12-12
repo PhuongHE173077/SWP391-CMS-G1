@@ -14,24 +14,21 @@ import model.*;
 
 public class ContractDAO extends DBContext {  
 // HÀM LẤY LIST CONTRACTS CỦA STAFF
-    public List<Contract> getContractsByStaff(int staffId, String keyword, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+    public List<Contract> getContractsByStaff(String keyword, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
         String sql = "select c.*, u1.displayName as customer_name, u2.displayName as saleStaff_name "
                 + "from swp391.contract c "
                 + "left join _user u1 on c.user_id = u1.id "
-                + "left join _user u2 on c.createBy = u2.id "
-                + "where c.createBy = ? ";
+                + "left join _user u2 on c.createBy = u2.id where c.isDelete= 0 ";
                 
 
         //THAM SỐ FILTER TRUYỀN VÀO
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
         }
-        if (status != null && !status.isEmpty()) {
-            sql += " AND c.isDelete = ? ";
-        }
+       
         //SORT
         //default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id DESC";
@@ -54,17 +51,12 @@ public class ContractDAO extends DBContext {
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
-            if(staffId > 0){
-                ps.setInt(index++, staffId);
-            }
+          
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");
             }
-            if (status != null && !status.isEmpty()) {
-                // status = "1" -> isDelete = 1 (Active), 0 là inactive
-                ps.setBoolean(index++, status.equals("1"));
-            }
+          
             
             ps.setInt(index++, pageSize);
             ps.setInt(index++, offset);
@@ -94,29 +86,24 @@ public class ContractDAO extends DBContext {
     }
 
   // HÀM ĐẾM TỔNG SỐ CONTRACTS => ĐỂ PHÂN TRANG
-    public int countContractsByStaff(int staffId, String keyword, String status) {
+    public int countContractsByStaff(String keyword) {
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
-                + "where c.createBy = ? ";
+                + "c.isDelete= 0 ";
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
         }
-        if (status != null && !status.isEmpty()) {
-            sql += " AND c.isDelete = ? ";
-        }
+         
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
-            ps.setInt(index++, staffId);
+           
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");
             }
-            if (status != null && !status.isEmpty()) {
-                ps.setBoolean(index++, status.equals("1"));
-            }
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
