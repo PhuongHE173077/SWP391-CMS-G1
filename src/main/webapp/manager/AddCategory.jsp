@@ -1,36 +1,26 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Add Category</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 
-        .container {
+    <jsp:include page="managerLayout.jsp">
+        <jsp:param name="pageTitle" value="Add Category" />
+    </jsp:include>
+
+    <style>
+        .form-container {
             background: white;
-            width: 400px;
+            max-width: 500px;
+            margin: 0 auto;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #333;
             text-align: center;
         }
 
-        h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        label {
+        .form-container label {
             display: block;
             text-align: left;
             margin-bottom: 6px;
@@ -38,19 +28,20 @@
             color: #555;
         }
 
-        input[type=text] {
+        .form-container input[type=text] {
             width: 100%;
             padding: 10px 12px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 14px;
+            box-sizing: border-box;
         }
 
-        input[type=submit] {
+        .form-container input[type=submit] {
             width: 100%;
             padding: 10px;
-            background: #007bff;
+            background: #10b981;
             color: white;
             border: none;
             border-radius: 6px;
@@ -60,11 +51,10 @@
             margin-bottom: 12px;
         }
 
-        input[type=submit]:hover {
-            background: #0056b3;
+        .form-container input[type=submit]:hover {
+            background: #059669;
         }
 
-        /* Back button */
         .back-btn {
             display: block;
             width: 100%;
@@ -75,6 +65,8 @@
             border-radius: 6px;
             transition: 0.2s;
             font-size: 15px;
+            text-align: center;
+            box-sizing: border-box;
         }
 
         .back-btn:hover {
@@ -84,18 +76,19 @@
         .message {
             margin-top: 15px;
             font-size: 14px;
+            text-align: center;
         }
 
-        .error { color: #d9534f; }
-        .success { color: #28a745; }
+        .error {
+            color: #ef4444;
+        }
 
+        .success {
+            color: #10b981;
+        }
     </style>
-</head>
 
-<body>
-
-    <div class="container">
-        
+    <div class="form-container">
         <h2>Thêm danh mục thiết bị</h2>
 
         <form action="AddCategory" method="post">
@@ -105,12 +98,10 @@
             <input type="submit" value="Thêm mới">
         </form>
 
-        
-        <a href="ViewListCategory" class="back-btn"> Quay lại danh sách</a>
+        <a href="ViewListCategory" class="back-btn">Quay lại danh sách</a>
 
         <p class="message error">${error}</p>
         <p class="message success">${success}</p>
     </div>
 
-</body>
-</html>
+    <jsp:include page="managerFooter.jsp" />
