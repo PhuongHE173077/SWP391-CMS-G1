@@ -98,10 +98,10 @@
                                             <c:if test="${empty c.urlContract}">-</c:if>
                                         </td>
                                         <td class="text-center">
-                                            ${c.createBy.displayname}
-                                        </td>
+                                        ${c.createBy.displayname}
+                                    </td>
 
-                                        <td class="text-center">
+                                    <td class="text-center">
                                         <c:if test="${c.isDelete}"><span class="badge bg-success">Active</span></c:if>
                                         <c:if test="${!c.isDelete}"><span class="badge bg-secondary">Inactive</span></c:if>
                                         </td>
@@ -158,6 +158,29 @@
                             </li>
                         </ul>
                     </nav>
+
+                </c:if>
+            </div>
+            <div class="d-flex justify-content-between align-items-center w-100">
+
+                <div class="text-muted small">
+                    <span class="me-3">
+                        <i class="fas fa-list-alt me-1"></i> Showing: <strong>${contractList.size()}</strong> / ${pageSize} items
+                    </span>
+                    <span>
+                        <i class="fas fa-search me-1"></i> Total Found: <strong>${totalRecords}</strong> contracts
+                    </span>
+                </div>
+
+                <c:if test="${totalPages > 0}">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination m-0">
+                        </ul>
+                    </nav>
+                </c:if>
+
+                <c:if test="${totalPages <= 0}">
+                    <div></div> 
                 </c:if>
             </div>
         </div>
