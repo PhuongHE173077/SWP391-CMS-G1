@@ -259,18 +259,20 @@
                 <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a> 
             </div>
 
-            <div class="filter-bar">              
-                <select id="category_id" name="category_id" required>
-                    <option value="" disabled selected>-- Chọn Danh mục --</option>
-                    <c:forEach var="dc" items="${deviceCategory}"> 
-                        <option value="${dc.id}">${dc.name}</option>
-                    </c:forEach>
-                </select>
-                <select name="maintenance_time">
-                    <option value="">Tìm kiếm theo tên....</option>
-                </select>
+            <form action="ViewListDevice" method="get" id="filterForm">
+                <div class="filter-bar">
+                    <select id="category_id" name="category_id" onchange="document.getElementById('filterForm').submit()">
+                        <option value="0" ${selectedCategoryId == 0 ? 'selected' : ''}>-- Tất cả Danh mục --</option>
+                        <c:forEach var="dc" items="${deviceCategory}"> 
+                            <option value="${dc.id}" ${dc.id == selectedCategoryId ? 'selected' : ''}>${dc.name}</option>
+                        </c:forEach>
+                    </select>
 
-            </div>
+                    <input class="searchBox" type="text" name="textSearch" size="50" value="${currentSearchText}" placeholder="Tìm kiếm theo tên...">
+
+                    <input class="SearchButton" type="submit" name="btnGo" value="Tìm Kiếm">
+                </div>
+            </form>
 
             <table class="device-table">
                 <thead>
@@ -298,7 +300,7 @@
                             <td>
                                 <div class="action-col-wrapper">
                                     <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
-                                    <a href="manager/device/UpdateDevice.jsp">Sửa Sản Phẩm</a>
+                                    <a href="EditDevice?id=${d.id}">Sửa Sản Phẩm</a>
                                     <a href="#" onClick= " showMess(${d.id})">Xóa Sản Phẩm</a>
                                 </div>
                             </td>
@@ -311,15 +313,21 @@
 
             <div class="pagination">
 
+                <c:set var="urlParams" value=""/>
+                <c:if test="${selectedCategoryId > 0}">
+                    <c:set var="urlParams" value="${urlParams}&category_id=${selectedCategoryId}"/>
+                </c:if>
+                <c:if test="${currentSearchText != null && currentSearchText != ''}">
+                    <c:set var="urlParams" value="${urlParams}&textSearch=${currentSearchText}"/>
+                </c:if>
+
                 <c:forEach begin="1" end="${maxp}" var="i">
                     <c:choose>
                         <c:when test="${crPage == i}">
-                            <%-- Trang hiện tại: Thêm class "active" --%>
-                            <a href="ViewListDevice?page=${i}" class="active">${i}</a>
+                            <a href="ViewListDevice?page=${i}${urlParams}" class="active">${i}</a>
                         </c:when>
                         <c:otherwise>
-                            <%-- Các trang khác: Giữ nguyên link --%>
-                            <a href="ViewListDevice?page=${i}">${i}</a>
+                            <a href="ViewListDevice?page=${i}${urlParams}">${i}</a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
