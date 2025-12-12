@@ -312,7 +312,7 @@
                         <div class="menu-title">Main Menu</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/manager/dashboard" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/HomePage.jsp" class="nav-link">
                                     <i class="fas fa-home"></i>
                                     <span class="nav-text">Dashboard</span>
                                 </a>
