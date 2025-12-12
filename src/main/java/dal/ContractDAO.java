@@ -26,6 +26,111 @@ public class ContractDAO extends DBContext {
 
     }
 
+    public List<Contract> getDeletedContracts(String keyword, int pageIndex, int pageSize, String sortBy,
+            String sortOrder) {
+        List<Contract> lst = new ArrayList<>();
+        int offset = (pageIndex - 1) * pageSize;
+
+        String sql = "SELECT c.id, c.content, c.url_contract, c.isDelete, c.created_at, "
+                + "u.id as user_id, u.displayname as user_name, u.email as user_email, "
+                + "cb.id as createdBy_id, cb.displayname as createdBy_name "
+                + "FROM contract c "
+                + "LEFT JOIN _user u ON c.user_id = u.id "
+                + "LEFT JOIN _user cb ON c.createBy = cb.id "
+                + "WHERE c.isDelete = 1 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (c.id LIKE ? OR c.content LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
+        }
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            sql += "ORDER BY " + sortBy + " " + (sortOrder != null ? sortOrder : "ASC") + " ";
+        } else {
+            sql += "ORDER BY c.id DESC ";
+        }
+
+        sql += "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
+            ps.setInt(paramIndex++, pageSize);
+            ps.setInt(paramIndex, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Contract contract = new Contract();
+                    contract.setId(rs.getInt("id"));
+                    contract.setContent(rs.getString("content"));
+                    contract.setUrlContract(rs.getString("url_contract"));
+                    contract.setIsDelete(rs.getBoolean("isDelete"));
+
+                    Users user = new Users();
+                    user.setId(rs.getInt("user_id"));
+                    user.setDisplayname(rs.getString("user_name"));
+                    user.setEmail(rs.getString("user_email"));
+                    contract.setUser(user);
+
+                    Users createdBy = new Users();
+                    createdBy.setId(rs.getInt("createdBy_id"));
+                    createdBy.setDisplayname(rs.getString("createdBy_name"));
+                    contract.setCreateBy(createdBy);
+
+                    lst.add(contract);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lst;
+    }
+
+    public int countDeletedContracts(String keyword) {
+        String sql = "SELECT COUNT(*) FROM contract c "
+                + "LEFT JOIN _user u ON c.user_id = u.id "
+                + "LEFT JOIN _user cb ON c.createBy = cb.id "
+                + "WHERE c.isDelete = 1 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (c.id LIKE ? OR c.content LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(1, searchPattern);
+                ps.setString(2, searchPattern);
+                ps.setString(3, searchPattern);
+                ps.setString(4, searchPattern);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean restoreContract(int contractId) {
+        String sql = "UPDATE contract SET isDelete = 0 WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public int addContract(int userId, int createById, String content) {
         String sql = "INSERT INTO contract (user_id, createBy, content, isDelete, created_at) VALUES (?, ?, ?, 0, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

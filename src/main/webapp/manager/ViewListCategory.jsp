@@ -1,155 +1,138 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-        <!DOCTYPE html>
-        <html>
+        <jsp:include page="managerLayout.jsp">
+            <jsp:param name="pageTitle" value="Device Category List" />
+        </jsp:include>
 
-        <head>
-            <title>Device Category List</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background: #f2f2f2;
-                    padding: 40px;
+        <style>
+            .category-container {
+                background: white;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .category-container h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 25px;
+            }
+
+            .search-box {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .search-box input[type=text] {
+                width: 300px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .search-box button {
+                padding: 10px 15px;
+                background: #10b981;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            .search-box button:hover {
+                background: #059669;
+            }
+
+            .add-btn {
+                display: inline-block;
+                margin-bottom: 20px;
+                background: #10b981;
+                padding: 10px 15px;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: 0.2s;
+            }
+
+            .add-btn:hover {
+                background: #059669;
+            }
+
+            .category-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            .category-table th {
+                background: #1e293b;
+                color: white;
+                padding: 12px;
+                text-align: left;
+            }
+
+            .category-table td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .category-table tr:hover {
+                background: #f1f5f9;
+            }
+
+            .pagination {
+                text-align: center;
+                margin-top: 25px;
+            }
+
+            .pagination a {
+                margin: 0 5px;
+                text-decoration: none;
+                padding: 6px 12px;
+                border-radius: 6px;
+                border: 1px solid #10b981;
+                color: #10b981;
+                transition: 0.2s;
+            }
+
+            .pagination a:hover {
+                background: #10b981;
+                color: white;
+            }
+
+            .active-page {
+                background: #10b981 !important;
+                color: white !important;
+            }
+
+            .msg {
+                text-align: center;
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+
+            .success {
+                color: #10b981;
+            }
+
+            .error {
+                color: #ef4444;
+            }
+        </style>
+
+        <script>
+            function confirmDelete(id) {
+                if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+                    window.location.href = "DeleteCategory?id=" + id;
                 }
+            }
+        </script>
 
-                h2 {
-                    text-align: center;
-                    color: #333;
-                    margin-bottom: 25px;
-                }
-
-                /* Search Box */
-                .search-box {
-                    text-align: center;
-                    margin-bottom: 20px;
-                }
-
-                .search-box input[type=text] {
-                    width: 300px;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 6px;
-                }
-
-                .search-box button {
-                    padding: 10px 15px;
-                    background: #007bff;
-                    color: white;
-                    border: none;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    transition: 0.2s;
-                }
-
-                .search-box button:hover {
-                    background: #0056b3;
-                }
-
-                /* Add button */
-                .add-btn {
-                    display: inline-block;
-                    margin-bottom: 20px;
-                    background: #28a745;
-                    padding: 10px 15px;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 6px;
-                    transition: 0.2s;
-                }
-
-                .add-btn:hover {
-                    background: #1e7e34;
-                }
-
-                /* Table */
-                table {
-                    width: 70%;
-                    margin: auto;
-                    border-collapse: collapse;
-                    background: white;
-                    border-radius: 10px;
-                    overflow: hidden;
-                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-                }
-
-                th {
-                    background: #007bff;
-                    color: white;
-                    padding: 12px;
-                }
-
-                td {
-                    padding: 12px;
-                    border-bottom: 1px solid #eee;
-                }
-
-                tr:hover {
-                    background: #f1f7ff;
-                }
-
-                /* Delete button */
-                .delete-btn {
-                    color: red;
-                    cursor: pointer;
-                    text-decoration: none;
-                    margin-left: 10px;
-                }
-
-                /* Pagination */
-                .pagination {
-                    text-align: center;
-                    margin-top: 25px;
-                }
-
-                .pagination a {
-                    margin: 0 5px;
-                    text-decoration: none;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    border: 1px solid #007bff;
-                    color: #007bff;
-                    transition: 0.2s;
-                }
-
-                .pagination a:hover {
-                    background: #007bff;
-                    color: white;
-                }
-
-                .active-page {
-                    background: #007bff !important;
-                    color: white !important;
-                }
-
-                /* Alert messages */
-                .msg {
-                    text-align: center;
-                    font-size: 16px;
-                    margin-bottom: 15px;
-                }
-
-                .success {
-                    color: green;
-                }
-
-                .error {
-                    color: red;
-                }
-            </style>
-
-            <script>
-                function confirmDelete(id) {
-                    if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
-                        window.location.href = "DeleteCategory?id=" + id;
-                    }
-                }
-            </script>
-
-        </head>
-
-        <body>
-
+        <div class="category-container">
             <h2>Danh sách danh mục sản phẩm</h2>
 
             <!-- MESSAGE -->
@@ -161,7 +144,6 @@
                 <p class="msg error">${sessionScope.error}</p>
             </c:if>
 
-            <!-- Xóa thông báo sau khi hiển thị để khi F5 sẽ không còn hiện -->
             <% session.removeAttribute("success"); session.removeAttribute("error"); %>
 
                 <!-- SEARCH FORM -->
@@ -177,7 +159,7 @@
                 </div>
 
                 <!-- TABLE -->
-                <table>
+                <table class="category-table">
                     <tr>
                         <th>ID</th>
                         <th>Tên danh mục</th>
@@ -190,13 +172,11 @@
                             <td>${c.name}</td>
                             <td>
                                 <a href="UpdateCategory?id=${c.id}"
-                                    style="color: #007bff; text-decoration:none; margin-right:10px;">
+                                    style="color: #10b981; text-decoration:none; margin-right:10px;">
                                     Sửa
                                 </a>
-
-                                <!-- DELETE BUTTON -->
                                 <a href="DeleteCategory?id=${c.id}"
-                                    style="color: red; text-decoration:none; margin-right:10px;">
+                                    style="color: #ef4444; text-decoration:none; margin-right:10px;">
                                     Xóa
                                 </a>
                             </td>
@@ -212,7 +192,6 @@
                         </a>
                     </c:forEach>
                 </div>
+        </div>
 
-        </body>
-
-        </html>
+        <jsp:include page="managerFooter.jsp" />
