@@ -12,9 +12,9 @@ import java.util.*;
 import model.*;
 
 
-public class ContractDAO extends DBContext {
-
-    public List<Contract> getContractsByStaff(String keyword, int createById, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+public class ContractDAO extends DBContext {  
+// HÀM LẤY LIST CONTRACTS CỦA STAFF
+    public List<Contract> getContractsByStaff(String keyword, int staffId, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -22,18 +22,17 @@ public class ContractDAO extends DBContext {
                 + "from swp391.contract c "
                 + "left join _user u1 on c.user_id = u1.id "
                 + "left join _user u2 on c.createBy = u2.id "
-                + "where c.createBy = ? "
-                ;
+                + "where c.createBy = ? ";
                 
 
-        // --- FILTER ---
+        //THAM SỐ FILTER TRUYỀN VÀO
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
         }
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
-        // --- SORT ---
+        //SORT
         //default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id DESC";
         if (sortBy != null && !sortBy.isEmpty()) {
@@ -55,8 +54,8 @@ public class ContractDAO extends DBContext {
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
-            if(createById > 0){
-                ps.setInt(index++, createById);
+            if(staffId > 0){
+                ps.setInt(index++, staffId);
             }
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
@@ -94,7 +93,7 @@ public class ContractDAO extends DBContext {
         return lst;
     }
 
-  // Hàm đếm tổng số bản ghi (Để chia trang)
+  // HÀM ĐẾM TỔNG SỐ CONTRACTS => ĐỂ PHÂN TRANG
     public int countContractsByStaff(String keyword, String status, int staffId) {
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
@@ -106,7 +105,6 @@ public class ContractDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql += " AND c.isDelete = ? ";
         }
-        
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
