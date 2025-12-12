@@ -87,6 +87,9 @@ public class AddDevice extends HttpServlet {
         String categoryId = request.getParameter("category_id");
         int categoryID = Integer.parseInt(categoryId);
 
+        String message = "";
+        boolean success = false;
+
         DeviceDAO dev = new DeviceDAO();
         Device d = new Device();
         d.setName(name);
@@ -98,7 +101,13 @@ public class AddDevice extends HttpServlet {
         d.setCategory(dc);
 
         dev.insertDevice(d);
-        response.sendRedirect("ViewListDevice");
+
+        message = "Cập nhật thiết bị thành công!";
+        success = true;
+
+        request.setAttribute("message", message);
+        request.setAttribute("success", success);
+        request.getRequestDispatcher("/manager/device/AddDevice.jsp").forward(request, response);
 
     }
 

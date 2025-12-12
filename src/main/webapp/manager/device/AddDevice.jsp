@@ -156,8 +156,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="maintenance_time">Thời gian Bảo trì (ví dụ: 6 tháng):</label>
-                    <input type="text" id="maintenance_time" name="maintenance_time" placeholder="Nhập chu kỳ bảo trì...">
+                    <label for="maintenance_time">Thời gian Bảo trì (*):</label>
+                    <input type="text" id="maintenance_time" name="maintenance_time" placeholder="Nhập chu kỳ bảo trì..." required="">
                 </div>
 
                 <div class="form-group">
@@ -167,9 +167,6 @@
 
                 <button type="submit" class="btn-submit">💾 Lưu Thiết bị Mới</button>
             </form>
-
-
-
         </div>
 
     </body>
