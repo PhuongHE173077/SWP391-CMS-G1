@@ -102,6 +102,13 @@
             </div>
         </c:if>
         
+        <c:if test="${not empty param.error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>${param.error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+        
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -261,7 +268,7 @@
                                         <th>Số Seri</th>
                                         <th>Tên Thiết bị</th>
                                         <th>Ngày tạo</th>
-                                        <th style="width: 120px;">Trạng thái</th>
+                                        <th style="width: 120px;">Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -281,18 +288,11 @@
                                                 ${subDevice.createdAt != null ? subDevice.createdAt : 'N/A'}
                                             </td>
                                             <td class="align-middle">
-                                                <c:choose>
-                                                    <c:when test="${!subDevice.isDelete}">
-                                                        <span class="badge bg-success">
-                                                            <i class="fas fa-check-circle me-1"></i>Còn lại
-                                                        </span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="badge bg-danger">
-                                                            <i class="fas fa-times-circle me-1"></i>Đã xóa
-                                                        </span>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <a href="DeleteSubDevice?id=${subDevice.id}&deviceId=${device.id}" 
+                                                   class="btn btn-danger btn-sm"
+                                                   onclick="return confirm('Bạn có chắc chắn muốn xóa Sub Device này?');">
+                                                    <i class="fas fa-trash-alt me-1"></i>Xóa
+                                                </a>
                                             </td>
                                         </tr>
                                     </c:forEach>

@@ -334,4 +334,17 @@ public class SubDeviceDAO extends DBContext {
         }
         return 0;
     }
+    
+    // Xóa SubDevice (soft delete - set isDelete = 1)
+    public boolean deleteSubDevice(int subDeviceId) {
+        String query = "UPDATE sub_device SET isDelete = 1 WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, subDeviceId);
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
