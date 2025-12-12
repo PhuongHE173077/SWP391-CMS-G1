@@ -14,17 +14,26 @@
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contracts</h2>
+            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contract Management</h2>
             <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
                 <i class="fas fa-plus me-2"></i>Create New Contract
             </a>
         </div>
 
         <c:if test="${not empty msg}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                ${msg} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="fas fa-check-circle me-2"></i>${msg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" " aria-label="Close"></button>
             </div>
         </c:if>
+
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>${error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+
 
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -161,30 +170,8 @@
 
                 </c:if>
             </div>
-            <div class="d-flex justify-content-between align-items-center w-100">
 
-                <div class="text-muted small">
-                    <span class="me-3">
-                        <i class="fas fa-list-alt me-1"></i> Showing: <strong>${contractList.size()}</strong> / ${pageSize} items
-                    </span>
-                    <span>
-                        <i class="fas fa-search me-1"></i> Total Found: <strong>${totalRecords}</strong> contracts
-                    </span>
-                </div>
-
-                <c:if test="${totalPages > 0}">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination m-0">
-                        </ul>
-                    </nav>
-                </c:if>
-
-                <c:if test="${totalPages <= 0}">
-                    <div></div> 
-                </c:if>
-            </div>
         </div>
     </div>
-</div>
 </body>
 <jsp:include page="../../admin/adminFooter.jsp" />
