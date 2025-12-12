@@ -444,6 +444,30 @@ public class ContractDAO extends DBContext {
         return false;
     }
 
+    public int restoreMultipleContracts(List<Integer> contractIds) {
+        if (contractIds == null || contractIds.isEmpty()) {
+            return 0;
+        }
+        
+        // Tạo placeholders cho IN clause
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < contractIds.size(); i++) {
+            if (i > 0) placeholders.append(",");
+            placeholders.append("?");
+        }
+        
+        String sql = "UPDATE contract SET isDelete = 0 WHERE id IN (" + placeholders.toString() + ")";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int i = 0; i < contractIds.size(); i++) {
+                ps.setInt(i + 1, contractIds.get(i));
+            }
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public int addContract(int userId, int createById, String content) {
         String sql = "INSERT INTO contract (user_id, createBy, content, isDelete, created_at) VALUES (?, ?, ?, 0, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
