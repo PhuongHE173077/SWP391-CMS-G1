@@ -148,13 +148,10 @@
                 </div>
             </c:if>
 
-            <%-- Form Cập nhật Thiết bị --%>
-            <%-- Giả định đối tượng thiết bị hiện tại được truyền vào requestScope với tên là 'device' --%>
-            <c:set var="device" value="${requestScope.device}" />
+            <c:set var="device" value="${device}" />
 
-            <form action="UpdateDevice" method="POST">
-                
-                <%-- Trường ẩn để gửi ID thiết bị (rất quan trọng cho việc cập nhật) --%>
+            <form action="EditDevice" method="POST">
+
                 <input type="hidden" name="id" value="${device.id}">
 
                 <div class="form-group">
@@ -165,8 +162,8 @@
                 <div class="form-group">
                     <label for="category_id">Danh mục (*):</label>
                     <select id="category_id" name="category_id" required>
-                        <option value="" disabled>-- Chọn Danh mục --</option>
-                        <%-- Lặp qua danh sách danh mục và so sánh ID để chọn giá trị hiện tại --%>
+                        <option value="" disabled selected>-- Chọn Danh mục --</option>
+
                         <c:forEach var="dc" items="${deviceCategory}">
                             <option value="${dc.id}" ${dc.id == device.category.id ? 'selected' : ''}>
                                 ${dc.name}
@@ -179,16 +176,9 @@
                     <label for="image">URL Hình ảnh:</label>
                     <input type="url" id="image" name="image" placeholder="Ví dụ: https://example.com/device_img.jpg" value="${device.image}">
                 </div>
-                
-                <%-- Hiển thị ảnh xem trước nếu có URL --%>
-                <c:if test="${not empty device.image}">
-                    <div class="image-preview">
-                        <img src="${device.image}" alt="Ảnh Thiết bị">
-                    </div>
-                </c:if>
 
                 <div class="form-group">
-                    <label for="maintenance_time">Thời gian Bảo trì (ví dụ: 6 tháng):</label>
+                    <label for="maintenance_time">Thời gian Bảo trì :</label>
                     <input type="text" id="maintenance_time" name="maintenance_time" placeholder="Nhập chu kỳ bảo trì..." value="${device.maintenanceTime}">
                 </div>
 
