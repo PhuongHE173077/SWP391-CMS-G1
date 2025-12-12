@@ -328,6 +328,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="/ViewListDevice" class="nav-link">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="nav-text">Quản lý Thiết bị</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/contract-list" class="nav-link">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="nav-text">Quản lý hợp đồng</span>
