@@ -5,6 +5,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -100,6 +101,29 @@ public class ViewContractDelete extends HttpServlet {
                 }
             } else {
                 request.getSession().setAttribute("error", "Thiếu thông tin ID hợp đồng!");
+            }
+        } else if ("restoreMultiple".equals(action)) {
+            String[] contractIds = request.getParameterValues("contractIds");
+            if (contractIds != null && contractIds.length > 0) {
+                try {
+                    List<Integer> ids = new ArrayList<>();
+                    for (String idStr : contractIds) {
+                        ids.add(Integer.parseInt(idStr));
+                    }
+                    
+                    ContractDAO contractDAO = new ContractDAO();
+                    int restoredCount = contractDAO.restoreMultipleContracts(ids);
+                    
+                    if (restoredCount > 0) {
+                        request.getSession().setAttribute("msg", "Đã khôi phục thành công " + restoredCount + " hợp đồng!");
+                    } else {
+                        request.getSession().setAttribute("error", "Không thể khôi phục các hợp đồng đã chọn. Vui lòng thử lại!");
+                    }
+                } catch (NumberFormatException e) {
+                    request.getSession().setAttribute("error", "Có ID hợp đồng không hợp lệ!");
+                }
+            } else {
+                request.getSession().setAttribute("error", "Vui lòng chọn ít nhất một hợp đồng để khôi phục!");
             }
         }
 
