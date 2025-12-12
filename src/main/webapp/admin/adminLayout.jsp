@@ -333,12 +333,6 @@
                                     <span class="nav-text">Quản lý Role</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/ViewListDevice" class="nav-link">
-                                    <i class="fas fa-key"></i>
-                                    <span class="nav-text">Quản lý Device</span>
-                                </a>
-                            </li>
                         </ul>
 
                         <div class="menu-title">Hệ thống</div>
