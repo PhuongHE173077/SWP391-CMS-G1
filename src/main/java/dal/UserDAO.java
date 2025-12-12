@@ -21,6 +21,19 @@ public class UserDAO extends DBContext {
         user.setActive(rs.getBoolean("active"));
         user.setAddress(rs.getString("address"));
         user.setGender(rs.getBoolean("gender"));
+        try {
+            int roleId = rs.getInt("role_id");
+            if (!rs.wasNull()) {
+                Roles role = new Roles();
+                role.setId(roleId);
+                try {
+                    role.setName(rs.getString("role_name"));
+                } catch (SQLException ignore) {
+                }
+                user.setRoles(role);
+            }
+        } catch (SQLException ignore) {
+        }
         return user;
     }
 
@@ -108,7 +121,8 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+    public List<Users> searchUsers(String keyword, String roleId, String status, String gender, int pageIndex,
+            int pageSize, String sortBy, String sortOrder) {
         List<Users> list = new ArrayList<>();
         // số lượng User trên 1 page
         /*
@@ -131,29 +145,29 @@ public class UserDAO extends DBContext {
 
         // 2. Nếu user chọn filter nào thì nối thêm câu SQL đó
         // Nếu có nhập từ khóa (Search)
-        //1
+        // 1
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND u.displayname LIKE ? ";
         }
 
         // Nếu có chọn Role (Khác rỗng)
-        //2
+        // 2
         if (roleId != null && !roleId.isEmpty()) {
             sql += " AND u.role_id = ? ";
         }
 
         // Nếu có chọn Status
-        //3
+        // 3
         if (status != null && !status.isEmpty()) {
             sql += " AND u.active = ? ";
         }
 
         // Nếu có chọn Gender
-        //4
+        // 4
         if (gender != null && !gender.isEmpty()) {
             sql += " AND u.gender = ? ";
         }
-        //default khi hiện list là order by user Id
+        // default khi hiện list là order by user Id
         String listSort = " ORDER BY u.id DESC";
 
         if (sortBy != null && !sortBy.isEmpty()) {
@@ -181,14 +195,15 @@ public class UserDAO extends DBContext {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
 
-            //? của search Keyword
+            // ? của search Keyword
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
             }
             if (roleId != null && !roleId.isEmpty()) {
                 ps.setInt(index++, Integer.parseInt(roleId));
             }
-            // ? của status, Nếu status="1" -> set true (Active), ngược lại set false (Inactive)
+            // ? của status, Nếu status="1" -> set true (Active), ngược lại set false
+            // (Inactive)
             if (status != null && !status.isEmpty()) {
                 ps.setBoolean(index++, status.equals("1"));
             }
@@ -196,9 +211,9 @@ public class UserDAO extends DBContext {
                 // Giải thích: Nếu gender="1" -> set true (Male), ngược lại set false (Female)
                 ps.setBoolean(index++, gender.equals("1"));
             }
-            //? của pageSize, lấy 3 người/ 1 page
+            // ? của pageSize, lấy 3 người/ 1 page
             ps.setInt(index++, pageSize);
-            //? của offset, Bỏ qua offset người
+            // ? của offset, Bỏ qua offset người
             ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -414,7 +429,10 @@ public class UserDAO extends DBContext {
     }
 
     public Users getUserByEmail(String email) {
-        String sql = "SELECT * FROM _user WHERE email = ?";
+        String sql = "SELECT u.*, r.name as role_name "
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE u.email = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, email);

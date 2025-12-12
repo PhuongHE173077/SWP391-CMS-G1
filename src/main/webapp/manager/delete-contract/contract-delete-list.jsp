@@ -113,7 +113,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="py-3 ps-3">ID</th>
-                                <th class="py-3">Content</th>
+                                
                                 <th class="py-3">Customer Name</th>
                                 <th class="py-3 text-center">Url Contract</th>
                                 <th class="py-3 text-center">Created By</th>
@@ -125,11 +125,7 @@
                             <c:forEach items="${contractList}" var="c">
                                 <tr>
                                     <td class="ps-3 fw-bold text-secondary">#${c.id}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="fw-bold text-dark">${c.content}</span>
-                                        </div>
-                                    </td>
+                                    
                                     <td class="text-muted">
                                         <c:if test="${not empty c.user}">
                                             ${c.user.displayname}
