@@ -123,9 +123,7 @@
                             <i class="fas fa-lightbulb me-2"></i>
                             <strong>Lưu ý:</strong>
                             <ul class="mb-0 mt-2">
-                                <li>Sub Device mới sẽ được tạo với trạng thái "Còn lại" (isDelete = false)</li>
                                 <li>Số seri phải là duy nhất, không được trùng với các Sub Device khác</li>
-                                <li>Sau khi thêm thành công, bạn sẽ được chuyển về danh sách Sub Device</li>
                             </ul>
                         </div>
 
