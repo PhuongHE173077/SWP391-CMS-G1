@@ -61,6 +61,35 @@
         margin-bottom: 1rem;
         color: #dee2e6;
     }
+    
+    .pagination {
+        margin: 0;
+    }
+    
+    .pagination .page-link {
+        color: #667eea;
+        border-color: #dee2e6;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+        color: white;
+    }
+    
+    .pagination .page-link:hover {
+        background-color: #f8f9fa;
+        border-color: #667eea;
+        color: #667eea;
+    }
+    
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        background-color: #fff;
+        border-color: #dee2e6;
+        cursor: not-allowed;
+    }
 </style>
 
 <body class="bg-light">
@@ -82,7 +111,10 @@
                 </h3>
                 <p class="text-muted mb-0">
                     Thiết bị: <strong>${device.name}</strong> | 
-                    Tổng số: <strong>${remainingSubDevices.size()}</strong> sản phẩm
+                    Tổng số: <strong>${totalRecords != null ? totalRecords : remainingSubDevices.size()}</strong> sản phẩm
+                    <c:if test="${totalPages > 1}">
+                        | Trang <strong>${currentPage}</strong>/<strong>${totalPages}</strong>
+                    </c:if>
                 </p>
             </div>
             <div class="d-flex gap-2">
@@ -126,12 +158,14 @@
             </div>
         </div>
         
-        <!-- Search Form -->
+        <!-- Search and Filter Form -->
         <div class="card mb-4 shadow-sm">
             <div class="card-body">
                 <form action="ViewRemainingSubDevices" method="get" class="row g-3 align-items-end">
                     <input type="hidden" name="deviceId" value="${device.id}">
-                    <div class="col-md-10">
+                    
+                    <!-- Search by Seri -->
+                    <div class="col-md-4">
                         <label for="search" class="form-label fw-bold">
                             <i class="fas fa-search me-2 text-primary"></i>Tìm kiếm theo số Seri
                         </label>
@@ -143,24 +177,72 @@
                                    class="form-control" 
                                    id="search" 
                                    name="search" 
-                                   placeholder="Nhập số seri để tìm kiếm..."
+                                   placeholder="Nhập số seri..."
                                    value="${searchKeyword != null ? searchKeyword : param.search}">
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search me-2"></i>Tìm kiếm
-                        </button>
-                    </div>
-                    <c:if test="${not empty searchKeyword}">
-                        <div class="col-12">
-                            <a href="ViewRemainingSubDevices?deviceId=${device.id}" class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-times me-2"></i>Xóa bộ lọc
-                            </a>
-                            <span class="text-muted ms-2">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Đang tìm kiếm: <strong>"${searchKeyword}"</strong> - Tìm thấy: <strong>${remainingSubDevices.size()}</strong> kết quả
+                    
+                    <!-- Date From -->
+                    <div class="col-md-3">
+                        <label for="dateFrom" class="form-label fw-bold">
+                            <i class="fas fa-calendar-alt me-2 text-info"></i>Từ ngày
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="fas fa-calendar"></i>
                             </span>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="dateFrom" 
+                                   name="dateFrom" 
+                                   value="${dateFrom != null ? dateFrom : param.dateFrom}">
+                        </div>
+                    </div>
+                    
+                    <!-- Date To -->
+                    <div class="col-md-3">
+                        <label for="dateTo" class="form-label fw-bold">
+                            <i class="fas fa-calendar-check me-2 text-info"></i>Đến ngày
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="fas fa-calendar"></i>
+                            </span>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="dateTo" 
+                                   name="dateTo" 
+                                   value="${dateTo != null ? dateTo : param.dateTo}">
+                        </div>
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-search me-2"></i>Lọc
+                        </button>
+                        <a href="ViewRemainingSubDevices?deviceId=${device.id}" class="btn btn-outline-secondary w-100 btn-sm">
+                            <i class="fas fa-redo me-2"></i>Reset
+                        </a>
+                    </div>
+                    
+                    <!-- Filter Info -->
+                    <c:if test="${not empty searchKeyword || not empty dateFrom || not empty dateTo}">
+                        <div class="col-12 mt-2">
+                            <div class="alert alert-info mb-0 py-2">
+                                <i class="fas fa-filter me-2"></i>
+                                <strong>Bộ lọc đang áp dụng:</strong>
+                                <c:if test="${not empty searchKeyword}">
+                                    <span class="badge bg-primary ms-2">Seri: "${searchKeyword}"</span>
+                                </c:if>
+                                <c:if test="${not empty dateFrom}">
+                                    <span class="badge bg-info ms-2">Từ: ${dateFrom}</span>
+                                </c:if>
+                                <c:if test="${not empty dateTo}">
+                                    <span class="badge bg-info ms-2">Đến: ${dateTo}</span>
+                                </c:if>
+                                <span class="ms-2">| Tìm thấy: <strong>${totalRecords}</strong> kết quả</span>
+                            </div>
                         </div>
                     </c:if>
                 </form>
@@ -217,25 +299,86 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        <!-- Pagination -->
+                        <c:if test="${totalPages > 1}">
+                            <div class="card-footer bg-white border-top">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <!-- Nút Previous -->
+                                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                            <c:choose>
+                                                <c:when test="${currentPage > 1}">
+                                                    <a class="page-link" 
+                                                       href="ViewRemainingSubDevices?deviceId=${device.id}&page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${not empty searchKeyword ? searchKeyword : ''}${not empty dateFrom ? '&dateFrom=' : ''}${not empty dateFrom ? dateFrom : ''}${not empty dateTo ? '&dateTo=' : ''}${not empty dateTo ? dateTo : ''}">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="page-link">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </li>
+                                        
+                                        <!-- Các số trang -->
+                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                            <c:choose>
+                                                <c:when test="${i == currentPage}">
+                                                    <li class="page-item active">
+                                                        <span class="page-link">${i}</span>
+                                                    </li>
+                                                </c:when>
+                                                <c:when test="${i == 1 || i == totalPages || (i >= currentPage - 2 && i <= currentPage + 2)}">
+                                                    <li class="page-item">
+                                                        <a class="page-link" 
+                                                           href="ViewRemainingSubDevices?deviceId=${device.id}&page=${i}${not empty searchKeyword ? '&search=' : ''}${not empty searchKeyword ? searchKeyword : ''}${not empty dateFrom ? '&dateFrom=' : ''}${not empty dateFrom ? dateFrom : ''}${not empty dateTo ? '&dateTo=' : ''}${not empty dateTo ? dateTo : ''}">
+                                                            ${i}
+                                                        </a>
+                                                    </li>
+                                                </c:when>
+                                                <c:when test="${i == currentPage - 3 || i == currentPage + 3}">
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">...</span>
+                                                    </li>
+                                                </c:when>
+                                            </c:choose>
+                                        </c:forEach>
+                                        
+                                        <!-- Nút Next -->
+                                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                            <c:choose>
+                                                <c:when test="${currentPage < totalPages}">
+                                                    <a class="page-link" 
+                                                       href="ViewRemainingSubDevices?deviceId=${device.id}&page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${not empty searchKeyword ? searchKeyword : ''}${not empty dateFrom ? '&dateFrom=' : ''}${not empty dateFrom ? dateFrom : ''}${not empty dateTo ? '&dateTo=' : ''}${not empty dateTo ? dateTo : ''}">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="page-link">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                                              
+                            </div>
+                        </c:if>
                     </c:when>
                     <c:otherwise>
                         <div class="empty-state">
                             <c:choose>
                                 <c:when test="${not empty searchKeyword}">
                                     <i class="fas fa-search"></i>
-                                    <h5 class="mt-3">Không tìm thấy kết quả</h5>
-                                    <p class="text-muted">Không có Sub Device nào khớp với từ khóa "<strong>${searchKeyword}</strong>"</p>
-                                    <a href="ViewRemainingSubDevices?deviceId=${device.id}" class="btn btn-outline-primary mt-3">
-                                        <i class="fas fa-arrow-left me-2"></i>Xem tất cả Sub Device
-                                    </a>
+                                    <h5 class="mt-3">Không tìm thấy kết quả</h5>                                   
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fas fa-inbox"></i>
                                     <h5 class="mt-3">Không có Sub Device nào còn lại</h5>
                                     <p class="text-muted">Tất cả các sản phẩm con của thiết bị này đã bị xóa hoặc chưa được tạo.</p>
-                                    <a href="AddSubDevice?deviceId=${device.id}" class="btn btn-primary mt-3">
-                                        <i class="fas fa-plus me-2"></i>Thêm Sub Device đầu tiên
-                                    </a>
                                 </c:otherwise>
                             </c:choose>
                         </div>
