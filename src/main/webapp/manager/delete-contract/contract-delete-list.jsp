@@ -151,68 +151,137 @@
                                                 <td class="text-center">
                                                     <span class="badge bg-danger">Deleted</span>
                                                 </td>
-                                                <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-outline-success fw-bold"
-                                                        data-bs-toggle="modal" data-bs-target="#restoreModal${c.id}">
-                                                        <i class="fas fa-undo me-1"></i>Restore
-                                                    </button>
+                                                 <td class="text-center">
+                                                     <div class="d-flex gap-2 justify-content-center">
+                                                         <button type="button" class="btn btn-sm btn-outline-success fw-bold"
+                                                             data-bs-toggle="modal" data-bs-target="#restoreModal${c.id}">
+                                                             <i class="fas fa-undo me-1"></i>Restore
+                                                         </button>
+                                                         
+                                                         <button type="button" class="btn btn-sm btn-outline-danger fw-bold"
+                                                             data-bs-toggle="modal" data-bs-target="#deleteModal${c.id}">
+                                                             <i class="fas fa-trash-alt me-1"></i>Delete
+                                                         </button>
+                                                     </div>
 
-                                                    <!-- Restore Confirmation Modal -->
-                                                    <div class="modal fade" id="restoreModal${c.id}" tabindex="-1"
-                                                        aria-labelledby="restoreModalLabel${c.id}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header bg-success text-white">
-                                                                    <h5 class="modal-title"
-                                                                        id="restoreModalLabel${c.id}">
-                                                                        <i class="fas fa-undo me-2"></i>Xác nhận khôi
-                                                                        phục
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <p class="mb-0">Bạn có chắc chắn muốn khôi phục hợp
-                                                                        đồng <strong>#${c.id}</strong> không?</p>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">
-                                                                        <i class="fas fa-times me-1"></i>Hủy
-                                                                    </button>
-                                                                    <form
-                                                                        action="${pageContext.request.contextPath}/list-contract-delete"
-                                                                        method="post" style="display: inline;">
-                                                                        <input type="hidden" name="action"
-                                                                            value="restore">
-                                                                        <input type="hidden" name="id" value="${c.id}">
-                                                                        <c:if test="${not empty searchValue}">
-                                                                            <input type="hidden" name="search"
-                                                                                value="${searchValue}">
-                                                                        </c:if>
-                                                                        <c:if test="${not empty currentPage}">
-                                                                            <input type="hidden" name="page"
-                                                                                value="${currentPage}">
-                                                                        </c:if>
-                                                                        <c:if test="${not empty sortBy}">
-                                                                            <input type="hidden" name="sortBy"
-                                                                                value="${sortBy}">
-                                                                        </c:if>
-                                                                        <c:if test="${not empty sortOrder}">
-                                                                            <input type="hidden" name="sortOrder"
-                                                                                value="${sortOrder}">
-                                                                        </c:if>
-                                                                        <button type="submit" class="btn btn-success">
-                                                                            <i class="fas fa-check me-1"></i>Khôi phục
-                                                                        </button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                     <!-- Restore Confirmation Modal -->
+                                                     <div class="modal fade" id="restoreModal${c.id}" tabindex="-1"
+                                                         aria-labelledby="restoreModalLabel${c.id}" aria-hidden="true">
+                                                         <div class="modal-dialog modal-dialog-centered">
+                                                             <div class="modal-content">
+                                                                 <div class="modal-header bg-success text-white">
+                                                                     <h5 class="modal-title"
+                                                                         id="restoreModalLabel${c.id}">
+                                                                         <i class="fas fa-undo me-2"></i>Xác nhận khôi
+                                                                         phục
+                                                                     </h5>
+                                                                     <button type="button"
+                                                                         class="btn-close btn-close-white"
+                                                                         data-bs-dismiss="modal"
+                                                                         aria-label="Close"></button>
+                                                                 </div>
+                                                                 <div class="modal-body">
+                                                                     <p class="mb-0">Bạn có chắc chắn muốn khôi phục hợp
+                                                                         đồng <strong>#${c.id}</strong> không?</p>
+                                                                 </div>
+                                                                 <div class="modal-footer">
+                                                                     <button type="button" class="btn btn-secondary"
+                                                                         data-bs-dismiss="modal">
+                                                                         <i class="fas fa-times me-1"></i>Hủy
+                                                                     </button>
+                                                                     <form
+                                                                         action="${pageContext.request.contextPath}/list-contract-delete"
+                                                                         method="post" style="display: inline;">
+                                                                         <input type="hidden" name="action"
+                                                                             value="restore">
+                                                                         <input type="hidden" name="id" value="${c.id}">
+                                                                         <c:if test="${not empty searchValue}">
+                                                                             <input type="hidden" name="search"
+                                                                                 value="${searchValue}">
+                                                                         </c:if>
+                                                                         <c:if test="${not empty currentPage}">
+                                                                             <input type="hidden" name="page"
+                                                                                 value="${currentPage}">
+                                                                         </c:if>
+                                                                         <c:if test="${not empty sortBy}">
+                                                                             <input type="hidden" name="sortBy"
+                                                                                 value="${sortBy}">
+                                                                         </c:if>
+                                                                         <c:if test="${not empty sortOrder}">
+                                                                             <input type="hidden" name="sortOrder"
+                                                                                 value="${sortOrder}">
+                                                                         </c:if>
+                                                                         <button type="submit" class="btn btn-success">
+                                                                             <i class="fas fa-check me-1"></i>Khôi phục
+                                                                         </button>
+                                                                     </form>
+                                                                 </div>
+                                                             </div>
+                                                         </div>
+                                                     </div>
+
+                                                     <!-- Delete Confirmation Modal -->
+                                                     <div class="modal fade" id="deleteModal${c.id}" tabindex="-1"
+                                                         aria-labelledby="deleteModalLabel${c.id}" aria-hidden="true">
+                                                         <div class="modal-dialog modal-dialog-centered">
+                                                             <div class="modal-content">
+                                                                 <div class="modal-header bg-danger text-white">
+                                                                     <h5 class="modal-title"
+                                                                         id="deleteModalLabel${c.id}">
+                                                                         <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận xóa cứng
+                                                                     </h5>
+                                                                     <button type="button"
+                                                                         class="btn-close btn-close-white"
+                                                                         data-bs-dismiss="modal"
+                                                                         aria-label="Close"></button>
+                                                                 </div>
+                                                                 <div class="modal-body">
+                                                                     <div class="alert alert-warning mb-3">
+                                                                         <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                         <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác!
+                                                                     </div>
+                                                                     <p class="mb-2">Bạn có chắc chắn muốn <strong>XÓA CỨNG</strong> hợp đồng <strong>#${c.id}</strong> không?</p>
+                                                                     <p class="mb-0 text-muted">
+                                                                         <i class="fas fa-info-circle me-1"></i>
+                                                                         Các Sub Device liên quan sẽ được khôi phục.
+                                                                     </p>
+                                                                 </div>
+                                                                 <div class="modal-footer">
+                                                                     <button type="button" class="btn btn-secondary"
+                                                                         data-bs-dismiss="modal">
+                                                                         <i class="fas fa-times me-1"></i>Hủy
+                                                                     </button>
+                                                                     <form
+                                                                         action="${pageContext.request.contextPath}/list-contract-delete"
+                                                                         method="post" style="display: inline;">
+                                                                         <input type="hidden" name="action"
+                                                                             value="hardDelete">
+                                                                         <input type="hidden" name="id" value="${c.id}">
+                                                                         <c:if test="${not empty searchValue}">
+                                                                             <input type="hidden" name="search"
+                                                                                 value="${searchValue}">
+                                                                         </c:if>
+                                                                         <c:if test="${not empty currentPage}">
+                                                                             <input type="hidden" name="page"
+                                                                                 value="${currentPage}">
+                                                                         </c:if>
+                                                                         <c:if test="${not empty sortBy}">
+                                                                             <input type="hidden" name="sortBy"
+                                                                                 value="${sortBy}">
+                                                                         </c:if>
+                                                                         <c:if test="${not empty sortOrder}">
+                                                                             <input type="hidden" name="sortOrder"
+                                                                                 value="${sortOrder}">
+                                                                         </c:if>
+                                                                         <button type="submit" class="btn btn-danger">
+                                                                             <i class="fas fa-trash-alt me-1"></i>Xóa cứng
+                                                                         </button>
+                                                                     </form>
+                                                                 </div>
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 </td>
                                             </tr>
                                         </c:forEach>
 
