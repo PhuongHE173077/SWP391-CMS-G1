@@ -36,6 +36,9 @@
 
 
         <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3"> 
+                <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Filter & Sort</h5>
+            </div>     
             <div class="card-body">
                 <form action="contract-list" method="get">
 
@@ -170,8 +173,8 @@
 
                 </c:if>
             </div>
-
         </div>
     </div>
+</div>
 </body>
 <jsp:include page="../../admin/adminFooter.jsp" />
