@@ -95,7 +95,7 @@ public class ViewRemainingSubDevices extends HttpServlet {
             request.setAttribute("currentPage", pageIndex);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalRecords", totalRecords);
-            request.getRequestDispatcher("device/remaining-subdevices.jsp").forward(request, response);
+            request.getRequestDispatcher("manager/device/remaining-subdevices.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("ViewListDevice");

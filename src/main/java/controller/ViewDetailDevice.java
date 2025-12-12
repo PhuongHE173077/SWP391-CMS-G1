@@ -45,7 +45,7 @@ public class ViewDetailDevice extends HttpServlet {
 
             request.setAttribute("device", device);
             request.setAttribute("remainingCount", remainingCount);
-            request.getRequestDispatcher("device/device-detail.jsp").forward(request, response);
+            request.getRequestDispatcher("manager/device/device-detail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("ViewListDevice");

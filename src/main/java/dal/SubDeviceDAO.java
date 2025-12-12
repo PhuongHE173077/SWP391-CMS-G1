@@ -347,4 +347,20 @@ public class SubDeviceDAO extends DBContext {
         }
         return false;
     }
+    
+    // Restore SubDevices theo Contract ID (set isDelete = 0 cho tất cả sub devices trong contract)
+    public boolean restoreSubDevicesByContractId(int contractId) {
+        String query = "UPDATE sub_device sd "
+                + "INNER JOIN contract_item ci ON sd.id = ci.sub_devicel_id "
+                + "SET sd.isDelete = 0 "
+                + "WHERE ci.contract_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, contractId);
+            int affected = ps.executeUpdate();
+            return affected >= 0; // Có thể = 0 nếu không có sub device nào
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

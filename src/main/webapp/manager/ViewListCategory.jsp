@@ -1,126 +1,69 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
         <jsp:include page="managerLayout.jsp">
             <jsp:param name="pageTitle" value="Device Category List" />
         </jsp:include>
 
         <style>
-            .category-container {
-                background: white;
-                border-radius: 10px;
-                padding: 30px;
-                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            .card,
+            .btn,
+            .form-control,
+            .input-group-text,
+            .table,
+            .pagination .page-link,
+            .alert,
+            .badge {
+                border-radius: 0 !important;
             }
 
-            .category-container h2 {
-                text-align: center;
-                color: #333;
-                margin-bottom: 25px;
+            .btn-success,
+            .btn-success:hover,
+            .btn-success:focus {
+                background-color: #10b981;
+                border-color: #10b981;
             }
 
-            .search-box {
-                text-align: center;
-                margin-bottom: 20px;
+            .btn-success:hover {
+                background-color: #059669;
+                border-color: #059669;
             }
 
-            .search-box input[type=text] {
-                width: 300px;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-            }
-
-            .search-box button {
-                padding: 10px 15px;
-                background: #10b981;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                transition: 0.2s;
-            }
-
-            .search-box button:hover {
-                background: #059669;
-            }
-
-            .add-btn {
-                display: inline-block;
-                margin-bottom: 20px;
-                background: #10b981;
-                padding: 10px 15px;
-                color: white;
-                text-decoration: none;
-                border-radius: 6px;
-                transition: 0.2s;
-            }
-
-            .add-btn:hover {
-                background: #059669;
-            }
-
-            .category-table {
-                width: 100%;
-                border-collapse: collapse;
-                background: white;
-                border-radius: 10px;
-                overflow: hidden;
-            }
-
-            .category-table th {
-                background: #1e293b;
-                color: white;
-                padding: 12px;
-                text-align: left;
-            }
-
-            .category-table td {
-                padding: 12px;
-                border-bottom: 1px solid #eee;
-            }
-
-            .category-table tr:hover {
-                background: #f1f5f9;
-            }
-
-            .pagination {
-                text-align: center;
-                margin-top: 25px;
-            }
-
-            .pagination a {
-                margin: 0 5px;
-                text-decoration: none;
-                padding: 6px 12px;
-                border-radius: 6px;
-                border: 1px solid #10b981;
+            .btn-outline-success {
                 color: #10b981;
-                transition: 0.2s;
+                border-color: #10b981;
             }
 
-            .pagination a:hover {
-                background: #10b981;
+            .btn-outline-success:hover {
+                background-color: #10b981;
+                border-color: #10b981;
                 color: white;
             }
 
-            .active-page {
-                background: #10b981 !important;
-                color: white !important;
+            .alert-success {
+                background-color: #d1fae5;
+                border-color: #10b981;
+                color: #065f46;
             }
 
-            .msg {
-                text-align: center;
-                font-size: 16px;
-                margin-bottom: 15px;
-            }
-
-            .success {
+            .pagination .page-link {
                 color: #10b981;
+                border-color: #10b981;
             }
 
-            .error {
-                color: #ef4444;
+            .pagination .page-item.active .page-link {
+                background-color: #10b981;
+                border-color: #10b981;
+                color: white;
+            }
+
+            .pagination .page-link:hover {
+                background-color: #10b981;
+                border-color: #10b981;
+                color: white;
             }
         </style>
 
@@ -132,66 +75,117 @@
             }
         </script>
 
-        <div class="category-container">
-            <h2>Danh sách danh mục sản phẩm</h2>
+        <body class="bg-light">
+            <div class="container-fluid px-4 ">
 
-            <!-- MESSAGE -->
-            <c:if test="${not empty sessionScope.success}">
-                <p class="msg success">${sessionScope.success}</p>
-            </c:if>
+                <c:if test="${not empty sessionScope.success}">
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>${sessionScope.success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <c:remove var="success" scope="session" />
+                </c:if>
+                <c:if test="${not empty sessionScope.error}">
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>${sessionScope.error}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <c:remove var="error" scope="session" />
+                </c:if>
 
-            <c:if test="${not empty sessionScope.error}">
-                <p class="msg error">${sessionScope.error}</p>
-            </c:if>
-
-            <% session.removeAttribute("success"); session.removeAttribute("error"); %>
-
-                <!-- SEARCH FORM -->
-                <div class="search-box">
-                    <form action="ViewListCategory" method="get">
-                        <input type="text" name="search" value="${search}" placeholder="Tìm theo tên...">
-                        <button type="submit">Search</button>
-                    </form>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Tìm kiếm</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="ViewListCategory" method="get">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                                        <input type="text" name="search" class="form-control"
+                                            placeholder="Tìm theo tên danh mục..." value="${search}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex gap-2">
+                                    <button type="submit" class="btn btn-success w-100 fw-bold">Search</button>
+                                    <a href="ViewListCategory" class="btn btn-outline-secondary w-100"
+                                        title="Reset Filter">
+                                        Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
-                <div style="text-align:center;">
-                    <a href="AddCategory" class="add-btn">Thêm danh mục mới</a>
-                </div>
-
-                <!-- TABLE -->
-                <table class="category-table">
-                    <tr>
-                        <th>ID</th>
-                        <th>Tên danh mục</th>
-                        <th>Actions</th>
-                    </tr>
-
-                    <c:forEach items="${listCategory}" var="c">
-                        <tr>
-                            <td>${c.id}</td>
-                            <td>${c.name}</td>
-                            <td>
-                                <a href="UpdateCategory?id=${c.id}"
-                                    style="color: #10b981; text-decoration:none; margin-right:10px;">
-                                    Sửa
-                                </a>
-                                <a href="DeleteCategory?id=${c.id}"
-                                    style="color: #ef4444; text-decoration:none; margin-right:10px;">
-                                    Xóa
-                                </a>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </table>
-
-                <!-- PAGINATION -->
-                <div class="pagination">
-                    <c:forEach begin="1" end="${totalPage}" var="p">
-                        <a href="ViewListCategory?page=${p}&search=${search}" class="${p == page ? 'active-page' : ''}">
-                            ${p}
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-list me-2"></i>Danh sách danh
+                            mục sản phẩm</h5>
+                        <a href="AddCategory" class="btn btn-success fw-bold">
+                            <i class="fas fa-plus me-1"></i>Thêm danh mục mới
                         </a>
-                    </c:forEach>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="py-3 ps-3">ID</th>
+                                        <th class="py-3">Tên danh mục</th>
+                                        <th class="py-3 text-center" style="width: 150px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${listCategory}" var="c">
+                                        <tr>
+                                            <td class="ps-3 fw-bold text-secondary">#${c.id}</td>
+                                            <td class="text-muted">${c.name}</td>
+                                            <td class="text-center">
+                                                <a href="UpdateCategory?id=${c.id}"
+                                                    class="btn btn-sm btn-outline-success fw-bold me-1">
+                                                    <i class="fas fa-edit me-1"></i>Sửa
+                                                </a>
+                                                <a href="DeleteCategory?id=${c.id}"
+                                                    class="btn btn-sm btn-outline-danger fw-bold"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
+                                                    <i class="fas fa-trash me-1"></i>Xóa
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+
+                                    <c:if test="${empty listCategory}">
+                                        <tr>
+                                            <td colspan="3" class="text-center py-5 text-muted">
+                                                <h5>Không tìm thấy danh mục nào</h5>
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white d-flex justify-content-center py-3">
+                        <c:if test="${totalPage > 0}">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination m-0">
+                                    <c:forEach begin="1" end="${totalPage}" var="p">
+                                        <li class="page-item ${p == page ? 'active' : ''}">
+                                            <a class="page-link"
+                                                href="ViewListCategory?page=${p}&search=${search}">${p}</a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </nav>
+                        </c:if>
+                    </div>
                 </div>
-        </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
 
         <jsp:include page="managerFooter.jsp" />

@@ -399,6 +399,50 @@ public class ContractDAO extends DBContext {
         }
         return false;
     }
+    
+    // Xóa cứng contract (xóa contract và contract_item khỏi database)
+    public boolean hardDeleteContract(int contractId) {
+        try {
+            // Bắt đầu transaction
+            connection.setAutoCommit(false);
+            
+            // 1. Xóa contract_item trước 
+            String deleteItemsSql = "DELETE FROM contract_item WHERE contract_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteItemsSql)) {
+                ps.setInt(1, contractId);
+                ps.executeUpdate();
+            }
+            
+            // 2. Xóa contract
+            String deleteContractSql = "DELETE FROM contract WHERE id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteContractSql)) {
+                ps.setInt(1, contractId);
+                int affected = ps.executeUpdate();
+                
+                if (affected > 0) {
+                    connection.commit();
+                    return true;
+                } else {
+                    connection.rollback();
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
     public int addContract(int userId, int createById, String content) {
         String sql = "INSERT INTO contract (user_id, createBy, content, isDelete, created_at) VALUES (?, ?, ?, 0, NOW())";
@@ -486,6 +530,8 @@ public class ContractDAO extends DBContext {
         }
         return false;
     }
+    
+    
 
     public String[] getUserInfoById(int userId) {
         String sql = "SELECT displayname, email, phone, address FROM _user WHERE id = ?";
