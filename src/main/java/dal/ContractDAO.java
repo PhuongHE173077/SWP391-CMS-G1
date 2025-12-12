@@ -486,6 +486,8 @@ public class ContractDAO extends DBContext {
         }
         return false;
     }
+    
+    
 
     public String[] getUserInfoById(int userId) {
         String sql = "SELECT displayname, email, phone, address FROM _user WHERE id = ?";

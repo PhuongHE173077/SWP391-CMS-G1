@@ -82,9 +82,53 @@ public class ViewContractDelete extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        
+        if ("restore".equals(action)) {
+            String idStr = request.getParameter("id");
+            if (idStr != null && !idStr.isEmpty()) {
+                try {
+                    int contractId = Integer.parseInt(idStr);
+                    ContractDAO contractDAO = new ContractDAO();
+                    boolean success = contractDAO.restoreContract(contractId);
+                    
+                    if (success) {
+                        request.getSession().setAttribute("msg", "Khôi phục hợp đồng thành công!");
+                    } else {
+                        request.getSession().setAttribute("error", "Không thể khôi phục hợp đồng. Vui lòng thử lại!");
+                    }
+                } catch (NumberFormatException e) {
+                    request.getSession().setAttribute("error", "ID hợp đồng không hợp lệ!");
+                }
+            } else {
+                request.getSession().setAttribute("error", "Thiếu thông tin ID hợp đồng!");
+            }
+        }
 
-        response.sendRedirect(request.getContextPath() + "/list-contract-delete");
+        // Lấy lại các tham số để giữ nguyên filter và pagination
+        String search = request.getParameter("search");
+        String pageStr = request.getParameter("page");
+        String sortBy = request.getParameter("sortBy");
+        String sortOrder = request.getParameter("sortOrder");
+        
+        StringBuilder redirectUrl = new StringBuilder(request.getContextPath() + "/list-contract-delete");
+        boolean hasParam = false;
+        
+        if (search != null && !search.isEmpty()) {
+            redirectUrl.append(hasParam ? "&" : "?").append("search=").append(java.net.URLEncoder.encode(search, "UTF-8"));
+            hasParam = true;
+        }
+        if (pageStr != null && !pageStr.isEmpty()) {
+            redirectUrl.append(hasParam ? "&" : "?").append("page=").append(pageStr);
+            hasParam = true;
+        }
+        if (sortBy != null && !sortBy.isEmpty()) {
+            redirectUrl.append(hasParam ? "&" : "?").append("sortBy=").append(sortBy);
+            hasParam = true;
+        }
+        if (sortOrder != null && !sortOrder.isEmpty()) {
+            redirectUrl.append(hasParam ? "&" : "?").append("sortOrder=").append(sortOrder);
+        }
+        
+        response.sendRedirect(redirectUrl.toString());
     }
 
     /**
