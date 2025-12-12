@@ -14,7 +14,7 @@ import model.*;
 
 public class ContractDAO extends DBContext {  
 // HÀM LẤY LIST CONTRACTS CỦA STAFF
-    public List<Contract> getContractsByStaff(String keyword, int staffId, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+    public List<Contract> getContractsByStaff(int staffId, String keyword, String status, int pageIndex, int pageSize, String sortBy, String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -94,7 +94,7 @@ public class ContractDAO extends DBContext {
     }
 
   // HÀM ĐẾM TỔNG SỐ CONTRACTS => ĐỂ PHÂN TRANG
-    public int countContractsByStaff(String keyword, String status, int staffId) {
+    public int countContractsByStaff(int staffId, String keyword, String status) {
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
                 + "where c.createBy = ? ";
