@@ -75,21 +75,13 @@
                     </div>
 
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <select name="status" class="form-select">
-                                <option value="">All Status</option>
-                                <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
-                                <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
                                 <input type="text" name="search" class="form-control" placeholder="Search content or customer name..." value="${searchValue}">
                             </div>
                         </div>
-                        <div class="col-md-4 d-flex gap-2">
+                        <div class="col-md-6 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
                             <a href="contract-list" class="btn btn-outline-secondary w-100">Reset Filter</a>
                         </div>
@@ -104,8 +96,7 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="py-3 ps-3 text-center">ID</th>
-                                <th class="py-3 text-center">Content</th>
+                                <th class="text-center">ID</th>
                                 <th class="py-3 text-center" style="width: 150px">Customer Name</th>
                                 <th class="py-3 text-center" style="width: 150px">URL Contract</th>
                                 <th class="py-3 text-center" style="width: 100px">Create By</th>
@@ -117,8 +108,7 @@
                         <tbody>
                             <c:forEach items="${contractList}" var="c">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">${c.id}</td>
-                                    <td><span class="fw-bold text-dark">${c.content}</span></td>
+                                    <td class="fw-bold text-secondary text-center">${c.id}</td>
                                     <td class="text-primary text-center">${c.user.displayname}</td>
 
                                     <td class="text-center">
@@ -132,8 +122,8 @@
                                     </td>
 
                                     <td class="text-center">
-                                        <c:if test="${c.isDelete}"><span class="badge bg-success">Active</span></c:if>
-                                        <c:if test="${!c.isDelete}"><span class="badge bg-secondary">Inactive</span></c:if>
+                                        <c:if test="${!c.isDelete}"><span class="badge bg-success">Active</span></c:if>
+                                        <c:if test="${c.isDelete}"><span class="badge bg-secondary">Inactive</span></c:if>
                                         </td>
 
                                         <td class="text-center">
@@ -141,18 +131,15 @@
                                                 <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
                                             <a href="edit-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
 
-                                            <form action="change-contract-status" method="post" style="display: inline;">
+                                            <form action="deactivate-contract" method="post" style="display: inline;">
                                                 <input type="hidden" name="id" value="${c.id}">
-                                                <input type="hidden" name="status" value="${c.isDelete ? '0' : '1'}">
+                                                <input type="hidden" name="status" value="1">
                                                 <input type="hidden" name="page" value="${currentPage}">
                                                 <input type="hidden" name="search" value="${searchValue}">
-                                                <input type="hidden" name="statusFilter" value="${statusValue}">
+                                                >
 
-                                                <c:if test="${c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
-                                                </c:if>
                                                 <c:if test="${!c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success fw-bold" onclick="return confirm('Are you sure to Activate this contract?')">Activate</button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
                                                 </c:if>
                                             </form>
                                         </div>
@@ -174,17 +161,17 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination m-0">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
                             </li>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
                             </li>
                         </ul>
                     </nav>

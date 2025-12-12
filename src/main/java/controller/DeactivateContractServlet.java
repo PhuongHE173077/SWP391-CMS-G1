@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
  *
  * @author ADMIN
  */
-@WebServlet(name = "ChangeContractStatusServlet", urlPatterns = {"/change-contract-status"})
-public class ChangeContractStatusServlet extends HttpServlet {
+@WebServlet(name = "DeactivateContractServlet", urlPatterns = {"/deactivate-contract"})
+public class DeactivateContractServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -30,7 +30,7 @@ public class ChangeContractStatusServlet extends HttpServlet {
         try {
             // 1. Lấy dữ liệu ID và Status cần update
             int id = Integer.parseInt(request.getParameter("id"));
-            int status = Integer.parseInt(request.getParameter("status")); // 1: Active, 0: Inactive
+            int status = Integer.parseInt(request.getParameter("status"));  
 
             // 2. Gọi DAO để thực hiện update xuống DB
             ContractDAO dao = new ContractDAO();
@@ -39,17 +39,13 @@ public class ChangeContractStatusServlet extends HttpServlet {
             // 3. Gửi thông báo thành công qua Session (Flash Message)
             HttpSession session = request.getSession();
             if (status == 1) {
-                session.setAttribute("msg", "Activated contract successfully!");
-            } else {
                 session.setAttribute("msg", "Deactivated contract successfully!");
             }
-
             // 4. Lấy lại các tham số Filter/Sort cũ để Redirect về đúng ngữ cảnh
             // (Nếu không làm bước này, sau khi update nó sẽ nhảy về trang 1 và mất hết filter)
             String page = request.getParameter("page");
             String search = request.getParameter("search");
-            String statusFilter = request.getParameter("statusFilter");
-            String sortBy = request.getParameter("sortBy");
+             String sortBy = request.getParameter("sortBy");
             String sortOrder = request.getParameter("sortOrder");
 
             // Xử lý null (đề phòng)
@@ -59,9 +55,7 @@ public class ChangeContractStatusServlet extends HttpServlet {
             if (search == null) {
                 search = "";
             }
-            if (statusFilter == null) {
-                statusFilter = "";
-            }
+            
             if (sortBy == null) {
                 sortBy = "id";
             }
@@ -73,7 +67,6 @@ public class ChangeContractStatusServlet extends HttpServlet {
             // Lưu ý: search phải được Encode để xử lý ký tự đặc biệt hoặc tiếng Việt
             String redirectURL = "contract-list?"
                     + "page=" + page
-                    + "&status=" + statusFilter
                     + "&sortBy=" + sortBy
                     + "&sortOrder=" + sortOrder
                     + "&search=" + URLEncoder.encode(search, StandardCharsets.UTF_8);

@@ -74,17 +74,14 @@ public class ViewContractListServlet extends HttpServlet {
             int pageSize = 2;
             ContractDAO dao = new ContractDAO();
 
-            // Lấy ID của người đang đăng nhập
-            int currentStaffId = user.getId();
-
             // TÍNH TỔNG SỐ RECORDS
-            int totalRecords = dao.countContractsByStaff(currentStaffId, search, status);
+            int totalRecords = dao.countContractsByStaff(search);
 
             //totalRecords và pageSize đều là int => khi chia lấy thương,ví dụ 15:2= 7.5 thì thương nó sẽ lấy là kiểu int (cắt bỏ phần thập phân phía sau)
             //=> totalPages là 7 + 1=8
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
-            List<Contract> list = dao.getContractsByStaff(currentStaffId, search, status, pageIndex, pageSize, sortBy, sortOrder);
+            List<Contract> list = dao.getContractsByStaff(search, pageIndex, pageSize, sortBy, sortOrder);
 
             // Gửi dữ liệu sang JSP
             request.setAttribute("contractList", list);
