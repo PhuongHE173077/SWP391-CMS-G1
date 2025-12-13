@@ -81,8 +81,10 @@ public class ViewContractListServlet extends HttpServlet {
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
             List<Contract> list = dao.getAllActiveContracts(search, pageIndex, pageSize, sortBy, sortOrder);
-
+           UserDAO userDao = new UserDAO();
+            List<Users> lstManagerSaleStaff = userDao.getAllManagerSaleStaff();
             // Gửi dữ liệu sang JSP
+            request.setAttribute("lstManagerSaleStaff", lstManagerSaleStaff);
             request.setAttribute("contractList", list);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("currentPage", pageIndex);
