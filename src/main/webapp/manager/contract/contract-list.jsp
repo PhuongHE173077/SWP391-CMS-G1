@@ -50,12 +50,7 @@
                             </div>
 
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
-                                <label class="form-check-label">Content</label> 
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'content' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
                                 <label class="form-check-label">Customer</label> 
                             </div>
                         </div>
@@ -78,7 +73,7 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search content or customer name..." value="${searchValue}">
+                                <input type="text" name="search" class="form-control" placeholder="Search by customer name..." value="${searchValue}">
                             </div>
                         </div>
                         <div class="col-md-6 d-flex gap-2">
@@ -136,7 +131,7 @@
                                                 <input type="hidden" name="status" value="1">
                                                 <input type="hidden" name="page" value="${currentPage}">
                                                 <input type="hidden" name="search" value="${searchValue}">
-                                                >
+                                                
 
                                                 <c:if test="${!c.isDelete}">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>

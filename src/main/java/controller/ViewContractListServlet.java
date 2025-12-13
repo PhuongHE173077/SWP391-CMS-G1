@@ -52,7 +52,6 @@ public class ViewContractListServlet extends HttpServlet {
 
         // Lấy tham số Filter/Sort từ JSP
         String search = request.getParameter("search");
-        String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
         //page hiện tại lấy về từ jsp
@@ -65,23 +64,23 @@ public class ViewContractListServlet extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null) {
-            sortOrder = "DESC";
+            sortOrder = "ASC";
         }
 
         try {
             int pageIndex = Integer.parseInt(indexPage);
             //set 2 record trên 1 trang
-            int pageSize = 2;
+            int pageSize = 5;
             ContractDAO dao = new ContractDAO();
 
             // TÍNH TỔNG SỐ RECORDS
-            int totalRecords = dao.countContractsByStaff(search);
+            int totalRecords = dao.countAllContracts(search);
 
-            //totalRecords và pageSize đều là int => khi chia lấy thương,ví dụ 15:2= 7.5 thì thương nó sẽ lấy là kiểu int (cắt bỏ phần thập phân phía sau)
-            //=> totalPages là 7 + 1=8
+            //totalRecords và pageSize đều là int => khi chia lấy thương,ví dụ 23:5= 4,6 thì thương nó sẽ lấy là kiểu int (cắt bỏ phần thập phân phía sau)
+            //=> totalPages là 4 + 1= 5
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
-            List<Contract> list = dao.getContractsByStaff(search, pageIndex, pageSize, sortBy, sortOrder);
+            List<Contract> list = dao.getAllActiveContracts(search, pageIndex, pageSize, sortBy, sortOrder);
 
             // Gửi dữ liệu sang JSP
             request.setAttribute("contractList", list);
@@ -90,11 +89,9 @@ public class ViewContractListServlet extends HttpServlet {
 
             // Giữ lại trạng thái Filter
             request.setAttribute("searchValue", search);
-            request.setAttribute("statusValue", status);
             request.setAttribute("sortBy", sortBy);
             request.setAttribute("sortOrder", sortOrder);
-            request.setAttribute("totalRecords", totalRecords); // Tổng số tìm thấy
-            request.setAttribute("pageSize", pageSize);         // Số lượng setting 1 trang
+
 
             request.getRequestDispatcher(URL_CONTRACT_LIST_DIRECTION).forward(request, response);
 
