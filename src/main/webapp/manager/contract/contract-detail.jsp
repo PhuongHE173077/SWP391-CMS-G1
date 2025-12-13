@@ -90,7 +90,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 d-flex gap-2 align-items-center">
-                            <button type="submit" class="btn btn-secondary px-4 py-2">Search</button>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold px-4 py-2">Search</button>
                             <a href="contract-detail?id=${c.id}" class="btn btn-outline-secondary px-4 py-2">Reset Filter</a>
                         </div>
                     </div>
