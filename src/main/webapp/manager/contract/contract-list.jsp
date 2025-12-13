@@ -70,13 +70,21 @@
                     </div>
 
                     <div class="row g-3">
+                         <div class="col-md-3">
+                            <select name="gender" class="form-select">
+                                <option value="">All Creator</option>
+                                <c:forEach items="${lstManagerSaleStaff}" var="lst"> 
+                                    <option value="${lst.id}" ${creatorValue == lst.id ? 'selected' : ''}>${lst.role_name}-${lst.displayname}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
                                 <input type="text" name="search" class="form-control" placeholder="Search by customer name..." value="${searchValue}">
                             </div>
                         </div>
-                        <div class="col-md-6 d-flex gap-2">
+                        <div class="col-md-3 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
                             <a href="contract-list" class="btn btn-outline-secondary w-100">Reset Filter</a>
                         </div>
