@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -26,7 +27,7 @@ public class ResetPassword extends HttpServlet {
      * methods.
      *
      * @param request servlet request
-     * @param response servlet response
+     * @param response servlet response 
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
@@ -85,8 +86,11 @@ public class ResetPassword extends HttpServlet {
             return;
         }
 
+        // Hash password trước khi lưu vào database
+        String hashedPassword = BCrypt.hashpw(newPass, BCrypt.gensalt(12));
+
         UserDAO dao = new UserDAO();
-        dao.updatePassword(email, newPass);
+        dao.updatePassword(email, hashedPassword);
 
         // Xoá session OTP
         session.removeAttribute("otp");

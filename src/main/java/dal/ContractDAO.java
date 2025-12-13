@@ -12,9 +12,10 @@ import java.util.*;
 import model.*;
 
 public class ContractDAO extends DBContext {
-// HÀM LẤY LIST CONTRACTS CỦA STAFF
+    // HÀM LẤY LIST CONTRACTS CỦA STAFF
 
-    public List<Contract> getAllActiveContracts(String keyword, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+    public List<Contract> getAllActiveContracts(String keyword, int pageIndex, int pageSize, String sortBy,
+            String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -22,21 +23,21 @@ public class ContractDAO extends DBContext {
                 + "from swp391.contract c "
                 + "left join _user u1 on c.user_id = u1.id "
                 + "left join _user u2 on c.createBy = u2.id where c.isDelete= 0 ";
+        // THAM SỐ FILTER TRUYỀN VÀO
 
-        //THAM SỐ FILTER TRUYỀN VÀO
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
-        }
-
-        //SORT
-        //default khi hiện list là order by user Id
+        // SORT
+        // default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id ASC";
         String orderCondition = "";
+        if (status != null && !status.isEmpty()) {
+            sql += " AND c.isDelete = ? ";
+        }
+        // SORT
+        // default khi hiện list là order by user Id
         if (sortBy != null && !sortBy.isEmpty()) {
-            if((sortOrder != null && sortOrder.equalsIgnoreCase("ASC"))){
+            if ((sortOrder != null && sortOrder.equalsIgnoreCase("ASC"))) {
                 orderCondition = "ASC";
-            }
-            else{
+            } else {
                 orderCondition = "DESC";
             }
         }
@@ -58,7 +59,6 @@ public class ContractDAO extends DBContext {
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
-
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");
@@ -92,7 +92,9 @@ public class ContractDAO extends DBContext {
     }
 
     // HÀM ĐẾM TỔNG SỐ CONTRACTS => ĐỂ PHÂN TRANG
+
     public int countAllContracts(String keyword) {
+
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
                 + "where c.isDelete= 0 ";
@@ -131,7 +133,7 @@ public class ContractDAO extends DBContext {
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, status);
-            ps.setInt(2, id); //1 Active, 0: Inactive
+            ps.setInt(2, id); // 1 Active, 0: Inactive
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,7 +186,9 @@ public class ContractDAO extends DBContext {
         return null; // Không tìm thấy hoặc lỗi
     }
 
-    public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate, int pageIndex, int pageSize) {
+    public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate,
+            int pageIndex, int pageSize) {
+
         List<ContractItem> list = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
@@ -295,6 +299,180 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
+    public List<Contract> getDeletedContracts(String keyword, int pageIndex, int pageSize, String sortBy,
+            String sortOrder) {
+        List<Contract> lst = new ArrayList<>();
+        int offset = (pageIndex - 1) * pageSize;
+
+        String sql = "SELECT c.id, c.content, c.url_contract, c.isDelete, c.created_at, "
+                + "u.id as user_id, u.displayname as user_name, u.email as user_email, "
+                + "cb.id as createdBy_id, cb.displayname as createdBy_name "
+                + "FROM contract c "
+                + "LEFT JOIN _user u ON c.user_id = u.id "
+                + "LEFT JOIN _user cb ON c.createBy = cb.id "
+                + "WHERE c.isDelete = 1 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (c.id LIKE ? OR c.content LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
+        }
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            sql += "ORDER BY " + sortBy + " " + (sortOrder != null ? sortOrder : "ASC") + " ";
+        } else {
+            sql += "ORDER BY c.id DESC ";
+        }
+
+        sql += "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
+            ps.setInt(paramIndex++, pageSize);
+            ps.setInt(paramIndex, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Contract contract = new Contract();
+                    contract.setId(rs.getInt("id"));
+                    contract.setContent(rs.getString("content"));
+                    contract.setUrlContract(rs.getString("url_contract"));
+                    contract.setIsDelete(rs.getBoolean("isDelete"));
+
+                    Users user = new Users();
+                    user.setId(rs.getInt("user_id"));
+                    user.setDisplayname(rs.getString("user_name"));
+                    user.setEmail(rs.getString("user_email"));
+                    contract.setUser(user);
+
+                    Users createdBy = new Users();
+                    createdBy.setId(rs.getInt("createdBy_id"));
+                    createdBy.setDisplayname(rs.getString("createdBy_name"));
+                    contract.setCreateBy(createdBy);
+
+                    lst.add(contract);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lst;
+    }
+
+    public int countDeletedContracts(String keyword) {
+        String sql = "SELECT COUNT(*) FROM contract c "
+                + "LEFT JOIN _user u ON c.user_id = u.id "
+                + "LEFT JOIN _user cb ON c.createBy = cb.id "
+                + "WHERE c.isDelete = 1 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (c.id LIKE ? OR c.content LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(1, searchPattern);
+                ps.setString(2, searchPattern);
+                ps.setString(3, searchPattern);
+                ps.setString(4, searchPattern);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean restoreContract(int contractId) {
+        String sql = "UPDATE contract SET isDelete = 0 WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Xóa cứng contract (xóa contract và contract_item khỏi database)
+    public boolean hardDeleteContract(int contractId) {
+        try {
+            // Bắt đầu transaction
+            connection.setAutoCommit(false);
+
+            // 1. Xóa contract_item trước
+            String deleteItemsSql = "DELETE FROM contract_item WHERE contract_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteItemsSql)) {
+                ps.setInt(1, contractId);
+                ps.executeUpdate();
+            }
+
+            // 2. Xóa contract
+            String deleteContractSql = "DELETE FROM contract WHERE id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteContractSql)) {
+                ps.setInt(1, contractId);
+                int affected = ps.executeUpdate();
+
+                if (affected > 0) {
+                    connection.commit();
+                    return true;
+                } else {
+                    connection.rollback();
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public int restoreMultipleContracts(List<Integer> contractIds) {
+        if (contractIds == null || contractIds.isEmpty()) {
+            return 0;
+        }
+
+        // Tạo placeholders cho IN clause
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < contractIds.size(); i++) {
+            if (i > 0)
+                placeholders.append(",");
+            placeholders.append("?");
+        }
+
+        String sql = "UPDATE contract SET isDelete = 0 WHERE id IN (" + placeholders.toString() + ")";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int i = 0; i < contractIds.size(); i++) {
+                ps.setInt(i + 1, contractIds.get(i));
+            }
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public int addContract(int userId, int createById, String content) {
         String sql = "INSERT INTO contract (user_id, createBy, content, isDelete, created_at) VALUES (?, ?, ?, 0, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -388,11 +566,11 @@ public class ContractDAO extends DBContext {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new String[]{
-                        rs.getString("displayname"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address")
+                    return new String[] {
+                            rs.getString("displayname"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("address")
                     };
                 }
             }

@@ -7,8 +7,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<jsp:include page="../admin/adminLayout.jsp">
-    <jsp:param name="pageTitle" value="Chi tiết Thiết bị" />
+<jsp:include page="../managerLayout.jsp">
+    <jsp:param name="pageTitle" value="Deleted Contract Management" />
 </jsp:include>
 
 <style>
@@ -135,7 +135,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="info-label">Thời gian bảo trì</div>
+                                <div class="info-label">Thời gian bảo trì (Tháng)</div>
                                 <div class="info-value">
                                     <i class="fas fa-clock me-2 text-warning"></i>
                                     ${device.maintenanceTime != null ? device.maintenanceTime : 'Chưa cập nhật'}

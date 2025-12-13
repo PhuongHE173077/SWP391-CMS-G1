@@ -4,8 +4,10 @@
  */
 package controller;
 
-import dal.CategoryDAO;
 import dal.DeviceDAO;
+import dal.CategoryDAO;
+import model.Device;
+import model.DeviceCategory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,15 +16,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Device;
-import model.DeviceCategory;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name = "AddDevice", urlPatterns = {"/AddDevice"})
-public class AddDevice extends HttpServlet {
+@WebServlet(name = "EditDevice", urlPatterns = {"/EditDevice"})
+public class EditDevice extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class AddDevice extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddDevice</title>");
+            out.println("<title>Servlet EditDevice</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddDevice at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet EditDevice at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,11 +62,21 @@ public class AddDevice extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        CategoryDAO cate = new CategoryDAO();
-        List<DeviceCategory> deviceCategoryList = cate.getAllCategory();
-        request.setAttribute("deviceCategory", deviceCategoryList);
-        request.getRequestDispatcher("manager/device/AddDevice.jsp").forward(request, response);
 
+        String sid = request.getParameter("id");
+        DeviceDAO dev = new DeviceDAO();
+        try {
+            int id = Integer.parseInt(sid);
+            Device divice = dev.getDeviceById(id);
+
+            CategoryDAO cate = new CategoryDAO();
+            List<DeviceCategory> deviceCategory = cate.getAllCategory();
+
+            request.setAttribute("deviceCategory", deviceCategory);
+            request.setAttribute("device", divice);
+            request.getRequestDispatcher("manager/device/UpdateDevice.jsp").forward(request, response);
+        } catch (NumberFormatException e) {
+        }
     }
 
     /**
@@ -77,40 +87,58 @@ public class AddDevice extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String name = request.getParameter("name");
-        String image = request.getParameter("image");
-        String maintenance_time = request.getParameter("maintenance_time");
-        String description = request.getParameter("description");
-        String categoryId = request.getParameter("category_id");
-        int categoryID = Integer.parseInt(categoryId);
+   @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {  
+   
+    request.setCharacterEncoding("UTF-8"); 
 
-        String message = "";
-        boolean success = false;
+    String idStr = request.getParameter("id");
+    String name = request.getParameter("name");
+    String category_id = request.getParameter("category_id");
+    String image = request.getParameter("image");
+    String maintenance_time = request.getParameter("maintenance_time");
+    String description = request.getParameter("description");
 
-        DeviceDAO dev = new DeviceDAO();
-        Device d = new Device();
-        d.setName(name);
-        d.setImage(image);
-        d.setDescription(description);
-        d.setMaintenanceTime(maintenance_time);
-        DeviceCategory dc = new DeviceCategory();
-        dc.setId(categoryID);
-        d.setCategory(dc);
+    DeviceDAO devDAO = new DeviceDAO();
+    Device device = new Device();
+    
+    request.setAttribute("deviceCategory", new CategoryDAO().getAllCategory());
+    
+    String message = "";
+    boolean success = false;
+    
+    try {
+        if (idStr == null || idStr.isEmpty()) {
+            throw new NumberFormatException("ID thiết bị không hợp lệ.");
+        }
+        int id = Integer.parseInt(idStr);
+        device.setId(id);
+        
+        device.setDescription(description);
+        device.setImage(image);
+        device.setName(name);
+        device.setMaintenanceTime(maintenance_time);      
 
-        dev.insertDevice(d);
-
+        devDAO.editDevice(device, category_id);
+        
         message = "Cập nhật thiết bị thành công!";
         success = true;
 
-        request.setAttribute("message", message);
-        request.setAttribute("success", success);
-        request.getRequestDispatcher("/manager/device/AddDevice.jsp").forward(request, response);
+        device = devDAO.getDeviceById(id);
+              
+    } catch (NumberFormatException e) {
+        message = "Lỗi: ID thiết bị không hợp lệ. Vui lòng kiểm tra lại.";
+        success = false;
+        
+    } 
+    
+    request.setAttribute("device", device);
+    request.setAttribute("message", message);
+    request.setAttribute("success", success);
 
-    }
-
+    request.getRequestDispatcher("/manager/device/UpdateDevice.jsp").forward(request, response);
+}
     /**
      * Returns a short description of the servlet.
      *

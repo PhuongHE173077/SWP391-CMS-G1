@@ -145,8 +145,8 @@ public class SubDeviceDAO extends DBContext {
         return subDevices;
     }
     
-    // Lấy danh sách SubDevice với phân trang (có hỗ trợ search)
-    public List<SubDevice> getRemainingSubDevicesByDeviceIdWithPaging(int deviceId, String seriKeyword, int pageIndex, int pageSize) {
+    // Lấy danh sách SubDevice với phân trang (có hỗ trợ search và date filter)
+    public List<SubDevice> getRemainingSubDevicesByDeviceIdWithPaging(int deviceId, String seriKeyword, String dateFrom, String dateTo, int pageIndex, int pageSize) {
         List<SubDevice> subDevices = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
         
@@ -159,6 +159,14 @@ public class SubDeviceDAO extends DBContext {
             query += "AND sd.seri_id LIKE ? ";
         }
         
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            query += "AND DATE(sd.created_at) >= ? ";
+        }
+        
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            query += "AND DATE(sd.created_at) <= ? ";
+        }
+        
         query += "ORDER BY sd.id LIMIT ? OFFSET ?";
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -167,6 +175,14 @@ public class SubDeviceDAO extends DBContext {
             
             if (seriKeyword != null && !seriKeyword.trim().isEmpty()) {
                 ps.setString(paramIndex++, "%" + seriKeyword + "%");
+            }
+            
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateFrom);
+            }
+            
+            if (dateTo != null && !dateTo.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateTo);
             }
             
             ps.setInt(paramIndex++, pageSize);
@@ -201,19 +217,36 @@ public class SubDeviceDAO extends DBContext {
         return subDevices;
     }
     
-    // Đếm số lượng SubDevice còn lại (có hỗ trợ search)
-    public int countRemainingSubDevicesByDeviceId(int deviceId, String seriKeyword) {
+    // Đếm số lượng SubDevice còn lại (có hỗ trợ search và date filter)
+    public int countRemainingSubDevicesByDeviceId(int deviceId, String seriKeyword, String dateFrom, String dateTo) {
         String query = "SELECT COUNT(*) FROM sub_device WHERE device_id = ? AND isDelete = 0";
         
         if (seriKeyword != null && !seriKeyword.trim().isEmpty()) {
             query += " AND seri_id LIKE ?";
         }
         
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            query += " AND DATE(created_at) >= ?";
+        }
+        
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            query += " AND DATE(created_at) <= ?";
+        }
+        
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, deviceId);
+            int paramIndex = 1;
+            ps.setInt(paramIndex++, deviceId);
             
             if (seriKeyword != null && !seriKeyword.trim().isEmpty()) {
-                ps.setString(2, "%" + seriKeyword + "%");
+                ps.setString(paramIndex++, "%" + seriKeyword + "%");
+            }
+            
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateFrom);
+            }
+            
+            if (dateTo != null && !dateTo.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateTo);
             }
             
             try (ResultSet rs = ps.executeQuery()) {
@@ -300,5 +333,34 @@ public class SubDeviceDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+    
+    // Xóa SubDevice (soft delete - set isDelete = 1)
+    public boolean deleteSubDevice(int subDeviceId) {
+        String query = "UPDATE sub_device SET isDelete = 1 WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, subDeviceId);
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // Restore SubDevices theo Contract ID (set isDelete = 0 cho tất cả sub devices trong contract)
+    public boolean restoreSubDevicesByContractId(int contractId) {
+        String query = "UPDATE sub_device sd "
+                + "INNER JOIN contract_item ci ON sd.id = ci.sub_devicel_id "
+                + "SET sd.isDelete = 0 "
+                + "WHERE ci.contract_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, contractId);
+            int affected = ps.executeUpdate();
+            return affected >= 0; // Có thể = 0 nếu không có sub device nào
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

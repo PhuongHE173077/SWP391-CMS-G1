@@ -1,13 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Danh sách Thiết bị</title>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<jsp:include page="../managerLayout.jsp">    
+    <jsp:param name="pageTitle" value="Deleted Contract Management" />
+</jsp:include>
         <style>
 
             body {
@@ -259,15 +256,20 @@
                 <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a> 
             </div>
 
-            <div class="filter-bar">
-                <select name="name">
-                    <option value="">Lọc theo thương hiệu</option>
-                </select>
-                <select name="maintenance_time">
-                    <option value="">Tìm kiếm theo tên....</option>
-                </select>
+            <form action="ViewListDevice" method="get" id="filterForm">
+                <div class="filter-bar">
+                    <select id="category_id" name="category_id" onchange="document.getElementById('filterForm').submit()">
+                        <option value="0" ${selectedCategoryId == 0 ? 'selected' : ''}>-- Tất cả Danh mục --</option>
+                        <c:forEach var="dc" items="${deviceCategory}"> 
+                            <option value="${dc.id}" ${dc.id == selectedCategoryId ? 'selected' : ''}>${dc.name}</option>
+                        </c:forEach>
+                    </select>
 
-            </div>
+                    <input class="searchBox" type="text" name="textSearch" size="50" value="${currentSearchText}" placeholder="Tìm kiếm theo tên...">
+
+                    <input class="SearchButton" type="submit" name="btnGo" value="Tìm Kiếm">
+                </div>
+            </form>
 
             <table class="device-table">
                 <thead>
@@ -308,15 +310,21 @@
 
             <div class="pagination">
 
+                <c:set var="urlParams" value=""/>
+                <c:if test="${selectedCategoryId > 0}">
+                    <c:set var="urlParams" value="${urlParams}&category_id=${selectedCategoryId}"/>
+                </c:if>
+                <c:if test="${currentSearchText != null && currentSearchText != ''}">
+                    <c:set var="urlParams" value="${urlParams}&textSearch=${currentSearchText}"/>
+                </c:if>
+
                 <c:forEach begin="1" end="${maxp}" var="i">
                     <c:choose>
                         <c:when test="${crPage == i}">
-                            <%-- Trang hiện tại: Thêm class "active" --%>
-                            <a href="ViewListDevice?page=${i}" class="active">${i}</a>
+                            <a href="ViewListDevice?page=${i}${urlParams}" class="active">${i}</a>
                         </c:when>
                         <c:otherwise>
-                            <%-- Các trang khác: Giữ nguyên link --%>
-                            <a href="ViewListDevice?page=${i}">${i}</a>
+                            <a href="ViewListDevice?page=${i}${urlParams}">${i}</a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
@@ -327,11 +335,12 @@
 
     </body>
     <script>
-        function showMess(id){
+        function showMess(id) {
             var option = confirm("Are you sure to delete ?");
-            if(option === true){
-                window.location.href = "DeleteDevice?id="+id;
+            if (option === true) {
+                window.location.href = "DeleteDevice?id=" + id;
             }
         }
     </script>
-</html>
+    
+    <jsp:include page="../managerFooter.jsp" />
