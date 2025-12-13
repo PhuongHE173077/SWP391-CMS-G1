@@ -71,10 +71,10 @@
 
                     <div class="row g-3">
                          <div class="col-md-3">
-                            <select name="gender" class="form-select">
+                            <select name="createBy" class="form-select">
                                 <option value="">All Creator</option>
                                 <c:forEach items="${lstManagerSaleStaff}" var="lst"> 
-                                    <option value="${lst.id}" ${creatorValue == lst.id ? 'selected' : ''}>${lst.role_name}-${lst.displayname}</option>
+                                    <option value="${lst.id}" ${creatorValue == lst.id ? 'selected' : ''}>(${lst.roles.name})-${lst.displayname}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -164,17 +164,17 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination m-0">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&createBy=${creatorValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
                             </li>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&createBy=${creatorValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&createBy=${creatorValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
                             </li>
                         </ul>
                     </nav>

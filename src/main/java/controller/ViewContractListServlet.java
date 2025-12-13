@@ -56,7 +56,15 @@ public class ViewContractListServlet extends HttpServlet {
         String sortOrder = request.getParameter("sortOrder");
         //page hiện tại lấy về từ jsp
         String indexPage = request.getParameter("page");
-
+        String createByRaw = request.getParameter("createBy");
+        int createById = 0;
+        try {
+            if (createByRaw != null && !createByRaw.isEmpty()) {
+                createById = Integer.parseInt(createByRaw);
+            }
+        } catch (NumberFormatException e) {
+            createById = 0;
+        }
         if (indexPage == null) {
             indexPage = "1";
         }
@@ -66,7 +74,6 @@ public class ViewContractListServlet extends HttpServlet {
         if (sortOrder == null) {
             sortOrder = "ASC";
         }
-
         try {
             int pageIndex = Integer.parseInt(indexPage);
             //set 2 record trên 1 trang
@@ -74,14 +81,14 @@ public class ViewContractListServlet extends HttpServlet {
             ContractDAO dao = new ContractDAO();
 
             // TÍNH TỔNG SỐ RECORDS
-            int totalRecords = dao.countAllContracts(search);
+            int totalRecords = dao.countAllContracts(search,createById);
 
             //totalRecords và pageSize đều là int => khi chia lấy thương,ví dụ 23:5= 4,6 thì thương nó sẽ lấy là kiểu int (cắt bỏ phần thập phân phía sau)
             //=> totalPages là 4 + 1= 5
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
-            List<Contract> list = dao.getAllActiveContracts(search, pageIndex, pageSize, sortBy, sortOrder);
-           UserDAO userDao = new UserDAO();
+            List<Contract> list = dao.getAllActiveContracts(search,createById, pageIndex, pageSize, sortBy, sortOrder);
+            UserDAO userDao = new UserDAO();
             List<Users> lstManagerSaleStaff = userDao.getAllManagerSaleStaff();
             // Gửi dữ liệu sang JSP
             request.setAttribute("lstManagerSaleStaff", lstManagerSaleStaff);
@@ -90,10 +97,10 @@ public class ViewContractListServlet extends HttpServlet {
             request.setAttribute("currentPage", pageIndex);
 
             // Giữ lại trạng thái Filter
+            request.setAttribute("creatorValue", createById);
             request.setAttribute("searchValue", search);
             request.setAttribute("sortBy", sortBy);
             request.setAttribute("sortOrder", sortOrder);
-
 
             request.getRequestDispatcher(URL_CONTRACT_LIST_DIRECTION).forward(request, response);
 

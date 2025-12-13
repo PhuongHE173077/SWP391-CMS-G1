@@ -14,7 +14,7 @@ import model.*;
 public class ContractDAO extends DBContext {
     // HÀM LẤY LIST CONTRACTS CỦA STAFF
 
-    public List<Contract> getAllActiveContracts(String keyword, int pageIndex, int pageSize, String sortBy,
+    public List<Contract> getAllActiveContracts(String keyword, int createById, int pageIndex, int pageSize, String sortBy,
             String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
@@ -24,7 +24,12 @@ public class ContractDAO extends DBContext {
                 + "left join _user u1 on c.user_id = u1.id "
                 + "left join _user u2 on c.createBy = u2.id where c.isDelete= 0 ";
         // THAM SỐ FILTER TRUYỀN VÀO
-
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (u1.displayName like ? or u2.displayName like ?)";
+        }
+        if (createById > 0) {
+            sql += " AND c.createBy = ?";
+        }
         // SORT
         // default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id ASC";
@@ -57,7 +62,9 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");
             }
-
+            if (createById > 0) {
+                ps.setInt(index++, createById);
+            }
             ps.setInt(index++, pageSize);
             ps.setInt(index++, offset);
             ResultSet rs = ps.executeQuery();
@@ -86,15 +93,18 @@ public class ContractDAO extends DBContext {
     }
 
     // HÀM ĐẾM TỔNG SỐ CONTRACTS => ĐỂ PHÂN TRANG
-
-    public int countAllContracts(String keyword) {
+    public int countAllContracts(String keyword, int createById) {
 
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
+                + "LEFT JOIN _user u2 on c.createBy = u2.id "
                 + "where c.isDelete= 0 ";
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += " AND (c.content LIKE ? OR u1.displayname LIKE ?) ";
+            sql += " AND (u1.displayname LIKE ? OR u2.displayname LIKE ?) ";
+        }
+        if (createById > 0) {
+            sql += " AND c.createBy = ?";
         }
 
         try {
@@ -105,7 +115,9 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, "%" + keyword + "%");
                 ps.setString(index++, "%" + keyword + "%");
             }
-
+            if (createById > 0) {
+                ps.setInt(index++, createById);
+            }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -118,7 +130,7 @@ public class ContractDAO extends DBContext {
 
     public static void main(String[] args) {
         ContractDAO dao = new ContractDAO();
-        int total = dao.countAllContracts("");
+        int total = dao.countAllContracts("", 7);
         System.out.println(total);
     }
 
@@ -450,8 +462,9 @@ public class ContractDAO extends DBContext {
         // Tạo placeholders cho IN clause
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < contractIds.size(); i++) {
-            if (i > 0)
+            if (i > 0) {
                 placeholders.append(",");
+            }
             placeholders.append("?");
         }
 
@@ -560,11 +573,11 @@ public class ContractDAO extends DBContext {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new String[] {
-                            rs.getString("displayname"),
-                            rs.getString("email"),
-                            rs.getString("phone"),
-                            rs.getString("address")
+                    return new String[]{
+                        rs.getString("displayname"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
                     };
                 }
             }
