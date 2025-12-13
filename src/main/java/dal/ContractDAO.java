@@ -31,23 +31,28 @@ public class ContractDAO extends DBContext {
         //SORT
         //default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id ASC";
+        String orderCondition = "";
         if (sortBy != null && !sortBy.isEmpty()) {
-            String orderCondition = "";
-            if (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) {
+            if((sortOrder != null && sortOrder.equalsIgnoreCase("ASC"))){
                 orderCondition = "ASC";
             }
-            switch (sortBy) {
-                case "customer":
-                    listSort = " ORDER BY u1.displayname " + orderCondition;
-                    break;
-                case "content":
-                    listSort = " ORDER BY c.content " + orderCondition;
-                    break;
-                case "id":
-                    listSort = " ORDER BY c.id " + orderCondition;
-                    break;
+            else{
+                orderCondition = "DESC";
             }
-        } 
+        }
+
+        switch (sortBy) {
+            case "customer":
+                listSort = " ORDER BY u1.displayname " + orderCondition;
+                break;
+            case "content":
+                listSort = " ORDER BY c.content " + orderCondition;
+                break;
+            case "id":
+                listSort = " ORDER BY c.id " + orderCondition;
+                break;
+        }
+
         sql += listSort;
         sql += " LIMIT ? OFFSET ?";
         try {
