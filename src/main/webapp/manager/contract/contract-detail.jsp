@@ -57,7 +57,7 @@
                     <label class="col-sm-2 col-form-label fw-bold text-secondary">Status</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control fw-bold ${c.isDelete ? 'text-danger' : 'text-success'}" 
-                               value="${c.isDelete ? 'Inactive' : 'Active'}" readonly>
+                               value="${c.isDelete ? 'Inactive' : 'ctive'}" readonly>
                     </div>
                 </div>
             </div>
@@ -130,7 +130,8 @@
                         <ul class="pagination">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                 <a class="page-link" href="contract-detail?id=${c.id}&page=${currentPage - 1}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">
-                                    <i class="fas fa-chevron-left"></i>
+<!--                                    <i class="fas fa-chevron-left"></i>-->
+Previous
                                 </a>
                             </li>
 
@@ -142,7 +143,8 @@
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
                                 <a class="page-link" href="contract-detail?id=${c.id}&page=${currentPage + 1}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">
-                                    <i class="fas fa-chevron-right"></i>
+                                    <!--<i class="fas fa-chevron-right"></i>-->
+                                    Next
                                 </a>
                             </li>
                         </ul>
