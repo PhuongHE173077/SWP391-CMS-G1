@@ -29,9 +29,6 @@ public class ContractDAO extends DBContext {
         // default khi hiện list là order by user Id
         String listSort = " ORDER BY c.id ASC";
         String orderCondition = "";
-        if (status != null && !status.isEmpty()) {
-            sql += " AND c.isDelete = ? ";
-        }
         // SORT
         // default khi hiện list là order by user Id
         if (sortBy != null && !sortBy.isEmpty()) {
@@ -45,9 +42,6 @@ public class ContractDAO extends DBContext {
         switch (sortBy) {
             case "customer":
                 listSort = " ORDER BY u1.displayname " + orderCondition;
-                break;
-            case "content":
-                listSort = " ORDER BY c.content " + orderCondition;
                 break;
             case "id":
                 listSort = " ORDER BY c.id " + orderCondition;
