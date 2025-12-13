@@ -498,16 +498,13 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-   // Hàm lấy Manager (2) và Sale Staff (3) dùng JOIN
+
     public List<Users> getAllManagerSaleStaff() {
         List<Users> list = new ArrayList<>();
-        
-        // SQL: Join bảng _user với bảng roles để lấy luôn tên role
         String sql = "SELECT u.*, r.name AS role_name "
-                   + "FROM _user u "
-                   + "INNER JOIN roles r ON u.role_id = r.id "
-                   + "WHERE u.role_id IN (2, 3) AND u.active = 1";
-        
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE u.role_id IN (2, 3) AND u.active = 1";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -519,17 +516,11 @@ public class UserDAO extends DBContext {
                 u.setPhone(rs.getString("phone"));
                 u.setAddress(rs.getString("address"));
                 u.setActive(rs.getBoolean("active"));
-                
-                // --- MAP ROLE (Lấy từ bảng Roles join sang) ---
+
                 Roles r = new Roles();
                 r.setId(rs.getInt("role_id"));
-                
-                // Lấy tên role từ cột alias "role_name" trong câu SQL
-                // Không cần if/else check ID nữa, DB trả về gì hiển thị cái đó
-                r.setName(rs.getString("role_name")); 
-                
+                r.setName(rs.getString("role_name"));
                 u.setRoles(r);
-                
                 list.add(u);
             }
         } catch (SQLException e) {
