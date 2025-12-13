@@ -228,10 +228,10 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, "%" + keyword + "%");
             }
             if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(index++, startDate + " 00:00:00"); // Ép kiểu về Timestamp
+                ps.setString(index++, startDate ); // Ép kiểu về Timestamp
             }
             if (endDate != null && !endDate.isEmpty()) {
-                ps.setString(index++, endDate + " 23:59:59");
+                ps.setString(index++, endDate);
             }
 
             ps.setInt(index++, pageSize);
