@@ -76,6 +76,7 @@ public class EditDevice extends HttpServlet {
             request.setAttribute("device", divice);
             request.getRequestDispatcher("manager/device/UpdateDevice.jsp").forward(request, response);
         } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
     }
 
@@ -93,7 +94,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
    
     request.setCharacterEncoding("UTF-8"); 
 
-    String idStr = request.getParameter("id");
+    String idDevice = request.getParameter("id");
     String name = request.getParameter("name");
     String category_id = request.getParameter("category_id");
     String image = request.getParameter("image");
@@ -109,12 +110,11 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     boolean success = false;
     
     try {
-        if (idStr == null || idStr.isEmpty()) {
+        if (idDevice == null || idDevice.isEmpty()) {
             throw new NumberFormatException("ID thiết bị không hợp lệ.");
         }
-        int id = Integer.parseInt(idStr);
-        device.setId(id);
-        
+        int id = Integer.parseInt(idDevice);
+        device.setId(id);      
         device.setDescription(description);
         device.setImage(image);
         device.setName(name);
@@ -129,14 +129,12 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
               
     } catch (NumberFormatException e) {
         message = "Lỗi: ID thiết bị không hợp lệ. Vui lòng kiểm tra lại.";
-        success = false;
-        
+        success = false;       
     } 
     
     request.setAttribute("device", device);
     request.setAttribute("message", message);
     request.setAttribute("success", success);
-
     request.getRequestDispatcher("/manager/device/UpdateDevice.jsp").forward(request, response);
 }
     /**

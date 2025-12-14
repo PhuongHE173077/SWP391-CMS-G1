@@ -62,8 +62,6 @@ public class ViewListDevice extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-
         String categoryIdStr = request.getParameter("category_id");
         int selectedCategoryId = 0;
 
@@ -74,41 +72,37 @@ public class ViewListDevice extends HttpServlet {
             }
         }
 
-
         String textSearch = request.getParameter("textSearch");
         if (textSearch == null) {
-            textSearch = ""; 
+            textSearch = "";
         }
 
-        String indexPage = request.getParameter("page");
+        String page = request.getParameter("indexPage");
         int PageSize = 7;
-        int Page = 1;
+        int indexPage = 1;
 
-        if (indexPage != null && !indexPage.isEmpty()) {
+        if (page != null && !page.isEmpty()) {
             try {
-                Page = Integer.parseInt(indexPage);
+                indexPage = Integer.parseInt(page);
             } catch (NumberFormatException ignored) {
             }
         }
-
         DeviceDAO devDao = new DeviceDAO();
-
         int count = devDao.getTotalFilteredDevice(selectedCategoryId, textSearch);
 
-        int maxPage = count/PageSize;
-        if(count % PageSize != 0){
+        int maxPage = count / PageSize;
+        if (count % PageSize != 0) {
             ++maxPage;
         }
-        
 
-        if (Page > maxPage && maxPage > 0) {
-            Page = maxPage;
+        if (indexPage > maxPage && maxPage > 0) {
+            indexPage = maxPage;
         }
-        if (Page < 1 && maxPage > 0) {
-            Page = 1;
+        if (indexPage < 1 && maxPage > 0) {
+            indexPage = 1;
         }
 
-        List<Device> devicePart = devDao.getFilteredDevicesWithPaging(Page, PageSize, selectedCategoryId, textSearch);
+        List<Device> devicePart = devDao.getFilteredDevicesWithPaging(indexPage, PageSize, selectedCategoryId, textSearch);
 
         CategoryDAO cateDao = new CategoryDAO();
         List<DeviceCategory> dc = cateDao.getAllCategory();
@@ -116,7 +110,7 @@ public class ViewListDevice extends HttpServlet {
         request.setAttribute("deviceCategory", dc);
         request.setAttribute("devices", devicePart);
 
-        request.setAttribute("crPage", Page);
+        request.setAttribute("crPage", indexPage);
         request.setAttribute("maxp", maxPage);
         request.setAttribute("selectedCategoryId", selectedCategoryId);
         request.setAttribute("currentSearchText", textSearch);
