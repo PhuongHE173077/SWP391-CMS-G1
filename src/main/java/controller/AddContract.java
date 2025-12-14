@@ -137,7 +137,7 @@ public class AddContract extends HttpServlet {
                 }
             }
 
-            // Generate PDF and upload to Cloudinary
+            // Generate PDF and upload to Cloudinary 
             String pdfUrl = null;
             try {
                 // Lấy thông tin khách hàng
