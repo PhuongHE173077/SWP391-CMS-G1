@@ -60,7 +60,7 @@ public class DeactivateContractServlet extends HttpServlet {
                 sortBy = "id";
             }
             if (sortOrder == null) {
-                sortOrder = "DESC";
+                sortOrder = "ASC";
             }
 
             // 5. Xây dựng URL Redirect
