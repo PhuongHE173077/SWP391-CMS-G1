@@ -57,7 +57,7 @@
                     <label class="col-sm-2 col-form-label fw-bold text-secondary">Status</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control fw-bold ${c.isDelete ? 'text-danger' : 'text-success'}" 
-                               value="${c.isDelete ? 'Inactive' : 'ctive'}" readonly>
+                               value="${c.isDelete ? 'Inactive' : 'Active'}" readonly>
                     </div>
                 </div>
             </div>
