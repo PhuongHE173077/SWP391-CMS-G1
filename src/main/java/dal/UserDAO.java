@@ -499,6 +499,36 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public List<Users> getAllManagerSaleStaff() {
+        List<Users> list = new ArrayList<>();
+        String sql = "SELECT u.*, r.name AS role_name "
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE u.role_id IN (2, 3) AND u.active = 1";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users u = new Users();
+                u.setId(rs.getInt("id"));
+                u.setDisplayname(rs.getString("displayname"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAddress(rs.getString("address"));
+                u.setActive(rs.getBoolean("active"));
+
+                Roles r = new Roles();
+                r.setId(rs.getInt("role_id"));
+                r.setName(rs.getString("role_name"));
+                u.setRoles(r);
+                list.add(u);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
         Users user = u.login("vana@example.com", "hashedpass1");

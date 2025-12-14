@@ -14,53 +14,77 @@
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contracts</h2>
+            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contract Management</h2>
             <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
                 <i class="fas fa-plus me-2"></i>Create New Contract
             </a>
         </div>
 
         <c:if test="${not empty msg}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                ${msg} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="fas fa-check-circle me-2"></i>${msg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" " aria-label="Close"></button>
             </div>
         </c:if>
 
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>${error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+
+
         <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3"> 
+                <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Filter & Sort</h5>
+            </div>     
             <div class="card-body">
                 <form action="contract-list" method="get">
-
-                    <div class="d-flex gap-3 mb-3 bg-light p-2 rounded">
-                        <div class="d-flex align-items-center gap-2">
+                    <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">           
+                        <div class="col-md-6 d-flex align-items-center gap-3">                            
                             <span class="fw-bold text-dark">Sort:</span>
-                            <label><input type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}> ID</label>
-                            <label><input type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}> Content</label>
-                            <label><input type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}> Customer</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}>
+                                <label class="form-check-label">ID</label> 
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
+                                <label class="form-check-label">Customer</label> 
+                            </div>
                         </div>
-                        <div class="vr"></div>
-                        <div class="d-flex align-items-center gap-2">
+
+                        <div class="col-md-6 d-flex align-items-center gap-3">                   
                             <span class="fw-bold text-dark">Order:</span>
-                            <label><input type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}> Ascending</label>
-                            <label><input type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}> Descending</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
+                                <label class="form-check-label">Ascending</label> 
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
+                                <label class="form-check-label">Descending</label> 
+                            </div>
                         </div>
                     </div>
 
                     <div class="row g-3">
-                        <div class="col-md-2">
-                            <select name="status" class="form-select">
-                                <option value="">All Status</option>
-                                <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
-                                <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
+                        <div class="col-md-3">
+                            <select name="createBy" class="form-select">
+                                <option value="">All Creator</option>
+                                <c:forEach items="${lstManagerSaleStaff}" var="lst"> 
+                                    <option value="${lst.id}" ${creatorValue == lst.id ? 'selected' : ''}>(${lst.roles.name})-${lst.displayname}</option>
+                                </c:forEach>
                             </select>
                         </div>
-
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search content or customer name..." value="${searchValue}">
+                                <input type="text" name="search" class="form-control" placeholder="Search by customer name..." value="${searchValue}">
                             </div>
                         </div>
-                        <div class="col-md-2 d-flex gap-2">
+                        <div class="col-md-3 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">Search</button>
                             <a href="contract-list" class="btn btn-outline-secondary w-100">Reset Filter</a>
                         </div>
@@ -73,22 +97,21 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered align-middle mb-0">
-                        <thead class="table-light"  >
+                        <thead class="table-light">
                             <tr>
-                                <th class="ps-3 text-center">ID</th>
-                                <th class="text-center">Content</th>
-                                <th class="text-center" style="width: 150px">Customer Name</th>
-                                <th class="text-center" style="width: 150px">URL Contract</th>
-                                <th class="text-center" style="width: 100px">Create By</th>
-                                <th class="text-center" style="width: 100px">Status</th>
-                                <th class="text-center" style="width: 200px;">Action</th>
+                                <th class="text-center">ID</th>
+                                <th class="py-3 text-center" style="width: 150px">Customer Name</th>
+                                <th class="py-3 text-center" style="width: 150px">URL Contract</th>
+                                <th class="py-3 text-center" style="width: 100px">Create By</th>
+                                <th class="py-3 text-center" style="width: 100px">Status</th>
+                                <!--chỉ lấy những contract có status là active-->
+                                <th class="py-3 text-center" style="width: 250px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${contractList}" var="c">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">${c.id}</td>
-                                    <td><span class="fw-bold text-dark">${c.content}</span></td>
+                                    <td class="fw-bold text-secondary text-center" style="width: 60px;">${c.id}</td>
                                     <td class="text-primary text-center">${c.user.displayname}</td>
 
                                     <td class="text-center">
@@ -98,12 +121,12 @@
                                             <c:if test="${empty c.urlContract}">-</c:if>
                                         </td>
                                         <td class="text-center">
-                                            ${c.createBy.displayname}
-                                        </td>
+                                        ${c.createBy.displayname}
+                                    </td>
 
-                                        <td class="text-center">
-                                        <c:if test="${c.isDelete}"><span class="badge bg-success">Active</span></c:if>
-                                        <c:if test="${!c.isDelete}"><span class="badge bg-secondary">Inactive</span></c:if>
+                                    <td class="text-center">
+                                        <c:if test="${!c.isDelete}"><span class="badge bg-success">Active</span></c:if>
+                                        <c:if test="${c.isDelete}"><span class="badge bg-secondary">Inactive</span></c:if>
                                         </td>
 
                                         <td class="text-center">
@@ -111,18 +134,15 @@
                                                 <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
                                             <a href="update-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
 
-                                            <form action="change-contract-status" method="post" style="display: inline;">
+                                            <form action="deactivate-contract" method="post" style="display: inline;">
                                                 <input type="hidden" name="id" value="${c.id}">
-                                                <input type="hidden" name="status" value="${c.isDelete ? '0' : '1'}">
                                                 <input type="hidden" name="page" value="${currentPage}">
                                                 <input type="hidden" name="search" value="${searchValue}">
-                                                <input type="hidden" name="statusFilter" value="${statusValue}">
-
-                                                <c:if test="${c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
-                                                </c:if>
+                                                <input type="hidden" name="sortBy" value="${sortBy}">     
+                                                <input type="hidden" name="sortOrder" value="${sortOrder}"> 
+                                                <input type="hidden" name="createBy" value="${creatorValue}"> 
                                                 <c:if test="${!c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success fw-bold" onclick="return confirm('Are you sure to Activate this contract?')">Activate</button>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
                                                 </c:if>
                                             </form>
                                         </div>
@@ -144,24 +164,25 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination m-0">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+                                <a class="page-link" href="contract-list?page=${currentPage - 1}&search=${searchValue}&createBy=${creatorValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
                             </li>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+                                    <a class="page-link" href="contract-list?page=${i}&search=${searchValue}&createBy=${creatorValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                                <a class="page-link" href="contract-list?page=${currentPage + 1}&search=${searchValue}&createBy=${creatorValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
                             </li>
                         </ul>
                     </nav>
+
                 </c:if>
             </div>
         </div>
     </div>
 </div>
 </body>
-<jsp:include page="../../admin/adminFooter.jsp" />
+<jsp:include page="../managerFooter.jsp" />
