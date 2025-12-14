@@ -111,7 +111,7 @@
                         <tbody>
                             <c:forEach items="${contractList}" var="c">
                                 <tr>
-                                    <td class="fw-bold text-secondary text-center">${c.id}</td>
+                                    <td class="fw-bold text-secondary text-center" style="width: 60px;">${c.id}</td>
                                     <td class="text-primary text-center">${c.user.displayname}</td>
 
                                     <td class="text-center">
