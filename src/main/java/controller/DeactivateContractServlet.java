@@ -47,6 +47,7 @@ public class DeactivateContractServlet extends HttpServlet {
             String search = request.getParameter("search");
              String sortBy = request.getParameter("sortBy");
             String sortOrder = request.getParameter("sortOrder");
+            String createBy = request.getParameter("createBy");
 
             // Xử lý null (đề phòng)
             if (page == null) {
