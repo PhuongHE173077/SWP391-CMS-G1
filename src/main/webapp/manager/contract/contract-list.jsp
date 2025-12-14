@@ -70,7 +70,7 @@
                     </div>
 
                     <div class="row g-3">
-                         <div class="col-md-3">
+                        <div class="col-md-3">
                             <select name="createBy" class="form-select">
                                 <option value="">All Creator</option>
                                 <c:forEach items="${lstManagerSaleStaff}" var="lst"> 
@@ -139,8 +139,9 @@
                                                 <input type="hidden" name="status" value="1">
                                                 <input type="hidden" name="page" value="${currentPage}">
                                                 <input type="hidden" name="search" value="${searchValue}">
-                                                
-
+                                                <input type="hidden" name="sortBy" value="${sortBy}">     
+                                                <input type="hidden" name="sortOrder" value="${sortOrder}"> 
+                                                <input type="hidden" name="createBy" value="${creatorValue}"> 
                                                 <c:if test="${!c.isDelete}">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
                                                 </c:if>
