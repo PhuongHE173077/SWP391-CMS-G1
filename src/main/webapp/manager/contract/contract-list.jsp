@@ -132,7 +132,7 @@
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-2">
                                                 <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
-                                            <a href="edit-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
+                                            <a href="update-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
 
                                             <form action="deactivate-contract" method="post" style="display: inline;">
                                                 <input type="hidden" name="id" value="${c.id}">

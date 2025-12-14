@@ -587,4 +587,138 @@ public class ContractDAO extends DBContext {
         return null;
     }
 
+    // Lấy contract với created_at để kiểm tra điều kiện 6 ngày
+    public Contract getContractWithCreatedAt(int contractId) {
+        String sql = "SELECT c.*, c.created_at, "
+                + "u1.id as customer_id, u1.displayname AS customer_name, u1.phone as customer_phone, "
+                + "u2.displayname AS saleStaff_name "
+                + "FROM contract c "
+                + "LEFT JOIN _user u1 ON c.user_id = u1.id "
+                + "LEFT JOIN _user u2 ON c.createBy = u2.id "
+                + "WHERE c.id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Contract c = new Contract();
+                    c.setId(rs.getInt("id"));
+                    c.setContent(rs.getString("content"));
+                    c.setUrlContract(rs.getString("url_contract"));
+                    c.setIsDelete(rs.getBoolean("isDelete"));
+
+                    // Set created_at
+                    java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
+                    if (timestamp != null) {
+                        c.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
+                    }
+
+                    Users customer = new Users();
+                    customer.setId(rs.getInt("customer_id"));
+                    customer.setDisplayname(rs.getString("customer_name"));
+                    customer.setPhone(rs.getString("customer_phone"));
+                    c.setUser(customer);
+
+                    Users saleStaff = new Users();
+                    saleStaff.setId(rs.getInt("createBy"));
+                    saleStaff.setDisplayname(rs.getString("saleStaff_name"));
+                    c.setCreateBy(saleStaff);
+
+                    return c;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getContractWithCreatedAt: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Xóa contract item theo ID
+    public boolean deleteContractItem(int contractItemId) {
+        // Lấy sub_device_id trước khi xóa để restore isDelete
+        String getSql = "SELECT sub_devicel_id FROM contract_item WHERE id = ?";
+        int subDeviceId = -1;
+        try (PreparedStatement ps = connection.prepareStatement(getSql)) {
+            ps.setInt(1, contractItemId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    subDeviceId = rs.getInt("sub_devicel_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Xóa contract item
+        String deleteSql = "DELETE FROM contract_item WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+            ps.setInt(1, contractItemId);
+            boolean deleted = ps.executeUpdate() > 0;
+
+            // Restore sub_device isDelete = false
+            if (deleted && subDeviceId > 0) {
+                updateSubDeviceIsDelete(subDeviceId, false);
+            }
+            return deleted;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Lấy tất cả contract items của một contract (không phân trang)
+    public List<ContractItem> getAllItemsByContractId(int contractId) {
+        List<ContractItem> list = new ArrayList<>();
+        String sql = "SELECT ci.*, sd.seri_id, sd.id as sub_device_id, d.name as device_name, d.id as device_id, d.image as device_image, d.maintenance_time as maintenance_time "
+                + "FROM contract_item ci "
+                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                + "INNER JOIN device d ON sd.device_id = d.id "
+                + "WHERE ci.contract_id = ? "
+                + "ORDER BY ci.id ASC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ContractItem item = new ContractItem();
+                    item.setId(rs.getInt("id"));
+                    item.setStartAt(rs.getTimestamp("startAt"));
+                    item.setEndDate(rs.getTimestamp("endDate"));
+
+                    SubDevice sd = new SubDevice();
+                    sd.setId(rs.getInt("sub_device_id"));
+                    sd.setSeriId(rs.getString("seri_id"));
+
+                    Device d = new Device();
+                    d.setId(rs.getInt("device_id"));
+                    d.setName(rs.getString("device_name"));
+                    d.setImage(rs.getString("device_image"));
+                    d.setMaintenanceTime(String.valueOf(rs.getInt("maintenance_time")));
+                    sd.setDevice(d);
+
+                    item.setSubDevice(sd);
+                    list.add(item);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Cập nhật nội dung contract
+    public boolean updateContractContent(int contractId, String content) {
+        String sql = "UPDATE contract SET content = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, content);
+            ps.setInt(2, contractId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
