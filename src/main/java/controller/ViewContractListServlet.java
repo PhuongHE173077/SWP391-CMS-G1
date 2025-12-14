@@ -52,12 +52,19 @@ public class ViewContractListServlet extends HttpServlet {
 
         // Lấy tham số Filter/Sort từ JSP
         String search = request.getParameter("search");
-        String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
         //page hiện tại lấy về từ jsp
         String indexPage = request.getParameter("page");
-
+        String createByRaw = request.getParameter("createBy");
+        int createById = 0;
+        try {
+            if (createByRaw != null && !createByRaw.isEmpty()) {
+                createById = Integer.parseInt(createByRaw);
+            }
+        } catch (NumberFormatException e) {
+            createById = 0;
+        }
         if (indexPage == null) {
             indexPage = "1";
         }
@@ -65,32 +72,33 @@ public class ViewContractListServlet extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null) {
-            sortOrder = "DESC";
+            sortOrder = "ASC";
         }
-
         try {
             int pageIndex = Integer.parseInt(indexPage);
             //set 2 record trên 1 trang
-            int pageSize = 2;
+            int pageSize = 5;
             ContractDAO dao = new ContractDAO();
 
-            // Lấy ID của người đang đăng nhập
-            int currentStaffId = user.getId();
-
             // TÍNH TỔNG SỐ RECORDS
-            int totalRecords = dao.countContractsByStaff(currentStaffId,search, status);
-            int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
-            
-            List<Contract> list = dao.getContractsByStaff(currentStaffId, search, status, pageIndex, pageSize, sortBy, sortOrder);
+            int totalRecords = dao.countAllContracts(search,createById);
 
+            //totalRecords và pageSize đều là int => khi chia lấy thương,ví dụ 23:5= 4,6 thì thương nó sẽ lấy là kiểu int (cắt bỏ phần thập phân phía sau)
+            //=> totalPages là 4 + 1= 5
+            int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
+
+            List<Contract> list = dao.getAllActiveContracts(search,createById, pageIndex, pageSize, sortBy, sortOrder);
+            UserDAO userDao = new UserDAO();
+            List<Users> lstManagerSaleStaff = userDao.getAllManagerSaleStaff();
             // Gửi dữ liệu sang JSP
+            request.setAttribute("lstManagerSaleStaff", lstManagerSaleStaff);
             request.setAttribute("contractList", list);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("currentPage", pageIndex);
 
             // Giữ lại trạng thái Filter
+            request.setAttribute("creatorValue", createById);
             request.setAttribute("searchValue", search);
-            request.setAttribute("statusValue", status);
             request.setAttribute("sortBy", sortBy);
             request.setAttribute("sortOrder", sortOrder);
 
