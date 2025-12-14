@@ -17,6 +17,20 @@
                         height: 90vh;
                     }
 
+                    #pageLoadingOverlay {
+                        position: fixed;
+                        inset: 0;
+                        background: rgba(255, 255, 255, 0.75);
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10000;
+                    }
+
+                    #pageLoadingOverlay.show {
+                        display: flex;
+                    }
+
                     .product-img {
                         width: 60px;
                         height: 60px;
@@ -81,6 +95,12 @@
 
 
             <body class="bg-light py-4 position-relative">
+                <div id="pageLoadingOverlay" aria-hidden="true">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status" aria-label="Loading"></div>
+                        <div class="mt-2 fw-medium">Đang tạo hợp đồng...</div>
+                    </div>
+                </div>
                 <div class="position-absolute d-flex justify-content-between align-items-center bg-white"
                     style="top: 10px; left: 10px;">
                     <div class="d-flex align-items-center gap-2">
@@ -187,7 +207,8 @@
 
                                     <!-- Submit Button -->
                                     <div class="mt-auto">
-                                        <button type="button" id="submit-button" class="btn btn-primary w-100">Tạo hợp đồng</button>
+                                        <button type="button" id="submit-button" class="btn btn-primary w-100">Tạo hợp
+                                            đồng</button>
                                     </div>
                                 </div>
                             </div>

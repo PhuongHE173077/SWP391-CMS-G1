@@ -36,7 +36,7 @@ function searchUser(query) {
     fetch("/search-user?keyword=" + encodeURIComponent(query))
         .then(res => res.json())
         .then(data => {
-            console.log(data);
+           
             renderUserResult(data);
         })
         .catch(err => console.error("Search user error:", err));
@@ -100,12 +100,10 @@ function searchSubDevice(query) {
         .catch(err => console.error("Search subdevice error:", err));
 }
 
-// Render SubDevice Search Results
 function renderSubDeviceResult(subDevices) {
     const list = document.getElementById("subDeviceResult");
     list.innerHTML = "";
 
-    // Lọc bỏ những sản phẩm đã được thêm vào danh sách
     const filteredSubDevices = subDevices?.filter(subDevice =>
         !selectedSubDevices.find(d => d.seriId === subDevice.seriId)
     ) || [];
@@ -223,9 +221,30 @@ function clearUser() {
     phoneSpan.textContent = "";
 }
 
+function setSubmitLoading(isLoading) {
+    const overlay = document.getElementById("pageLoadingOverlay");
+    const submitBtn = document.getElementById("submit-button");
+
+    if (overlay) {
+        overlay.classList.toggle("show", !!isLoading);
+        overlay.setAttribute("aria-hidden", (!isLoading).toString());
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = !!isLoading;
+        if (isLoading) {
+            submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+            submitBtn.textContent = "Đang tạo...";
+        } else {
+            const original = submitBtn.dataset.originalText;
+            if (original) submitBtn.textContent = original;
+        }
+    }
+}
+
 
 function submitContract() {
-    
+
     if (!selectedUserId) {
         alert("Vui lòng chọn khách hàng");
         return;
@@ -248,6 +267,7 @@ function submitContract() {
         subDevices: selectedSubDevices
     };
 
+    setSubmitLoading(true);
     fetch("/AddContract", {
         method: "POST",
         headers: {
@@ -259,7 +279,7 @@ function submitContract() {
         .then(data => {
             if (data.success) {
                 alert(data.message);
-               
+
                 clearUser();
                 selectedSubDevices = [];
                 document.querySelector(".table tbody").innerHTML = "";
@@ -272,18 +292,21 @@ function submitContract() {
         .catch(err => {
             console.error("Error creating contract:", err);
             alert("Có lỗi xảy ra khi tạo hợp đồng");
+        })
+        .finally(() => {
+            setSubmitLoading(false);
         });
 }
 
 
 document.addEventListener("DOMContentLoaded", function () {
-   
+
     const clearUserBtn = document.querySelector(".btn-link.text-danger");
     if (clearUserBtn) {
         clearUserBtn.addEventListener("click", clearUser);
     }
 
-    
+
     const submitBtn = document.querySelector("#submit-button");
     if (submitBtn) {
         submitBtn.addEventListener("click", submitContract);
