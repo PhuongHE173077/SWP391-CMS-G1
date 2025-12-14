@@ -30,7 +30,6 @@ public class DeactivateContractServlet extends HttpServlet {
         try {
             // 1. Lấy dữ liệu ID và Status cần update
             int id = Integer.parseInt(request.getParameter("id"));
-            int status = Integer.parseInt(request.getParameter("status"));  
 
             // 2. Gọi DAO để thực hiện update xuống DB
             ContractDAO dao = new ContractDAO();
@@ -38,16 +37,16 @@ public class DeactivateContractServlet extends HttpServlet {
 
             // 3. Gửi thông báo thành công qua Session (Flash Message)
             HttpSession session = request.getSession();
-            if (status == 1) {
-                session.setAttribute("msg", "Deactivated contract successfully!");
-            }
+            session.setAttribute("msg", "Deactivated contract successfully!");
+
             // 4. Lấy lại các tham số Filter/Sort cũ để Redirect về đúng ngữ cảnh
             // (Nếu không làm bước này, sau khi update nó sẽ nhảy về trang 1 và mất hết filter)
             String page = request.getParameter("page");
             String search = request.getParameter("search");
-             String sortBy = request.getParameter("sortBy");
+            String sortBy = request.getParameter("sortBy");
             String sortOrder = request.getParameter("sortOrder");
-            String createBy = request.getParameter("createBy");
+            String createByRaw = request.getParameter("createBy");
+            int createBy = 0;
 
             // Xử lý null (đề phòng)
             if (page == null) {
@@ -56,12 +55,21 @@ public class DeactivateContractServlet extends HttpServlet {
             if (search == null) {
                 search = "";
             }
-            
+
             if (sortBy == null) {
                 sortBy = "id";
             }
             if (sortOrder == null) {
                 sortOrder = "ASC";
+            }
+            if (createByRaw == null) {
+                createBy = 0;
+            }
+            try {
+                createBy = Integer.parseInt(createByRaw);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Error when parse createBy: " + e.getMessage());
             }
 
             // 5. Xây dựng URL Redirect
@@ -70,6 +78,7 @@ public class DeactivateContractServlet extends HttpServlet {
                     + "page=" + page
                     + "&sortBy=" + sortBy
                     + "&sortOrder=" + sortOrder
+                    + "&createBy=" + createBy
                     + "&search=" + URLEncoder.encode(search, StandardCharsets.UTF_8);
 
             // Chuyển hướng
