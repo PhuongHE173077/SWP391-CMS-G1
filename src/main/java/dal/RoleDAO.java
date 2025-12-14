@@ -19,7 +19,7 @@ public class RoleDAO extends DBContext {
 
     public List<Roles> getAllRoleses() {
         List<Roles> roleses = new ArrayList<>();
-        String query = "SELECT * FROM roles";
+        String query = "SELECT * FROM roles as r where r.id != 1";
         try (PreparedStatement ps = connection.prepareStatement(query);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -74,7 +74,8 @@ public class RoleDAO extends DBContext {
         }
         return permissions;
     }
-// active/deactive role
+
+    // active/deactive role
     public void changeRoleStatus(int id, int status) {
         String query = "UPDATE roles SET status = ? WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -127,10 +128,31 @@ public class RoleDAO extends DBContext {
             addPermission(roleId, router);
         }
     }
+
+    public List<List<String>> getAllRolePermissionsMap(List<Roles> roles) {
+        List<List<String>> permissionList = new ArrayList<>();
+        for (Roles role : roles) {
+            List<String> routers = new ArrayList<>();
+            String query = "SELECT router FROM role_permission WHERE role_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setInt(1, role.getId());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        routers.add(rs.getString("router"));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            permissionList.add(routers);
+        }
+        return permissionList;
+    }
+
     public static void main(String[] args) {
         RoleDAO dao = new RoleDAO();
         List<Roles> roles = dao.getAllRoleses();
-        for(Roles role: roles){
+        for (Roles role : roles) {
             System.out.println(role);
         }
     }

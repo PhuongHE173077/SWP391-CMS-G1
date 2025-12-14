@@ -333,6 +333,13 @@
                                     <span class="nav-text">Quản lý Role</span>
                                 </a>
                             </li>
+                            
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/role-permission" class="nav-link">
+                                    <i class="fas fa-key"></i>
+                                    <span class="nav-text">Phân quyền</span>
+                                </a>
+                            </li>
                         </ul>
 
                         <div class="menu-title">Hệ thống</div>
