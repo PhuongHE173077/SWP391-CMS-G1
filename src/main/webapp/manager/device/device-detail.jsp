@@ -79,16 +79,10 @@
                     <!-- Hình ảnh thiết bị -->
                     <div class="col-md-4 mb-4">
                         <div class="device-image-container">
-                            <c:choose>
-                                <c:when test="${not empty device.image}">
-                                    <img src="${device.image}" alt="${device.name}" class="device-image" 
-                                         onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
-                                </c:when>
-                                <c:otherwise>
-                                    <img src="https://via.placeholder.com/400x300?text=No+Image" 
-                                         alt="No Image" class="device-image">
-                                </c:otherwise>
-                            </c:choose>
+                                <img src="${not empty device.image ? device.image : 'https://sudospaces.com/phonglien-vn/2025/07/df36f4bc988f11d1489e-large.jpg'}" 
+                                 alt="${device.name}" 
+                                 class="device-image" 
+                                 onerror="this.src='https://sudospaces.com/phonglien-vn/2025/07/df36f4bc988f11d1489e-large.jpg'">
                         </div>
                     </div>
                     
