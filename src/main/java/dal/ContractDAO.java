@@ -87,7 +87,7 @@ public class ContractDAO extends DBContext {
                 lst.add(c);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error getting active contracts: " + e.getMessage());
         }
         return lst;
     }
@@ -228,7 +228,7 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, "%" + keyword + "%");
             }
             if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(index++, startDate ); 
+                ps.setString(index++, startDate);
             }
             if (endDate != null && !endDate.isEmpty()) {
                 ps.setString(index++, endDate);
