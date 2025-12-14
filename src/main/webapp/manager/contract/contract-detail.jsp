@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <jsp:include page="../../admin/adminLayout.jsp">
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <jsp:include page="../managerLayout.jsp">
     <jsp:param name="pageTitle" value="Contract Detail" />
 </jsp:include>
 
@@ -159,4 +159,4 @@ Previous
         </div>
     </div>
 </body>
-<jsp:include page="../../admin/adminFooter.jsp" />
+<jsp:include page="../managerFooter.jsp" />
