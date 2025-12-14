@@ -5,73 +5,83 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dal.RoleDAO;
+import dal.RolePermissionDAO;
+import model.RolePermission;
+import model.Roles;
+import model.RouterGroup;
+import utils.RouterDefault;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "UpdateRolePermission", urlPatterns = {"/UpdateRolePermission"})
+@WebServlet(name = "UpdateRolePermission", urlPatterns = { "/UpdateRolePermission" })
 public class UpdateRolePermission extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UpdateRolePermission</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UpdateRolePermission at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    private RoleDAO roleDAO = new RoleDAO();
+    private RolePermissionDAO rolePermissionDAO = new RolePermissionDAO();
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       request.getRequestDispatcher("admin/role/updateRolePermission.jsp").forward(request, response);
+        List<Roles> listRoles = roleDAO.getAllRoleses();
+        List<RouterGroup> routerGroups = RouterDefault.getRouterGroups();
+        List<RolePermission> rolePermissions = rolePermissionDAO.getRolePermission();
+
+        request.setAttribute("listRoles", listRoles);
+        request.setAttribute("routerGroups", routerGroups);
+        request.setAttribute("rolePermissions", rolePermissions);
+
+        request.getRequestDispatcher("admin/role/updateRolePermission.jsp").forward(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         request.getRequestDispatcher("amdmin/role/updateRolePermission.jsp").forward(request, response);
+        List<Roles> listRoles = roleDAO.getAllRoleses();
+        List<RouterGroup> routerGroups = RouterDefault.getRouterGroups();
+
+        rolePermissionDAO.deleteAllRolePermissions();
+
+        for (Roles role : listRoles) {
+            for (RouterGroup group : routerGroups) {
+                for (model.Routers router : group.getRouterses()) {
+                    String paramName = "perm_" + role.getId() + "_" + router.getRouter();
+                    String paramValue = request.getParameter(paramName);
+                    if (paramValue != null && paramValue.equals("on")) {
+                        rolePermissionDAO.addRolePermission(role.getId(), router.getRouter());
+                    }
+                }
+            }
+        }
+
+        request.setAttribute("message", "Cập nhật quyền thành công!");
+        response.sendRedirect("role-permission");
     }
 
     /**

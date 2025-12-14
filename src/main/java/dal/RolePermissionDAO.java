@@ -34,12 +34,32 @@ public class RolePermissionDAO extends DBContext {
                 role.setStatus(rs.getBoolean("status"));
                 rp.setRoles(role);
 
-                    rolePermissions.add(rp);
+                rolePermissions.add(rp);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return rolePermissions;
+    }
+
+    public void deleteAllRolePermissions() {
+        String query = "DELETE FROM role_permission";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addRolePermission(int roleId, String router) {
+        String query = "INSERT INTO role_permission (role_id, router) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, roleId);
+            ps.setString(2, router);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
