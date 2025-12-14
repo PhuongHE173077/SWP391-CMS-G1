@@ -136,7 +136,6 @@
 
                                             <form action="deactivate-contract" method="post" style="display: inline;">
                                                 <input type="hidden" name="id" value="${c.id}">
-                                                <input type="hidden" name="status" value="1">
                                                 <input type="hidden" name="page" value="${currentPage}">
                                                 <input type="hidden" name="search" value="${searchValue}">
                                                 <input type="hidden" name="sortBy" value="${sortBy}">     
