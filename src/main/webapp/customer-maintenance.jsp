@@ -149,7 +149,10 @@
                                         <c:otherwise>
                                             <span class="badge bg-secondary">${r.status}</span>
                                         </c:otherwise>
-
-
                                     </c:choose>
                                 </td>
+                                <td class="text-center">
+                                        <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
