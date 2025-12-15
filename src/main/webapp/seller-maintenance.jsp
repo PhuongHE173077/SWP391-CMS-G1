@@ -121,7 +121,7 @@
                                 <th class="text-center">Req ID</th>
                                 <th class="py-3">Customer Name</th>
                                 <th class="py-3">Device Name</th>
-                                <th class="py-3">Serial Number</th>
+                                <th class="py-3">Device Serial Number</th>
                                 <th class="py-3" style="width: 25%;">Content</th>
                                 <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
@@ -145,7 +145,7 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
+                                        <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy"/>
                                     </td>
                                     <td class="text-center">
                                         <c:choose>

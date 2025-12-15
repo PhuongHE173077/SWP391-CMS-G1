@@ -81,7 +81,7 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
         request.setAttribute("sortOrder", sortOrder);
 
         // 6. Forward về giao diện Customer
-        request.getRequestDispatcher("customer/maintenance/customer-maintenance.jsp").forward(request, response);
+        request.getRequestDispatcher("/customer-maintenance.jsp").forward(request, response);
     } 
  
 }
