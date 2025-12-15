@@ -76,7 +76,7 @@ public class SearchUser extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         UserDAO dao = new UserDAO();
-        List<Users> users = dao.searchUsersByKeyword(keyword);
+        List<Users> users = dao.searchUsersByPhone(keyword,10);
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(OffsetDateTime.class,

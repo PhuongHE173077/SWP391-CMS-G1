@@ -29,17 +29,30 @@ public class RouterDefault {
     private static void initDefaultRouters() {
 
         // Manage Role
-        addRouterGroup("Quản lý role", Arrays.asList(
-                new Routers("Xem role", "/ViewRole"),
-                new Routers("Xem chi tiết role", "/RoleDetail"),
-                 new Routers("Update role", "/EditRole")
+//        addRouterGroup("Quản lý role", Arrays.asList(
+//                new Routers("Xem role", "/ViewRole"),
+//                new Routers("Xem chi tiết role", "/RoleDetail"),
+//                 new Routers("Update role", "/EditRole")
+//        ));
+        addRouterGroup("Quản lý danh mục thiết bị", Arrays.asList(
+                new Routers("Xem danh mục", "/ViewListCategory"),
+                new Routers("Thêm danh mục", "/AddCategory"),
+                new Routers("Update thiết bị", "/UpdateCategory")
         ));
         
         // Manage device
         addRouterGroup("Quản lý thiết bị", Arrays.asList(
-                new Routers("Xem thiết bị", "/ViewDevice"),
-                new Routers("Xem chi tiết thiết bị", "/DeviceDetail"),
+                new Routers("Xem thiết bị", "/ViewListDevice"),
+                new Routers("Thêm danh mục", "/AddDevice"),
+                new Routers("Xem chi tiết thiết bị", "/ViewDetailDevice"),
                 new Routers("Update thiết bị", "/EditDevice")
+        ));
+        
+        addRouterGroup("Quản lý Hợp đồng", Arrays.asList(
+                new Routers("Xem Hợp đồng", "/contract-list"),
+                new Routers("Tạo hợp đồng", "/AddContract"),
+                new Routers("Xem chi tiết Hợp đồng", "/contract-detail"),
+                new Routers("Update Hợp đồng", "/update-contact")
         ));
 
     }

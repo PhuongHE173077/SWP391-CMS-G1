@@ -102,8 +102,8 @@ public class UserDAO extends DBContext {
     }
 
     public boolean insertUser(Users user) {
-        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id,created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, user.getDisplayname());
             ps.setString(2, user.getEmail());
@@ -494,6 +494,77 @@ public class UserDAO extends DBContext {
             }
         } catch (SQLException e) {
             System.out.println("Error searching users: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public List<Users> searchUsersByPhone(String keyword, int pageSize) {
+        List<Users> list = new ArrayList<>();
+        String sql = "SELECT u.*, r.name as role_name "
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE ( u.phone LIKE ?) "
+                + "AND u.active = 1 AND u.role_id != 1 "
+                + "LIMIT ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setInt(2, pageSize);
+            
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Roles role = new Roles();
+                role.setId(rs.getInt("role_id"));
+                role.setName(rs.getString("role_name"));
+                Users user = new Users();
+                user.setId(rs.getInt("id"));
+                user.setDisplayname(rs.getString("displayname"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setPhone(rs.getString("phone"));
+                user.setActive(rs.getBoolean("active"));
+                user.setAddress(rs.getString("address"));
+                user.setGender(rs.getBoolean("gender"));
+                user.setRoles(role);
+
+                list.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching users: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Users> getAllManagerSaleStaff() {
+        List<Users> list = new ArrayList<>();
+        String sql = "SELECT u.*, r.name AS role_name "
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE u.role_id IN (2, 3) AND u.active = 1";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users u = new Users();
+                u.setId(rs.getInt("id"));
+                u.setDisplayname(rs.getString("displayname"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAddress(rs.getString("address"));
+                u.setActive(rs.getBoolean("active"));
+
+                Roles r = new Roles();
+                r.setId(rs.getInt("role_id"));
+                r.setName(rs.getString("role_name"));
+                u.setRoles(r);
+                list.add(u);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;

@@ -36,7 +36,7 @@ function searchUser(query) {
     fetch("/search-user?keyword=" + encodeURIComponent(query))
         .then(res => res.json())
         .then(data => {
-           
+
             renderUserResult(data);
         })
         .catch(err => console.error("Search user error:", err));
@@ -77,8 +77,11 @@ function selectUser(u) {
     nameSpan.textContent = u.displayname;
     nameSpan.classList.remove('warning');
 
-    const phoneSpan = document.querySelector(".phone")
+    const phoneSpan = document.querySelector(".phone");
     phoneSpan.textContent = u.phone;
+    
+    const addressSpan = document.querySelector(".adress");
+    addressSpan.textContent = u.address;
 
     document.getElementById("userResult").innerHTML = "";
 
@@ -299,6 +302,17 @@ function submitContract() {
 }
 
 
+// Function to select customer (called from popover after creating new customer)
+function selectCustomer(customer) {
+    if (customer && customer.id) {
+        selectUser({
+            id: customer.id,
+            displayname: customer.name,
+            phone: customer.phone
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
 
     const clearUserBtn = document.querySelector(".btn-link.text-danger");
@@ -310,5 +324,88 @@ document.addEventListener("DOMContentLoaded", function () {
     const submitBtn = document.querySelector("#submit-button");
     if (submitBtn) {
         submitBtn.addEventListener("click", submitContract);
+    }
+
+    // Initialize popover for adding new customer
+    const addCustomerBtn = document.getElementById('addCustomerBtn');
+    if (addCustomerBtn) {
+        const popoverContentEl = document.getElementById('createCustomerPopover');
+        const popoverContent = popoverContentEl ? popoverContentEl.innerHTML : '';
+
+        const popover = new bootstrap.Popover(addCustomerBtn, {
+            content: popoverContent,
+            sanitize: false,
+            trigger: 'click'
+        });
+
+
+        addCustomerBtn.addEventListener('shown.bs.popover', function () {
+            const popoverEl = document.querySelector('.popover');
+            if (!popoverEl) return;
+
+            const cancelBtn = popoverEl.querySelector('#cancelCreateCustomer');
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function () {
+                    popover.hide();
+                });
+            }
+
+            const submitBtn = popoverEl.querySelector('#submitCreateCustomer');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const name = popoverEl.querySelector('#newCustomerName').value.trim();
+                    const phone = popoverEl.querySelector('#newCustomerPhone').value.trim();
+                    const email = popoverEl.querySelector('#newCustomerEmail').value.trim();
+                    const address = popoverEl.querySelector('#newCustomerAddress').value.trim();
+
+                    if (!name || !phone || !email) {
+                        alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                        return;
+                    }
+
+
+                    fetch('/AddCustomer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            phone: phone,
+                            email: email,
+                            address: address
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Tạo tài khoản thành công!');
+                                popover.hide();
+                                // Optionally auto-select the new customer
+                                if (data.customer) {
+                                    selectCustomer(data.customer);
+                                }
+                            } else {
+                                alert(data.message || 'Có lỗi xảy ra!');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra khi tạo tài khoản!');
+                        });
+                });
+            }
+        });
+
+        // Close popover when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!addCustomerBtn.contains(e.target) && !document.querySelector('.popover')?.contains(e.target)) {
+                popover.hide();
+            }
+        });
     }
 });
