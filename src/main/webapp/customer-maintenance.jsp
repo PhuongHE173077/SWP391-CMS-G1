@@ -40,12 +40,12 @@
                     <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
                         <div class="col-md-7 d-flex align-items-center gap-3 flex-wrap">
                             <span class="fw-bold text-dark">Sort by:</span>
-                            
+
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}>
                                 <label class="form-check-label">ID</label>
                             </div>
-                            
+
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
                                 <label class="form-check-label">Created At</label>
@@ -55,7 +55,7 @@
                                 <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
                                 <label class="form-check-label">Content</label>
                             </div>
-                            
+
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
                                 <label class="form-check-label">Status</label>
@@ -90,7 +90,7 @@
                         <div class="col-md-2">
                             <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
                         </div>
-                        
+
                         <div class="col-md-5">
                             <div class="input-group">
                                 <input type="text" name="search" class="form-control" placeholder="Search device name, content..." value="${searchValue}">
@@ -98,7 +98,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mt-2">
                         <div class="col-12 text-end">
                             <a href="customer-maintenance" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
@@ -139,15 +139,7 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <%
-                                            model.MaintanceRequest item = (model.MaintanceRequest) pageContext.getAttribute("r");
-                                            java.util.Date dateDisplay = null;
-                                            if (item.getCreatedAt() != null) {
-                                                dateDisplay = java.util.Date.from(item.getCreatedAt().toInstant());
-                                            }
-                                            pageContext.setAttribute("dateDisplay", dateDisplay);
-                                        %>
-                                        <fmt:formatDate value="${dateDisplay}" pattern="dd-MMM-yyyy HH:mm"/>
+                                        <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy"/>
                                     </td>
                                     <td class="text-center">
                                         <c:choose>
@@ -211,7 +203,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 <%--<jsp:include page="../../managerFooter.jsp" />--%>
