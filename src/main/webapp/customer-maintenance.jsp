@@ -8,7 +8,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%-- <jsp:include page="../../customerLayout.jsp"> --%>
-    <%-- <jsp:param name="pageTitle" value="My Maintenance Requests" /> --%>
+<%-- <jsp:param name="pageTitle" value="My Maintenance Requests" /> --%>
 <%-- </jsp:include> --%>
 
 <head>
@@ -16,7 +16,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
- <body class="bg-light">
+<body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
             <a class="navbar-brand" href="#">Customer Portal</a>
@@ -43,45 +43,56 @@
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
                                 <label class="form-check-label">Date Sent</label>
                             </div>                
-                                <div class="form-check form-check-inline">
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
                                 <label class="form-check-label">Status</label>
                             </div>
-                                <div class="form-check form-check-inline">
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
                                 <label class="form-check-label">Content</label>
                             </div>
                         </div>
-                                <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
-                                <label class="form-check-label">Content</label>
-                            </div>
-                        </div>
-                                
-                                <div class="col-md-4 d-flex align-items-center gap-3 justify-content-end">
-                            <span class="fw-bold text-dark">Order:</span>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label>
-                            </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
+                            <label class="form-check-label">Content</label>
                         </div>
                     </div>
-                      <div class="row g-3">
-                        <div class="col-md-3">
-                            <select name="status" class="form-select">
-                                <option value="">All Status</option>
-                                <c:forEach items="${statusList}" var="s">
-                                    <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
-                                </c:forEach>
-                            </select>
+
+                    <div class="col-md-4 d-flex align-items-center gap-3 justify-content-end">
+                        <span class="fw-bold text-dark">Order:</span>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
+                            <label class="form-check-label">Descending</label>
                         </div>
-                          <div class="col-md-2">
-                            <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
+                            <label class="form-check-label">Ascending</label>
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
-                        </div>
+                    </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <c:forEach items="${statusList}" var="s">
+                            <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search device name, serial number..." value="${searchValue}">
+                        <button type="submit" class="btn btn-primary fw-bold">Search</button>
+                    </div>
+                </div>
+               
+            </div>
+            </form>
+        </div>
+    </div>

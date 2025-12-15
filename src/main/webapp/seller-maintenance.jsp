@@ -105,7 +105,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-12 text-end">
-                            <a href="maintenance-list" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
+                            <a href="seller-maintenance" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
                         </div>
                     </div>
                 </form>
