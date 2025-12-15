@@ -158,3 +158,10 @@
                                     </td>
                                     </tr>
                             </c:forEach>
+                                    <c:if test="${empty requestList}">
+                                <tr>
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        You haven't sent any maintenance requests yet.
+                                    </td>
+                                </tr>
+                            </c:if>
