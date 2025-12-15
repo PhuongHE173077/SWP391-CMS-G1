@@ -120,3 +120,7 @@
                             <c:forEach items="${requestList}" var="r">
                                 <tr>
                                     <td class="fw-bold text-center text-secondary">#${r.id}</td>
+                                      <td class="fw-bold text-dark">
+                                        ${r.contractItem.subDevice.device.name}
+                                    </td>
+<!--                                
