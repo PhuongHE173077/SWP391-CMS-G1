@@ -143,7 +143,10 @@
                                             <c:when test="${r.status == 'Completed'}">
                                                 <span class="badge bg-success">Completed</span>
                                             </c:when>
-                                           
+                                             <c:when test="${r.status == 'Rejected'}">
+                                                <span class="badge bg-danger">Rejected</span>
+                                            </c:when>
+
                                        
                                         </c:choose>
                                     </td>
