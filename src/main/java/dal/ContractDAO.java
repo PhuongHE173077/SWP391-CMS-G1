@@ -319,7 +319,7 @@ public class ContractDAO extends DBContext {
                 + "WHERE c.isDelete = 1 ";
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += "AND (c.id LIKE ? OR c.content LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
+            sql += "AND (c.id LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
         }
 
         if (sortBy != null && !sortBy.isEmpty()) {
@@ -334,7 +334,6 @@ public class ContractDAO extends DBContext {
             int paramIndex = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
-                ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);

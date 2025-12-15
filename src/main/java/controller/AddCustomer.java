@@ -4,31 +4,20 @@
  */
 package controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializer;
-
-import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Users;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "SearchUser", urlPatterns = { "/search-user" })
-public class SearchUser extends HttpServlet {
+@WebServlet(name = "AddCustomer", urlPatterns = { "/AddCustomer" })
+public class AddCustomer extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,10 +36,10 @@ public class SearchUser extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SearchUser</title>");
+            out.println("<title>Servlet AddCustomer</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SearchUser at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddCustomer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -69,24 +58,7 @@ public class SearchUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String keyword = request.getParameter("keyword");
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        UserDAO dao = new UserDAO();
-        List<Users> users = dao.searchUsersByPhone(keyword,10);
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(OffsetDateTime.class,
-                        (JsonSerializer<OffsetDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-                .registerTypeAdapter(LocalDateTime.class,
-                        (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-                .create();
-
-        String json = gson.toJson(users);
-        response.getWriter().write(json);
+        processRequest(request, response);
     }
 
     /**

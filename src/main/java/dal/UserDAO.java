@@ -498,6 +498,47 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+    
+    public List<Users> searchUsersByPhone(String keyword, int pageSize) {
+        List<Users> list = new ArrayList<>();
+        String sql = "SELECT u.*, r.name as role_name "
+                + "FROM _user u "
+                + "INNER JOIN roles r ON u.role_id = r.id "
+                + "WHERE ( u.phone LIKE ?) "
+                + "AND u.active = 1 AND u.role_id != 1 "
+                + "LIMIT ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setInt(2, pageSize);
+            
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Roles role = new Roles();
+                role.setId(rs.getInt("role_id"));
+                role.setName(rs.getString("role_name"));
+                Users user = new Users();
+                user.setId(rs.getInt("id"));
+                user.setDisplayname(rs.getString("displayname"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setPhone(rs.getString("phone"));
+                user.setActive(rs.getBoolean("active"));
+                user.setAddress(rs.getString("address"));
+                user.setGender(rs.getBoolean("gender"));
+                user.setRoles(role);
+
+                list.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching users: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     public List<Users> getAllManagerSaleStaff() {
         List<Users> list = new ArrayList<>();
