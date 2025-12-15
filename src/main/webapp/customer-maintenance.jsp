@@ -30,6 +30,7 @@
                 <i class="fas fa-plus-circle me-2"></i>New Request
             </a>
         </div>
+
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
                 <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-search me-2"></i>Search & Filter</h5>
@@ -42,153 +43,159 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
                                 <label class="form-check-label">Date Sent</label>
-                            </div>                
+                            </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
                                 <label class="form-check-label">Status</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
                                 <label class="form-check-label">Content</label>
                             </div>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
-                            <label class="form-check-label">Content</label>
+
+                        <div class="col-md-4 d-flex align-items-center gap-3 justify-content-end">
+                            <span class="fw-bold text-dark">Order:</span>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
+                                <label class="form-check-label">Newest</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
+                                <label class="form-check-label">Oldest</label>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4 d-flex align-items-center gap-3 justify-content-end">
-                        <span class="fw-bold text-dark">Order:</span>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                            <label class="form-check-label">Descending</label>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select name="status" class="form-select">
+                                <option value="">All Status</option>
+                                <c:forEach items="${statusList}" var="s">
+                                    <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
+                                </c:forEach>
+                            </select>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                            <label class="form-check-label">Ascending</label>
+                        <div class="col-md-2">
+                            <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" placeholder="Search device name, serial number..." value="${searchValue}">
+                                <button type="submit" class="btn btn-primary fw-bold">Search</button>
+                            </div>
                         </div>
                     </div>
-            </div>
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <select name="status" class="form-select">
-                        <option value="">All Status</option>
-                        <c:forEach items="${statusList}" var="s">
-                            <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
-                        </c:forEach>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
-                </div>
-                <div class="col-md-2">
-                    <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
-                </div>
-                <div class="col-md-3">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search device name, serial number..." value="${searchValue}">
-                        <button type="submit" class="btn btn-primary fw-bold">Search</button>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-12 text-end">
-                        <a href="customer-maintenance" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
-                    </div>
-                </div>
-
-            </div>
-            </form>
-        </div>
-    </div>
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered align-middle mb-0">
-                    <thead class="table-light text-secondary">
-                        <tr>
-                            <th class="text-center">Req ID</th>
-                            <th class="py-3">Device Name</th>
-                            <th class="py-3">Device Serial Number</th>
-                            <th class="py-3" style="width: 30%;">Issue Content</th>
-                            <th class="py-3 text-center">Date Request</th>
-                            <th class="py-3 text-center">Status</th>
-                            <th class="py-3 text-center" style="width: 100px;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${requestList}" var="r">
-                            <tr>
-                                <td class="fw-bold text-center text-secondary">#${r.id}</td>
-                                <td class="fw-bold text-dark">
-                                    ${r.contractItem.subDevice.device.name}
-                                </td>
-                                <td class="text-secondary font-monospace">
-                                    ${r.contractItem.subDevice.seriId}
-                                </td>
-                                <td class="text-muted">
-                                    <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                        ${r.content}
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
-                                </td>
-                                <td class="text-center">
-                                    <c:choose>
-                                        <c:when test="${r.status == 'Pending'}">
-                                            <span class="badge bg-warning text-dark">Pending</span>
-                                        </c:when>
-
-                                        <c:when test="${r.status == 'Completed'}">
-                                            <span class="badge bg-success">Completed</span>
-                                        </c:when>
-                                        <c:when test="${r.status == 'Rejected'}">
-                                            <span class="badge bg-danger">Rejected</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge bg-secondary">${r.status}</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td class="text-center">
-                                    <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
-                                        <i class="fas fa-eye"></i> View
-                                    </a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty requestList}">
-                            <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
-                                    You haven't sent any maintenance requests yet.
-                                </td>
-                            </tr>
-                        </c:if>
-                    </tbody>
-                </table>
+                </form>
             </div>
         </div>
-        <div class="card-footer bg-white d-flex justify-content-center py-3">
-            <c:if test="${totalPages > 0}">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination m-0">
-                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="customer-maintenance?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
-                        </li>
-                        <c:forEach begin="1" end="${totalPages}" var="i">
-                            <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                <a class="page-link" href="customer-maintenance?page=${i}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle mb-0">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="py-3">Device Info</th>
+                                <th class="py-3">Serial Number</th>
+                                <th class="py-3" style="width: 30%;">Issue Content</th>
+                                <th class="py-3 text-center">Date Sent</th>
+                                <th class="py-3 text-center">Status</th>
+                                <th class="py-3 text-center" style="width: 100px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${requestList}" var="r">
+                                <tr>
+                                    <td class="fw-bold text-center text-secondary">#${r.id}</td>
+                                    
+                                    <td class="fw-bold text-dark">
+                                        ${r.contractItem.subDevice.device.name}
+                                    </td>
+                                    
+                                    <td class="text-secondary font-monospace">
+                                        ${r.contractItem.subDevice.seriId}
+                                    </td>
+                                    
+                                    <td class="text-muted">
+                                        <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                            ${r.content}
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <%
+                                            model.MaintanceRequest item = (model.MaintanceRequest) pageContext.getAttribute("r");
+                                            java.util.Date dateDisplay = null;
+                                            if (item.getCreatedAt() != null) {
+                                                dateDisplay = java.util.Date.from(item.getCreatedAt().toInstant());
+                                            }
+                                            pageContext.setAttribute("dateDisplay", dateDisplay);
+                                        %>
+                                        <fmt:formatDate value="${dateDisplay}" pattern="dd-MMM-yyyy"/>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <c:choose>
+                                            <c:when test="${r.status == 'Pending'}">
+                                                <span class="badge bg-warning text-dark">Processing</span>
+                                            </c:when>
+                                            <c:when test="${r.status == 'Completed'}">
+                                                <span class="badge bg-success">Done</span>
+                                            </c:when>
+                                            <c:when test="${r.status == 'Rejected'}">
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge bg-secondary">${r.status}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            
+                            <c:if test="${empty requestList}">
+                                <tr>
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        You haven't sent any maintenance requests yet.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white d-flex justify-content-center py-3">
+                <c:if test="${totalPages > 0}">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination m-0">
+                            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                <a class="page-link" href="customer-maintenance?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
                             </li>
-                        </c:forEach>
-                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="customer-maintenance?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </c:if>
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="customer-maintenance?page=${i}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+                                </li>
+                            </c:forEach>
+                            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                <a class="page-link" href="customer-maintenance?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </c:if>
+            </div>
         </div>
     </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
