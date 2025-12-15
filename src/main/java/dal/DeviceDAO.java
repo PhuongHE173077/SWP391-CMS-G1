@@ -201,29 +201,6 @@ public class DeviceDAO extends DBContext {
         return 0;
     }
 
-    public Device editDevice(Device dev,String categoryId) {
-        String query = "update swp391.device\n"
-                + "set name = ?,\n"
-                + "description = ?,\n"
-                + "image = ?,\n"
-                + "maintenance_time = ?,\n"
-                + "category_id = ?\n"
-                + "where id = ?";
-       try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, dev.getName());
-            ps.setString(2, dev.getDescription());
-            ps.setString(3, dev.getImage());
-            ps.setString(4, dev.getMaintenanceTime());
-            ps.setString(5, categoryId);
-            ps.setInt(6, dev.getId());
-            ps.executeUpdate();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-       return dev;
-    }
-    
     // Lấy danh sách thiết bị đã xóa (isDelete = 1) với phân trang và filter
     public List<Device> getDeletedDevicesWithPaging(int indexPage, int PageSize, int categoryId, String textSearch) {
         List<Device> dev = new ArrayList<>();
