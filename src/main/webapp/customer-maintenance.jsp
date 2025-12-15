@@ -91,7 +91,12 @@
                         <button type="submit" class="btn btn-primary fw-bold">Search</button>
                     </div>
                 </div>
-               
+                <div class="row mt-2">
+                    <div class="col-12 text-end">
+                        <a href="customer-maintenance" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
+                    </div>
+                </div>
+
             </div>
             </form>
         </div>
