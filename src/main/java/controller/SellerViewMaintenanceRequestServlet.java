@@ -22,7 +22,7 @@ import model.Users;
  *
  * @author ADMIN
  */
-@WebServlet(name="SellerViewMaintenanceRequestServlet", urlPatterns={"/maintenance-list"})
+@WebServlet(name="SellerViewMaintenanceRequestServlet", urlPatterns={"/seller-maintenance"})
 public class SellerViewMaintenanceRequestServlet extends HttpServlet {
    
    @Override
@@ -85,6 +85,6 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
         request.setAttribute("sortOrder", sortOrder);
 
         // 5. Forward về JSP
-        request.getRequestDispatcher("manager/maintenance/seller-maintenance.jsp").forward(request, response);
+        request.getRequestDispatcher("/seller-maintenance.jsp").forward(request, response);
     }
 }

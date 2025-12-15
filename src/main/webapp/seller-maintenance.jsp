@@ -7,9 +7,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<jsp:include page="../../managerLayout.jsp">
+<%--<jsp:include page="../../main/webapp/manager/managerLayout.jsp">
     <jsp:param name="pageTitle" value="Maintenance Requests" />
-</jsp:include>
+</jsp:include>--%>
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
@@ -30,7 +30,7 @@
                 <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-filter me-2"></i>Filter & Sort</h5>
             </div>
             <div class="card-body">
-                <form action="maintenance-list" method="get">
+                <form action="seller-maintenance" method="get">
                     <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
                         <div class="col-md-7 d-flex align-items-center gap-3 flex-wrap">
                             <span class="fw-bold text-dark">Sort by:</span>
@@ -114,7 +114,7 @@
                                 <th class="py-3">Customer Name</th>
                                 <th class="py-3">Device Info</th>
                                 <th class="py-3" style="width: 25%;">Content</th>
-                                <th class="py-3 text-center">Date Request</th>
+                                <!--<th class="py-3 text-center">Date Request</th>-->
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 200px;">Action</th>
                             </tr>
@@ -133,9 +133,9 @@
                                             ${r.content}
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        <fmt:formatDate value="${r.created_at}" pattern="dd-MMM-yyyy HH:mm"/>
-                                    </td>
+<!--                                    <td class="text-center">
+                                        <%--<fmt:formatDate value="${r.created_at}" pattern="dd-MMM-yyyy HH:mm"/>--%>
+                                    </td>-->
                                     <td class="text-center">
                                         <c:choose>
                                             <c:when test="${r.status == 'Pending'}">
@@ -197,17 +197,17 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination m-0">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="maintenance-list?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&customerId=${customerIdValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+                                <a class="page-link" href="seller-maintenance?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&customerId=${customerIdValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
                             </li>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="maintenance-list?page=${i}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&customerId=${customerIdValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
+                                    <a class="page-link" href="seller-maintenance?page=${i}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&customerId=${customerIdValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="maintenance-list?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&customerId=${customerIdValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                                <a class="page-link" href="seller-maintenance?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&customerId=${customerIdValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -216,4 +216,4 @@
         </div>
     </div>
 </body>
-<jsp:include page="../../managerFooter.jsp" />
+<%--<jsp:include page="../../managerFooter.jsp" />--%>
