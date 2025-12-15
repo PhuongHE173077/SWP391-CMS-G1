@@ -499,13 +499,17 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public static void main(String[] args) {
-        UserDAO u = new UserDAO();
-        Users user = u.login("vana@example.com", "hashedpass1");
-        if (user != null) {
-            System.out.println("Login success: " + user.getDisplayname());
-        } else {
-            System.out.println("Login failed");
+    public int getCountAllUser() {
+        String query = "SELECT count(*) FROM swp391._user\n"
+                + "where role_id = 4;";
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return 0;
     }
 }

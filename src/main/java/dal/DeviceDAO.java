@@ -10,6 +10,20 @@ import model.DeviceCategory;
 
 public class DeviceDAO extends DBContext {
 
+    public int getCountAllDevice() {
+        String query = "SELECT count(*) FROM swp391.device;";
+
+        try (PreparedStatement ps = connection.prepareStatement(query);ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }                    
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
     public void insertDevice(Device dev) {
 
         String query = " INSERT INTO swp391.device (created_at,description, image, name, maintenance_time,isDelete, category_id) \n"

@@ -12,6 +12,7 @@ import java.util.*;
 import model.*;
 
 public class ContractDAO extends DBContext {
+
     // HÀM LẤY LIST CONTRACTS CỦA STAFF
     public List<Contract> getContractsByStaff(int staffId, String keyword, String status, int pageIndex, int pageSize,
             String sortBy, String sortOrder) {
@@ -287,8 +288,9 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, endDate + " 23:59:59");
             }
             ResultSet rs = ps.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -399,26 +401,26 @@ public class ContractDAO extends DBContext {
         }
         return false;
     }
-    
+
     // Xóa cứng contract (xóa contract và contract_item khỏi database)
     public boolean hardDeleteContract(int contractId) {
         try {
             // Bắt đầu transaction
             connection.setAutoCommit(false);
-            
+
             // 1. Xóa contract_item trước 
             String deleteItemsSql = "DELETE FROM contract_item WHERE contract_id = ?";
             try (PreparedStatement ps = connection.prepareStatement(deleteItemsSql)) {
                 ps.setInt(1, contractId);
                 ps.executeUpdate();
             }
-            
+
             // 2. Xóa contract
             String deleteContractSql = "DELETE FROM contract WHERE id = ?";
             try (PreparedStatement ps = connection.prepareStatement(deleteContractSql)) {
                 ps.setInt(1, contractId);
                 int affected = ps.executeUpdate();
-                
+
                 if (affected > 0) {
                     connection.commit();
                     return true;
@@ -448,14 +450,16 @@ public class ContractDAO extends DBContext {
         if (contractIds == null || contractIds.isEmpty()) {
             return 0;
         }
-        
+
         // Tạo placeholders cho IN clause
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < contractIds.size(); i++) {
-            if (i > 0) placeholders.append(",");
+            if (i > 0) {
+                placeholders.append(",");
+            }
             placeholders.append("?");
         }
-        
+
         String sql = "UPDATE contract SET isDelete = 0 WHERE id IN (" + placeholders.toString() + ")";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (int i = 0; i < contractIds.size(); i++) {
@@ -554,8 +558,6 @@ public class ContractDAO extends DBContext {
         }
         return false;
     }
-    
-    
 
     public String[] getUserInfoById(int userId) {
         String sql = "SELECT displayname, email, phone, address FROM _user WHERE id = ?";
@@ -563,11 +565,11 @@ public class ContractDAO extends DBContext {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new String[] {
-                            rs.getString("displayname"),
-                            rs.getString("email"),
-                            rs.getString("phone"),
-                            rs.getString("address")
+                    return new String[]{
+                        rs.getString("displayname"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
                     };
                 }
             }
@@ -711,4 +713,17 @@ public class ContractDAO extends DBContext {
         return false;
     }
 
+    public int getCountAllContract() {
+        String query = "SELECT count(*) FROM swp391.contract";
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
