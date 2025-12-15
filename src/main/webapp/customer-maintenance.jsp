@@ -139,6 +139,11 @@
                                             <c:when test="${r.status == 'Pending'}">
                                                 <span class="badge bg-warning text-dark">Pending</span>
                                             </c:when>
-                                        
+                                       
+                                            <c:when test="${r.status == 'Completed'}">
+                                                <span class="badge bg-success">Completed</span>
+                                            </c:when>
+                                           
+                                       
                                         </c:choose>
                                     </td>
