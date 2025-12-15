@@ -90,6 +90,19 @@
                     .subdevice-item:hover {
                         background-color: #f8f9fa;
                     }
+
+                    .popover {
+                        max-width: 350px;
+                    }
+
+                    .popover-body .form-label {
+                        font-size: 0.875rem;
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .popover-body .form-control {
+                        font-size: 0.875rem;
+                    }
                 </style>
             </head>
 
@@ -162,8 +175,11 @@
                                             <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
                                             <input type="text" class="form-control" id="searchUser"
                                                 placeholder="Nhập tên, SĐT hoặc email">
-                                            <button class="btn btn-success" type="button"><i
-                                                    class="fas fa-plus"></i></button>
+                                            <button class="btn btn-success" type="button" id="addCustomerBtn"
+                                                data-bs-toggle="popover" data-bs-placement="bottom" data-bs-html="true"
+                                                data-bs-title="Tạo tài khoản khách hàng">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
                                         </div>
                                         <ul id="userResult" class="list-group mt-2"></ul>
 
@@ -216,11 +232,38 @@
                     </div>
                 </div>
 
-                <script
-                    src="${pageContext.request.contextPath}/assets/js/add-contract/add-contract.js?v=<%=System.currentTimeMillis()%>"></script>
+                <!-- Popover Template -->
+                <div id="createCustomerPopover" class="d-none">
+                    <form id="createCustomerForm">
+                        <div class="mb-2">
+                            <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="newCustomerName" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control form-control-sm" id="newCustomerPhone" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control form-control-sm" id="newCustomerEmail" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Địa chỉ</label>
+                            <input type="text" class="form-control form-control-sm" id="newCustomerAddress">
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end mt-3">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                id="cancelCreateCustomer">Hủy</button>
+                            <button type="submit" class="btn btn-primary btn-sm" id="submitCreateCustomer">Tạo</button>
+                        </div>
+                    </form>
+                </div>
+
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
                     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
                     crossorigin="anonymous"></script>
+                <script
+                    src="${pageContext.request.contextPath}/assets/js/add-contract/add-contract.js?v=<%=System.currentTimeMillis()%>"></script>
             </body>
 
             </html>

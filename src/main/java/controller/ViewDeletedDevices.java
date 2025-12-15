@@ -7,7 +7,6 @@ package controller;
 import dal.CategoryDAO;
 import dal.DeviceDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,8 +20,8 @@ import model.DeviceCategory;
  *
  * @author ADMIN
  */
-@WebServlet(name = "ViewListDevice", urlPatterns = {"/ViewListDevice"})
-public class ViewListDevice extends HttpServlet {
+@WebServlet(name = "ViewDeletedDevices", urlPatterns = {"/ViewDeletedDevices"})
+public class ViewDeletedDevices extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,35 +32,10 @@ public class ViewListDevice extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ViewListDevice</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ViewListDevice at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String categoryIdStr = request.getParameter("category_id");
         int selectedCategoryId = 0;
 
@@ -74,35 +48,38 @@ public class ViewListDevice extends HttpServlet {
 
         String textSearch = request.getParameter("textSearch");
         if (textSearch == null) {
-            textSearch = "";
+            textSearch = ""; 
         }
 
-        String page = request.getParameter("indexPage");
+        String indexPage = request.getParameter("page");
         int PageSize = 7;
-        int indexPage = 1;
+        int Page = 1;
 
-        if (page != null && !page.isEmpty()) {
+        if (indexPage != null && !indexPage.isEmpty()) {
             try {
-                indexPage = Integer.parseInt(page);
+                Page = Integer.parseInt(indexPage);
             } catch (NumberFormatException ignored) {
             }
         }
-        DeviceDAO devDao = new DeviceDAO();
-        int count = devDao.getTotalFilteredDevice(selectedCategoryId, textSearch);
 
-        int maxPage = count / PageSize;
-        if (count % PageSize != 0) {
+        DeviceDAO devDao = new DeviceDAO();
+
+        int count = devDao.getTotalDeletedDevices(selectedCategoryId, textSearch);
+
+        int maxPage = count/PageSize;
+        if(count % PageSize != 0){
             ++maxPage;
         }
+        
 
-        if (indexPage > maxPage && maxPage > 0) {
-            indexPage = maxPage;
+        if (Page > maxPage && maxPage > 0) {
+            Page = maxPage;
         }
-        if (indexPage < 1 && maxPage > 0) {
-            indexPage = 1;
+        if (Page < 1 && maxPage > 0) {
+            Page = 1;
         }
 
-        List<Device> devicePart = devDao.getFilteredDevicesWithPaging(indexPage, PageSize, selectedCategoryId, textSearch);
+        List<Device> devicePart = devDao.getDeletedDevicesWithPaging(Page, PageSize, selectedCategoryId, textSearch);
 
         CategoryDAO cateDao = new CategoryDAO();
         List<DeviceCategory> dc = cateDao.getAllCategory();
@@ -110,12 +87,12 @@ public class ViewListDevice extends HttpServlet {
         request.setAttribute("deviceCategory", dc);
         request.setAttribute("devices", devicePart);
 
-        request.setAttribute("crPage", indexPage);
+        request.setAttribute("crPage", Page);
         request.setAttribute("maxp", maxPage);
         request.setAttribute("selectedCategoryId", selectedCategoryId);
         request.setAttribute("currentSearchText", textSearch);
 
-        request.getRequestDispatcher("manager/device/listDevice.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/device/deleted-device-list.jsp").forward(request, response);
     }
 
     /**
@@ -143,3 +120,5 @@ public class ViewListDevice extends HttpServlet {
     }// </editor-fold>
 
 }
+
+

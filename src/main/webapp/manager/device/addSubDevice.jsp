@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<jsp:include page="../admin/adminLayout.jsp">
+<jsp:include page="../managerLayout.jsp">
     <jsp:param name="pageTitle" value="Thêm Sub Device" />
 </jsp:include>
 

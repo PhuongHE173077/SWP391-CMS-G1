@@ -8,7 +8,6 @@
         <title>Cập nhật Thiết bị</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
         <style>
-            /* CSS Tương tự như trang Thêm Mới */
             body {
                 font-family: 'Poppins', sans-serif;
                 margin: 0;
@@ -141,7 +140,6 @@
                 <h1>️ Cập nhật Thiết bị</h1>
             </div>
 
-            <%-- Hiển thị thông báo (thành công/thất bại) --%>
             <c:if test="${not empty requestScope.message}">
                 <div class="message ${requestScope.success ? 'success' : 'error'}">
                     ${requestScope.message}

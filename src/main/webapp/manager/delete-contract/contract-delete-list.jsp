@@ -58,11 +58,7 @@
                                                 ${sortBy=='c.id' || empty sortBy ? 'checked' : '' }>
                                             <label class="form-check-label">ID</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="sortBy" value="c.content"
-                                                ${sortBy=='c.content' ? 'checked' : '' }>
-                                            <label class="form-check-label">Content</label>
-                                        </div>
+                                        
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="sortBy"
                                                 value="u.displayname" ${sortBy=='u.displayname' ? 'checked' : '' }>
