@@ -101,29 +101,33 @@
             </form>
         </div>
     </div>
-                        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle mb-0">
-                        <thead class="table-light text-secondary">
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle mb-0">
+                    <thead class="table-light text-secondary">
+                        <tr>
+                            <th class="text-center">Req ID</th>
+                            <th class="py-3">Device Name</th>
+                            <th class="py-3">Device Serial Number</th>
+                            <th class="py-3" style="width: 30%;">Issue Content</th>
+                            <th class="py-3 text-center">Date Request</th>
+                            <th class="py-3 text-center">Status</th>
+                            <th class="py-3 text-center" style="width: 100px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${requestList}" var="r">
                             <tr>
-                                <th class="text-center">Req ID</th>
-                                <th class="py-3">Device Name</th>
-                                <th class="py-3">Device Serial Number</th>
-                                <th class="py-3" style="width: 30%;">Issue Content</th>
-                                <th class="py-3 text-center">Date Request</th>
-                                <th class="py-3 text-center">Status</th>
-                                <th class="py-3 text-center" style="width: 100px;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${requestList}" var="r">
-                                <tr>
-                                    <td class="fw-bold text-center text-secondary">#${r.id}</td>
-                                      <td class="fw-bold text-dark">
-                                        ${r.contractItem.subDevice.device.name}
-                                    </td>
-                                     <td class="text-secondary font-monospace">
-                                        ${r.contractItem.subDevice.seriId}
-                                    </td>
-<!--                                
+                                <td class="fw-bold text-center text-secondary">#${r.id}</td>
+                                <td class="fw-bold text-dark">
+                                    ${r.contractItem.subDevice.device.name}
+                                </td>
+                                <td class="text-secondary font-monospace">
+                                    ${r.contractItem.subDevice.seriId}
+                                </td>
+                                <td class="text-muted">
+                                    <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                        ${r.content}
+                                    </div>
+                                </td>
