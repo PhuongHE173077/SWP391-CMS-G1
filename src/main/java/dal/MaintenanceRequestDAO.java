@@ -180,5 +180,24 @@ public class MaintenanceRequestDAO extends DBContext {
         }
         return list;
     }
-    
+
+    public List<String> getAllStatuses() {
+        List<String> list = new ArrayList<>();
+        // Chỉ lấy các status khác nhau, loại bỏ trùng lặp
+        String sql = "SELECT DISTINCT status FROM maintenance_request WHERE status IS NOT NULL";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String status = rs.getString("status");
+                if (status != null && !status.isEmpty()) {
+                    list.add(status);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

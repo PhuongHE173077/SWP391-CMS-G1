@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import dal.MaintenanceRequestDAO;
@@ -22,13 +21,13 @@ import model.Users;
  *
  * @author ADMIN
  */
-@WebServlet(name="SellerViewMaintenanceRequestServlet", urlPatterns={"/seller-maintenance"})
+@WebServlet(name = "SellerViewMaintenanceRequestServlet", urlPatterns = {"/seller-maintenance"})
 public class SellerViewMaintenanceRequestServlet extends HttpServlet {
-   
-   @Override
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // 1. Nhận tham số từ Request
         String search = request.getParameter("search");
         String status = request.getParameter("status");
@@ -45,31 +44,41 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
             if (customerIdRaw != null && !customerIdRaw.isEmpty()) {
                 customerId = Integer.parseInt(customerIdRaw);
             }
-        } catch (NumberFormatException e) { customerId = 0; }
+        } catch (NumberFormatException e) {
+            customerId = 0;
+        }
 
-        if (sortBy == null) sortBy = "created_at"; // Mặc định sort theo ngày
-        if (sortOrder == null) sortOrder = "DESC"; // Mới nhất lên đầu
-        
+        if (sortBy == null) {
+            sortBy = "created_at"; // Mặc định sort theo ngày
+        }
+        if (sortOrder == null) {
+            sortOrder = "DESC"; // Mới nhất lên đầu
+        }
         int pageIndex = 1;
         try {
-            if (pageRaw != null) pageIndex = Integer.parseInt(pageRaw);
-        } catch (NumberFormatException e) { pageIndex = 1; }
-        
+            if (pageRaw != null) {
+                pageIndex = Integer.parseInt(pageRaw);
+            }
+        } catch (NumberFormatException e) {
+            pageIndex = 1;
+        }
+
         int pageSize = 5; // Số lượng record trên 1 trang
 
         // 3. Gọi DAO
         MaintenanceRequestDAO mrDao = new MaintenanceRequestDAO();
         UserDAO userDao = new UserDAO(); // Giả sử bạn có UserDAO để lấy danh sách khách hàng
-
+        List<String> statusList = mrDao.getAllStatuses();
         int totalRecords = mrDao.countTotalRequests(search, status, fromDate, toDate, customerId);
         int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
         List<MaintanceRequest> list = mrDao.searchRequests(search, status, fromDate, toDate, customerId, pageIndex, pageSize, sortBy, sortOrder);
-        
+
         // Lấy danh sách Customer để đổ vào Dropdown Filter
         List<Users> customerList = userDao.getAllCustomers(); // Bạn cần viết hàm này trong UserDAO
 
         // 4. Set Attribute gửi sang JSP
+        request.setAttribute("statusList", statusList);  
         request.setAttribute("requestList", list);
         request.setAttribute("customerList", customerList);
         request.setAttribute("totalPages", totalPages);

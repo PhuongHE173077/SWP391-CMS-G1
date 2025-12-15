@@ -77,9 +77,9 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="Pending" ${statusValue == 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Completed" ${statusValue == 'Completed' ? 'selected' : ''}>Completed</option>
-                                <option value="Rejected" ${statusValue == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                <c:forEach items="${statusList}" var="s">
+                                    <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -120,7 +120,8 @@
                             <tr>
                                 <th class="text-center">Req ID</th>
                                 <th class="py-3">Customer Name</th>
-                                <th class="py-3">Device Info</th>
+                                <th class="py-3">Device Name</th>
+                                <th class="py-3">Serial Number</th>
                                 <th class="py-3" style="width: 25%;">Content</th>
                                 <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
@@ -132,9 +133,11 @@
                                 <tr>
                                     <td class="fw-bold text-center">#${r.id}</td>
                                     <td class="fw-bold text-primary">${r.user.displayname}</td>
-                                    <td>
-                                        <div class="fw-bold">${r.contractItem.subDevice.device.name}</div>
-                                        <small class="text-muted">SN: ${r.contractItem.subDevice.seriId}</small>
+                                    <td class="fw-bold text-dark">
+                                        ${r.contractItem.subDevice.device.name}
+                                    </td>
+                                    <td class="text-secondary font-monospace">
+                                        ${r.contractItem.subDevice.seriId}
                                     </td>
                                     <td class="text-muted">
                                         <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
@@ -166,22 +169,9 @@
                                                 View
                                             </a>
 
-                                            <c:if test="${r.status == 'Pending'}">
-                                                <form action="update-request" method="post" style="display:inline;">
-                                                    <input type="hidden" name="id" value="${r.id}">
-                                                    <input type="hidden" name="status" value="Completed">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('Mark as Completed?')">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
-                                                </form>
-                                                <form action="update-request" method="post" style="display:inline;">
-                                                    <input type="hidden" name="id" value="${r.id}">
-                                                    <input type="hidden" name="status" value="Rejected">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Reject this request?')">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </form>
-                                            </c:if>
+                                            <a href="send-reply?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
+                                                <i class="fas fa-paper-plane me-1"></i>Reply
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
