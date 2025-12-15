@@ -82,3 +82,6 @@
                           <div class="col-md-2">
                             <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
                         </div>
+                        <div class="col-md-2">
+                            <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
+                        </div>
