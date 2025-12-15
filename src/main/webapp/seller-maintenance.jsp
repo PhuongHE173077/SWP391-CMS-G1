@@ -3,20 +3,23 @@
     Created on : Dec 15, 2025, 10:46:12 AM
     Author     : ADMIN
 --%>
- <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%--<jsp:include page="../../main/webapp/manager/managerLayout.jsp">
     <jsp:param name="pageTitle" value="Maintenance Requests" />
 </jsp:include>--%>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary fw-bold"><i class="fas fa-tools me-2"></i>Maintenance Request Management</h2>
-            </div>
+        </div>
 
         <c:if test="${not empty msg}">
             <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
@@ -42,11 +45,16 @@
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
                                 <label class="form-check-label">Created At</label>
                             </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
+                                <label class="form-check-label">Content</label>
+                            </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
                                 <label class="form-check-label">Customer Name</label>
                             </div>
-                             <div class="form-check form-check-inline">
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
                                 <label class="form-check-label">Status</label>
                             </div>
@@ -95,11 +103,11 @@
                             </div>
                         </div>
                     </div>
-                     <div class="row mt-2">
+                    <div class="row mt-2">
                         <div class="col-12 text-end">
-                             <a href="maintenance-list" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
+                            <a href="maintenance-list" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
                         </div>
-                     </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -114,7 +122,7 @@
                                 <th class="py-3">Customer Name</th>
                                 <th class="py-3">Device Info</th>
                                 <th class="py-3" style="width: 25%;">Content</th>
-                                <!--<th class="py-3 text-center">Date Request</th>-->
+                                <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 200px;">Action</th>
                             </tr>
@@ -133,9 +141,9 @@
                                             ${r.content}
                                         </div>
                                     </td>
-<!--                                    <td class="text-center">
-                                        <%--<fmt:formatDate value="${r.created_at}" pattern="dd-MMM-yyyy HH:mm"/>--%>
-                                    </td>-->
+                                    <td class="text-center">
+                                        <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
+                                    </td>
                                     <td class="text-center">
                                         <c:choose>
                                             <c:when test="${r.status == 'Pending'}">
@@ -157,7 +165,7 @@
                                             <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
                                                 View
                                             </a>
-                                            
+
                                             <c:if test="${r.status == 'Pending'}">
                                                 <form action="update-request" method="post" style="display:inline;">
                                                     <input type="hidden" name="id" value="${r.id}">
@@ -178,7 +186,7 @@
                                     </td>
                                 </tr>
                             </c:forEach>
-                            
+
                             <c:if test="${empty requestList}">
                                 <tr>
                                     <td colspan="7" class="text-center py-5 text-muted">
