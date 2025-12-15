@@ -16,4 +16,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
- 
+ <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">Customer Portal</a>
+        </div>
+    </nav>
+
+    <div class="container px-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary fw-bold"><i class="fas fa-history me-2"></i>My Maintenance History</h2>
+            <a href="create-request" class="btn btn-success shadow-sm fw-bold">
+                <i class="fas fa-plus-circle me-2"></i>New Request
+            </a>
+        </div>
