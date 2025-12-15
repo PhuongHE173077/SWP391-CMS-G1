@@ -74,13 +74,12 @@ public class DeviceDAO extends DBContext {
                     category.setId(rs.getInt("category_id"));
                     category.setName(rs.getString("category_name"));
                     device.setCategory(category);
-
+                    
                     java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
                     if (timestamp != null) {
                         OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
                         device.setCreatedAt(odt);
                     }
-
                     return device;
                 }
             }
@@ -88,6 +87,29 @@ public class DeviceDAO extends DBContext {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Device editDevice(Device dev, String categoryId) {
+        String query = "update swp391.device\n"
+                + "set name = ?,\n"
+                + "description = ?,\n"
+                + "image = ?,\n"
+                + "maintenance_time = ?,\n"
+                + "category_id = ?\n"
+                + "where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, dev.getName());
+            ps.setString(2, dev.getDescription());
+            ps.setString(3, dev.getImage());
+            ps.setString(4, dev.getMaintenanceTime());
+            ps.setString(5, categoryId);
+            ps.setInt(6, dev.getId());
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dev;
     }
 
     public List<Device> getFilteredDevicesWithPaging(int indexPage, int PageSize, int categoryId, String textSearch) {
@@ -98,7 +120,6 @@ public class DeviceDAO extends DBContext {
 
         List<Object> params = new ArrayList<>();
 
-        // 1. Thêm điều kiện LỌC THEO CATEGORY
         if (categoryId > 0) {
             query += " AND d.category_id = ?";
             params.add(categoryId);
@@ -132,16 +153,15 @@ public class DeviceDAO extends DBContext {
 
                     DeviceCategory dc = new DeviceCategory();
                     String categoryName = rs.getString("category_name");
+                    int categoryID = rs.getInt("category_id");
                     dc.setName(categoryName);
-
+                    dc.setId(categoryID);
                     device.setCategory(dc);
 
                     java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
                     if (timestamp != null) {
                         OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
                         device.setCreatedAt(odt);
-                    } else {
-                        device.setCreatedAt(null);
                     }
                     dev.add(device);
                 }

@@ -85,29 +85,48 @@ public class AddDevice extends HttpServlet {
         String maintenance_time = request.getParameter("maintenance_time");
         String description = request.getParameter("description");
         String categoryId = request.getParameter("category_id");
-        int categoryID = Integer.parseInt(categoryId);
 
         String message = "";
         boolean success = false;
 
-        DeviceDAO dev = new DeviceDAO();
-        Device d = new Device();
-        d.setName(name);
-        d.setImage(image);
-        d.setDescription(description);
-        d.setMaintenanceTime(maintenance_time);
-        DeviceCategory dc = new DeviceCategory();
-        dc.setId(categoryID);
-        d.setCategory(dc);
+        if (name == null
+                || categoryId == null
+                || image == null
+                || maintenance_time == null
+                || description == null) {
 
-        dev.insertDevice(d);
+            message = "Vui lòng nhập đầy đủ thông tin bắt buộc";
+            success = false;
 
-        message = "Cập nhật thiết bị thành công!";
-        success = true;
+        } else {
+            try {
+                int categoryID = Integer.parseInt(categoryId);
+
+                Device d = new Device();
+                d.setName(name);
+                d.setImage(image);
+                d.setDescription(description);
+                d.setMaintenanceTime(maintenance_time);
+
+                DeviceCategory dc = new DeviceCategory();
+                dc.setId(categoryID);
+                d.setCategory(dc);
+
+                new DeviceDAO().insertDevice(d);
+
+                message = "Thêm thiết bị thành công!";
+                success = true;
+
+            } catch (Exception e) {
+                message = "Có lỗi xảy ra khi xử lý dữ liệu";
+                success = false;
+            }
+        }
 
         request.setAttribute("message", message);
         request.setAttribute("success", success);
-        request.getRequestDispatcher("/manager/device/AddDevice.jsp").forward(request, response);
+        request.getRequestDispatcher("/manager/device/AddDevice.jsp")
+                .forward(request, response);
 
     }
 

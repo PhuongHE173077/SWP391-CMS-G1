@@ -3,3 +3,5 @@ target
 nbactions.xml
 nb-configuration.xml
 src/main/java/dal/DBContext.java
+src/main/resources/META-INF/persistence.xml
+src/main/resources/META-INF/persistence.xml

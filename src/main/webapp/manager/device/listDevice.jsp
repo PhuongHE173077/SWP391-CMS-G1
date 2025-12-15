@@ -3,7 +3,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <jsp:include page="../managerLayout.jsp">    
-    <jsp:param name="pageTitle" value="Deleted Contract Management" />
+    <jsp:param name="pageTitle" value="View List Device" />
 </jsp:include>
         <style>
 
@@ -20,7 +20,7 @@
                 margin: 0 auto;
                 padding: 30px;
                 background-color: #fff;
-                border-radius: 8px; /* Bo góc nhẹ */
+                border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
 
@@ -143,22 +143,21 @@
 
             .device-table .action-col {
                 text-align: center;
-                width: 300px; /* Tăng chiều rộng để các nút vừa vặn */
+                width: 300px; 
                 padding: 8px;
             }
 
             .action-col-wrapper {
                 display: flex;
-                justify-content: center; /* Căn giữa các nút */
-                gap: 8px; /* Tăng khoảng cách giữa các nút */
+                justify-content: center; 
+                gap: 8px; 
                 padding: 0;
                 margin: 0;
             }
 
-            /* Đảm bảo style cho cả thẻ <a> và <button> */
             .action-col-wrapper a, .action-col-wrapper button {
-                padding: 6px 10px; /* Giảm nhẹ padding */
-                border: none; /* Bỏ border để trông hiện đại hơn */
+                padding: 6px 10px; 
+                border: none; 
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 13px;
@@ -166,19 +165,17 @@
                 transition: background-color 0.2s, box-shadow 0.2s;
                 white-space: nowrap;
                 text-decoration: none;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Thêm đổ bóng nhẹ */
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
             }
 
-            /* Xem Chi tiết (Info/Màu xám) */
             .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
-                background-color: #f8f9fa; /* Màu xám nhạt */
+                background-color: #f8f9fa; 
                 color: #495057;
             }
             .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
                 background-color: #e2e6ea;
             }
 
-            /* Sửa Sản Phẩm (Warning/Màu vàng) */
             .action-col-wrapper a:nth-child(2), .action-col-wrapper button:nth-child(2) {
                 background-color: #ffc107;
                 color: #343a40;
@@ -187,7 +184,6 @@
                 background-color: #e0a800;
             }
 
-            /* Xóa Sản Phẩm (Danger/Màu đỏ) */
             .action-col-wrapper a:nth-child(3), .action-col-wrapper button:nth-child(3) {
                 background-color: #dc3545;
                 color: #fff;
@@ -196,7 +192,7 @@
                 background-color: #c82333;
             }
             .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
-                background-color: #f8f9fa; /* Màu xám nhạt */
+                background-color: #f8f9fa; 
                 color: #495057;
             }
             .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
@@ -213,7 +209,7 @@
                 padding: 8px 14px;
                 margin-left: 5px;
                 text-decoration: none;
-                color: #007bff; /* Màu chữ mặc định */
+                color: #007bff;
                 background-color: #fff;
                 border: 1px solid #ddd;
                 border-radius: 4px;
@@ -222,16 +218,14 @@
                 transition: background-color 0.2s, color 0.2s, border-color 0.2s;
             }
 
-            /* Kiểu cho trang hiện tại (active) - BÔI XANH Ở ĐÂY */
             .pagination a.active {
                 font-weight: 600;
-                color: #fff; /* Chữ trắng */
-                background-color: #007bff; /* Nền xanh */
+                color: #fff; 
+                background-color: #007bff;
                 border-color: #007bff;
-                cursor: default; /* Thay đổi con trỏ chuột */
+                cursor: default; 
             }
 
-            /* Hover chỉ áp dụng cho các trang KHÔNG phải trang hiện tại */
             .pagination a:hover:not(.active) {
                 background-color: #e9ecef;
                 border-color: #c9c9c9;
@@ -248,7 +242,6 @@
         </style>
     </head>
     <body>
-
         <div class="container">
 
             <div class="header">
@@ -324,10 +317,10 @@
                 <c:forEach begin="1" end="${maxp}" var="i">
                     <c:choose>
                         <c:when test="${crPage == i}">
-                            <a href="ViewListDevice?page=${i}${urlParams}" class="active">${i}</a>
+                            <a href="ViewListDevice?indexPage=${i}${urlParams}" class="active">${i}</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="ViewListDevice?page=${i}${urlParams}">${i}</a>
+                            <a href="ViewListDevice?indexPage=${i}${urlParams}">${i}</a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
