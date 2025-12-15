@@ -14,80 +14,142 @@ import model.*;
  */
 public class MaintenanceRequestDAO extends DBContext{
     
-//      public List<Contract> getMaintenanceRequest(String keyword, String sortBy, String sortOrder, int pageIndex, int pageSize, Integer userId) {
-//        List<MaintanceRequest> lst = new ArrayList<>();
-//        int offset = (pageIndex - 1) * pageSize;
-//
-//        String sql =  "select * from swp391.maintenance_request m";
-// 
-//        // THAM SỐ FILTER TRUYỀN VÀO
-//          if (userId > 0) {
-//            sql += " AND m.user_id = ?";
-//        }
-//        if (keyword != null && !keyword.trim().isEmpty()) {
-//            sql += " AND m.content like ?";
-//        }
-//       
-//        // SORT
-//        // default khi hiện list là order by user Id
-//        String listSort = " ORDER BY m.id ASC";
-//        String orderCondition = "";
-//        // SORT
-//        // default khi hiện list là order by user Id
-//        if (sortBy != null && !sortBy.isEmpty()) {
-//            if ((sortOrder != null && sortOrder.equalsIgnoreCase("ASC"))) {
-//                orderCondition = "ASC";
-//            } else {
-//                orderCondition = "DESC";
-//            }
-//        }
-//
-//        switch (sortBy) {
-//            case "customer":
-//                listSort = " ORDER BY u1.displayname " + orderCondition;
-//                break;
-//            case "id":
-//                listSort = " ORDER BY c.id " + orderCondition;
-//                break;
-//        }
-//
-//        sql += listSort;
-//        sql += " LIMIT ? OFFSET ?";
-//        try {
-//            PreparedStatement ps = connection.prepareStatement(sql);
-//            int index = 1;
-//            if (keyword != null && !keyword.trim().isEmpty()) {
-//                ps.setString(index++, "%" + keyword + "%");
-//                ps.setString(index++, "%" + keyword + "%");
-//            }
-//            if (createById > 0) {
-//                ps.setInt(index++, createById);
-//            }
-//            ps.setInt(index++, pageSize);
-//            ps.setInt(index++, offset);
-//            ResultSet rs = ps.executeQuery();
-//            while (rs.next()) {
-//                Contract c = new Contract();
-//                c.setId(rs.getInt("id"));
-//                c.setContent(rs.getString("content"));
-//                c.setUrlContract(rs.getString("url_contract"));
-//                c.setIsDelete(rs.getBoolean("isDelete"));
-//                // Map Customer Name
-//                Users customer = new Users();
-//                customer.setId(rs.getInt("user_id"));
-//                customer.setDisplayname(rs.getString("customer_name"));
-//                c.setUser(customer);
-//                // Map Creator Name
-//                Users saleStaff = new Users();
-//                saleStaff.setId(rs.getInt("createBy"));
-//                saleStaff.setDisplayname(rs.getString("saleStaff_name"));
-//                c.setCreateBy(saleStaff);
-//                lst.add(c);
-//            }
-//        } catch (SQLException e) {
-//            System.err.println("Error getting active contracts: " + e.getMessage());
-//        }
-//        return lst;
-//    }
-//    
+ // Hàm đếm tổng số records để phân trang
+    public int countTotalRequests(String keyword, String status, String fromDate, String toDate, int customerId) {
+        String sql = "SELECT COUNT(*) FROM maintenance_request mr "
+                   + "JOIN _user u ON mr.user_id = u.id "
+                   + "JOIN contract_item ci ON mr.contact_detail_id = ci.id "
+                   + "JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                   + "JOIN device d ON sd.device_id = d.id "
+                   + "WHERE 1=1 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (mr.id LIKE ? OR u.displayname LIKE ? OR d.name LIKE ? OR sd.seri_id LIKE ? OR mr.content LIKE ?) ";
+        }
+        if (status != null && !status.isEmpty()) {
+            sql += " AND mr.status = ? ";
+        }
+        if (customerId > 0) {
+            sql += " AND mr.user_id = ? ";
+        }
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql += " AND mr.created_at >= ? ";
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql += " AND mr.created_at <= ? "; // Lưu ý: Nếu muốn lấy hết ngày thì nên dùng < (toDate + 1 day) hoặc so sánh DATE()
+        }
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int index = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                for (int i = 0; i < 5; i++) ps.setString(index++, "%" + keyword + "%");
+            }
+            if (status != null && !status.isEmpty()) ps.setString(index++, status);
+            if (customerId > 0) ps.setInt(index++, customerId);
+            if (fromDate != null && !fromDate.isEmpty()) ps.setString(index++, fromDate);
+            if (toDate != null && !toDate.isEmpty()) ps.setString(index++, toDate);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Hàm tìm kiếm và lấy danh sách
+    public List<MaintanceRequest> searchRequests(String keyword, String status, String fromDate, String toDate, 
+                                                 int customerId, int pageIndex, int pageSize, String sortBy, String sortOrder) {
+        List<MaintanceRequest> list = new ArrayList<>();
+        
+        // SQL Join để lấy thông tin chi tiết: Tên khách, Tên máy, Số seri
+        String sql = "SELECT mr.*, u.displayname as customer_name, d.name as device_name, sd.seri_id "
+                   + "FROM maintenance_request mr "
+                   + "JOIN _user u ON mr.user_id = u.id "
+                   + "JOIN contract_item ci ON mr.contact_detail_id = ci.id "
+                   + "JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                   + "JOIN device d ON sd.device_id = d.id "
+                   + "WHERE 1=1 ";
+
+        // --- FILTER ---
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (mr.id LIKE ? OR u.displayname LIKE ? OR d.name LIKE ? OR sd.seri_id LIKE ? OR mr.content LIKE ?) ";
+        }
+        if (status != null && !status.isEmpty()) {
+            sql += " AND mr.status = ? ";
+        }
+        if (customerId > 0) {
+            sql += " AND mr.user_id = ? ";
+        }
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql += " AND mr.created_at >= ? ";
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql += " AND mr.created_at <= ? ";
+        }
+
+        // --- SORT ---
+        String orderByCol = "mr.created_at"; // Mặc định
+        if ("id".equalsIgnoreCase(sortBy)) orderByCol = "mr.id";
+        else if ("customer".equalsIgnoreCase(sortBy)) orderByCol = "u.displayname";
+        else if ("status".equalsIgnoreCase(sortBy)) orderByCol = "mr.status";
+        else if ("content".equalsIgnoreCase(sortBy)) orderByCol = "mr.content";
+
+        String direction = "ASC".equalsIgnoreCase(sortOrder) ? "ASC" : "DESC";
+        sql += " ORDER BY " + orderByCol + " " + direction;
+
+        // --- PAGING ---
+        sql += " LIMIT ? OFFSET ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int index = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                for (int i = 0; i < 5; i++) ps.setString(index++, "%" + keyword + "%");
+            }
+            if (status != null && !status.isEmpty()) ps.setString(index++, status);
+            if (customerId > 0) ps.setInt(index++, customerId);
+            if (fromDate != null && !fromDate.isEmpty()) ps.setString(index++, fromDate + " 00:00:00");
+            if (toDate != null && !toDate.isEmpty()) ps.setString(index++, toDate + " 23:59:59");
+
+            int offset = (pageIndex - 1) * pageSize;
+            ps.setInt(index++, pageSize);
+            ps.setInt(index++, offset);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                MaintanceRequest req = new MaintanceRequest();
+                req.setId(rs.getInt("id"));
+                req.setCreated_at(rs.getTimestamp("created_at"));
+                req.setContent(rs.getString("content"));
+                req.setStatus(rs.getString("status"));
+
+                // Map User (Customer)
+                Users u = new Users();
+                u.setId(rs.getInt("user_id"));
+                u.setDisplayname(rs.getString("customer_name"));
+                req.setUser(u);
+
+                // Map ContractItem -> SubDevice -> Device (Để lấy tên máy và seri)
+                ContractItem ci = new ContractItem();
+                ci.setId(rs.getInt("contact_detail_id"));
+                
+                SubDevice sd = new SubDevice();
+                sd.setSeriId(rs.getString("seri_id"));
+                
+                Device d = new Device();
+                d.setName(rs.getString("device_name"));
+                
+                sd.setDevice(d);
+                ci.setSubDevice(sd);
+                req.setContractItem(ci);
+
+                list.add(req);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
