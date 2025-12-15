@@ -62,6 +62,12 @@
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
+                                <label class="form-check-label">Descending</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
                                 <label class="form-check-label">Ascending</label>
                             </div>
+                        </div>
+                    </div>
                       
