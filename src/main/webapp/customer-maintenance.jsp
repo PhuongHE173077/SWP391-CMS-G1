@@ -134,3 +134,11 @@
                                  <td class="text-center">
                                         <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
                                     </td>
+                                    <td class="text-center">
+                                        <c:choose>
+                                            <c:when test="${r.status == 'Pending'}">
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            </c:when>
+                                        
+                                        </c:choose>
+                                    </td>
