@@ -345,6 +345,20 @@
                                     <span class="nav-text">Quản lý hợp đồng đã xóa</span>
                                 </a>
                             </li>
+                            
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/manager-maintenance" class="nav-link">
+                                    <i class="fas fa-folder"></i>
+                                    <span class="nav-text">Manager quản lí maintenance</span>
+                                </a>
+                            </li>
+                            
+                             <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/user-maintenance" class="nav-link">
+                                    <i class="fas fa-folder"></i>
+                                    <span class="nav-text">Customer quản lí maintenance</span>
+                                </a>
+                            </li>
                         </ul>
 
                         <div class="menu-title">Hệ thống</div>

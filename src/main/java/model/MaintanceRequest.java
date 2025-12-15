@@ -24,7 +24,7 @@ public class MaintanceRequest extends BaseEntity {
     private Users user;
 
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
     @NotNull
     @ManyToOne
@@ -34,7 +34,7 @@ public class MaintanceRequest extends BaseEntity {
     public MaintanceRequest() {
     }
 
-    public MaintanceRequest(String content, Users user, Boolean status, ContractItem contractItem) {
+    public MaintanceRequest(String content, Users user, String status, ContractItem contractItem) {
         this.content = content;
         this.user = user;
         this.status = status;
@@ -57,11 +57,11 @@ public class MaintanceRequest extends BaseEntity {
         this.user = user;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
