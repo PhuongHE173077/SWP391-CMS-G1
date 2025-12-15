@@ -66,6 +66,22 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
         
         // Lấy danh sách Status để đổ vào dropdown filter
         List<String> statusList = mrDao.getAllStatuses();
+        // 5. Gửi dữ liệu sang JSP
+        request.setAttribute("requestList", list);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("currentPage", pageIndex);
+        request.setAttribute("statusList", statusList);
+
+        // Giữ lại trạng thái filter
+        request.setAttribute("searchValue", search);
+        request.setAttribute("statusValue", status);
+        request.setAttribute("fromDateValue", fromDate);
+        request.setAttribute("toDateValue", toDate);
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("sortOrder", sortOrder);
+
+        // 6. Forward về giao diện Customer
+        request.getRequestDispatcher("customer/maintenance/customer-maintenance.jsp").forward(request, response);
     } 
  
 }
