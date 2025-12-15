@@ -123,4 +123,7 @@
                                       <td class="fw-bold text-dark">
                                         ${r.contractItem.subDevice.device.name}
                                     </td>
+                                     <td class="text-secondary font-monospace">
+                                        ${r.contractItem.subDevice.seriId}
+                                    </td>
 <!--                                
