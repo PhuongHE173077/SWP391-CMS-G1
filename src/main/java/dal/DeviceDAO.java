@@ -40,6 +40,18 @@ public class DeviceDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public boolean restoreDevice(int deviceId) {
+        String query = "UPDATE swp391.device SET isDelete = 0 WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, deviceId);
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public Device getDeviceById(int deviceId) {
         String query = "SELECT d.*, c.id AS category_id, c.name AS category_name "
@@ -189,4 +201,119 @@ public class DeviceDAO extends DBContext {
         return 0;
     }
 
+    public Device editDevice(Device dev,String categoryId) {
+        String query = "update swp391.device\n"
+                + "set name = ?,\n"
+                + "description = ?,\n"
+                + "image = ?,\n"
+                + "maintenance_time = ?,\n"
+                + "category_id = ?\n"
+                + "where id = ?";
+       try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, dev.getName());
+            ps.setString(2, dev.getDescription());
+            ps.setString(3, dev.getImage());
+            ps.setString(4, dev.getMaintenanceTime());
+            ps.setString(5, categoryId);
+            ps.setInt(6, dev.getId());
+            ps.executeUpdate();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       return dev;
+    }
+    
+    // Lấy danh sách thiết bị đã xóa (isDelete = 1) với phân trang và filter
+    public List<Device> getDeletedDevicesWithPaging(int indexPage, int PageSize, int categoryId, String textSearch) {
+        List<Device> dev = new ArrayList<>();
+        String query = "SELECT d.*, c.name AS category_name FROM swp391.device d "
+                + " INNER JOIN swp391.device_category c ON d.category_id = c.id"
+                + " WHERE d.isDelete = 1";
+
+        List<Object> params = new ArrayList<>();
+
+        // 1. Thêm điều kiện LỌC THEO CATEGORY
+        if (categoryId > 0) {
+            query += " AND d.category_id = ?";
+            params.add(categoryId);
+        }
+
+        if (textSearch != null && !textSearch.trim().isEmpty()) {
+            query += " AND d.name LIKE ?";
+            params.add("%" + textSearch + "%");
+        }
+
+        query += " ORDER BY d.id LIMIT ? OFFSET ?";
+
+        params.add(PageSize);
+        params.add((indexPage - 1) * PageSize);
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Device device = new Device();
+
+                    device.setId(rs.getInt("id"));
+                    device.setName(rs.getString("name"));
+                    device.setDescription(rs.getString("description"));
+                    device.setImage(rs.getString("image"));
+                    device.setMaintenanceTime(rs.getString("maintenance_time"));
+                    device.setIsDelete(rs.getBoolean("isDelete"));
+
+                    DeviceCategory dc = new DeviceCategory();
+                    String categoryName = rs.getString("category_name");
+                    dc.setName(categoryName);
+
+                    device.setCategory(dc);
+
+                    java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
+                    if (timestamp != null) {
+                        OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
+                        device.setCreatedAt(odt);
+                    } else {
+                        device.setCreatedAt(null);
+                    }
+                    dev.add(device);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dev;
+    }
+    
+    // Đếm tổng số thiết bị đã xóa với filter
+    public int getTotalDeletedDevices(int categoryId, String textSearch) {
+        String query = "SELECT count(*) FROM swp391.device d WHERE d.isDelete = 1";
+        List<Object> params = new ArrayList<>();
+
+        if (categoryId > 0) {
+            query += " AND d.category_id = ?";
+            params.add(categoryId);
+        }
+
+        if (textSearch != null && !textSearch.trim().isEmpty()) {
+            query += " AND d.name LIKE ?";
+            params.add("%" + textSearch + "%");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
