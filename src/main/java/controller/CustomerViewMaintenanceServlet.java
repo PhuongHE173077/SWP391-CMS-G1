@@ -5,6 +5,7 @@
 
 package controller;
 
+import dal.MaintenanceRequestDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.MaintanceRequest;
 import model.Users;
 
 /**
@@ -51,6 +54,18 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
         } catch (NumberFormatException e) { pageIndex = 1; }
         
         int pageSize = 5;
+        // 4. Gọi DAO
+        MaintenanceRequestDAO mrDao = new MaintenanceRequestDAO();
+
+        // QUAN TRỌNG: Truyền user.getId() vào tham số customerId
+        // Để DAO chỉ lọc ra các request của chính user này
+        int totalRecords = mrDao.countTotalRequests(search, status, fromDate, toDate, user.getId());
+        int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
+
+        List<MaintanceRequest> list = mrDao.searchRequests(search, status, fromDate, toDate, user.getId(), pageIndex, pageSize, sortBy, sortOrder);
+        
+        // Lấy danh sách Status để đổ vào dropdown filter
+        List<String> statusList = mrDao.getAllStatuses();
     } 
  
 }
