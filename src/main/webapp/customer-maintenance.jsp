@@ -101,3 +101,18 @@
             </form>
         </div>
     </div>
+                        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle mb-0">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th class="text-center">Req ID</th>
+                                <th class="py-3">Device Name</th>
+                                <th class="py-3">Device Serial Number</th>
+                                <th class="py-3" style="width: 30%;">Issue Content</th>
+                                <th class="py-3 text-center">Date Sent</th>
+                                <th class="py-3 text-center">Status</th>
+                                <th class="py-3 text-center" style="width: 100px;">Action</th>
+                            </tr>
+                        </thead>
