@@ -42,10 +42,18 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
                                 <label class="form-check-label">Date Sent</label>
-                            </div>
-                                
-                                 
+                            </div>                
                                 <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
                                 <label class="form-check-label">Status</label>
                             </div>
+                                <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
+                                <label class="form-check-label">Content</label>
+                            </div>
+                        </div>
+                                <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
+                                <label class="form-check-label">Content</label>
+                            </div>
+                        </div>
