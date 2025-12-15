@@ -33,6 +33,14 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
             response.sendRedirect("login.jsp"); // Chưa đăng nhập thì đá về login
             return;
         }
+        // 2. Nhận tham số Filter từ JSP
+        String search = request.getParameter("search");
+        String status = request.getParameter("status");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
+        String sortBy = request.getParameter("sortBy");
+        String sortOrder = request.getParameter("sortOrder");
+        String pageRaw = request.getParameter("page");
     } 
  
 }
