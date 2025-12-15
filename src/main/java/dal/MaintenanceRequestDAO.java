@@ -121,7 +121,6 @@ public class MaintenanceRequestDAO extends DBContext{
             while (rs.next()) {
                 MaintanceRequest req = new MaintanceRequest();
                 req.setId(rs.getInt("id"));
-                req.setCreated_at(rs.getTimestamp("created_at"));
                 req.setContent(rs.getString("content"));
                 req.setStatus(rs.getString("status"));
 

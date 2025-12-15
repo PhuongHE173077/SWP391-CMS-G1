@@ -569,6 +569,29 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+    // Hàm lấy danh sách tất cả Customer để đổ vào Dropdown Filter
+    public List<Users> getAllCustomers() {
+        List<Users> list = new ArrayList<>();
+        // role_id = 4 là Customer (dựa theo dữ liệu insert roles của bạn)
+        String sql = "SELECT * FROM _user WHERE role_id = 4"; 
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users u = new Users();
+                u.setId(rs.getInt("id"));
+                u.setDisplayname(rs.getString("displayname"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAddress(rs.getString("address"));
+                u.setActive(rs.getBoolean("active"));                
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
