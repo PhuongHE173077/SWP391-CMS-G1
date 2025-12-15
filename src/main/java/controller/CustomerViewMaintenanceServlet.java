@@ -41,6 +41,16 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
         String pageRaw = request.getParameter("page");
+        // 3. Xử lý mặc định
+        if (sortBy == null) sortBy = "created_at";
+        if (sortOrder == null) sortOrder = "DESC";
+        
+        int pageIndex = 1;
+        try {
+            if (pageRaw != null) pageIndex = Integer.parseInt(pageRaw);
+        } catch (NumberFormatException e) { pageIndex = 1; }
+        
+        int pageSize = 5;
     } 
  
 }
