@@ -131,22 +131,25 @@
                                         ${r.content}
                                     </div>
                                 </td>
-                                 <td class="text-center">
-                                        <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
-                                    </td>
-                                    <td class="text-center">
-                                        <c:choose>
-                                            <c:when test="${r.status == 'Pending'}">
-                                                <span class="badge bg-warning text-dark">Pending</span>
-                                            </c:when>
-                                       
-                                            <c:when test="${r.status == 'Completed'}">
-                                                <span class="badge bg-success">Completed</span>
-                                            </c:when>
-                                             <c:when test="${r.status == 'Rejected'}">
-                                                <span class="badge bg-danger">Rejected</span>
-                                            </c:when>
+                                <td class="text-center">
+                                    <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
+                                </td>
+                                <td class="text-center">
+                                    <c:choose>
+                                        <c:when test="${r.status == 'Pending'}">
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        </c:when>
 
-                                       
-                                        </c:choose>
-                                    </td>
+                                        <c:when test="${r.status == 'Completed'}">
+                                            <span class="badge bg-success">Completed</span>
+                                        </c:when>
+                                        <c:when test="${r.status == 'Rejected'}">
+                                            <span class="badge bg-danger">Rejected</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-secondary">${r.status}</span>
+                                        </c:otherwise>
+
+
+                                    </c:choose>
+                                </td>
