@@ -77,8 +77,11 @@ function selectUser(u) {
     nameSpan.textContent = u.displayname;
     nameSpan.classList.remove('warning');
 
-    const phoneSpan = document.querySelector(".phone")
+    const phoneSpan = document.querySelector(".phone");
     phoneSpan.textContent = u.phone;
+    
+    const addressSpan = document.querySelector(".adress");
+    addressSpan.textContent = u.address;
 
     document.getElementById("userResult").innerHTML = "";
 
@@ -337,8 +340,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         addCustomerBtn.addEventListener('shown.bs.popover', function () {
-            const cancelBtn = document.getElementById('cancelCreateCustomer');
-            const form = document.getElementById('createCustomerForm');
+            const popoverEl = document.querySelector('.popover');
+            if (!popoverEl) return;
+
+            const cancelBtn = popoverEl.querySelector('#cancelCreateCustomer');
 
             if (cancelBtn) {
                 cancelBtn.addEventListener('click', function () {
@@ -346,14 +351,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
 
-            if (form) {
-                form.addEventListener('submit', function (e) {
+            const submitBtn = popoverEl.querySelector('#submitCreateCustomer');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     e.stopPropagation();
 
-                    const name = document.getElementById('newCustomerName').value.trim();
-                    const phone = document.getElementById('newCustomerPhone').value.trim();
-                    const email = document.getElementById('newCustomerEmail').value.trim();
-                    const address = document.getElementById('newCustomerAddress').value.trim();
+                    const name = popoverEl.querySelector('#newCustomerName').value.trim();
+                    const phone = popoverEl.querySelector('#newCustomerPhone').value.trim();
+                    const email = popoverEl.querySelector('#newCustomerEmail').value.trim();
+                    const address = popoverEl.querySelector('#newCustomerAddress').value.trim();
 
                     if (!name || !phone || !email) {
                         alert('Vui lòng điền đầy đủ thông tin bắt buộc!');

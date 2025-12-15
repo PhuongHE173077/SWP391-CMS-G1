@@ -102,8 +102,8 @@ public class UserDAO extends DBContext {
     }
 
     public boolean insertUser(Users user) {
-        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id,created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, user.getDisplayname());
             ps.setString(2, user.getEmail());
