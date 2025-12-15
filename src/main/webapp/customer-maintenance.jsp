@@ -152,16 +152,20 @@
                                     </c:choose>
                                 </td>
                                 <td class="text-center">
-                                        <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                    </td>
-                                    </tr>
-                            </c:forEach>
-                                    <c:if test="${empty requestList}">
-                                <tr>
-                                    <td colspan="7" class="text-center py-5 text-muted">
-                                        You haven't sent any maintenance requests yet.
-                                    </td>
-                                </tr>
-                            </c:if>
+                                    <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty requestList}">
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    You haven't sent any maintenance requests yet.
+                                </td>
+                            </tr>
+                        </c:if>
+                    </tbody>
+                </table>
+            </div>
+        </div>
