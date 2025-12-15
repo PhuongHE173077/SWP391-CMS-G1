@@ -169,7 +169,9 @@
                 </table>
             </div>
         </div>
-        
+        <div class="card-footer bg-white d-flex justify-content-center py-3">
+                <c:if test="${totalPages > 0}">
+                    <nav aria-label="Page navigation">
         <ul class="pagination m-0">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                 <a class="page-link" href="customer-maintenance?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
@@ -183,3 +185,8 @@
                                 <a class="page-link" href="customer-maintenance?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
                             </li>
                         </ul>
+                            </nav>
+                </c:if>
+            </div>
+        </div>
+    </div>
