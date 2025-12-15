@@ -131,3 +131,6 @@
                                         ${r.content}
                                     </div>
                                 </td>
+                                 <td class="text-center">
+                                        <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy HH:mm"/>
+                                    </td>
