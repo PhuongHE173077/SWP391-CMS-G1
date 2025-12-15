@@ -79,3 +79,6 @@
                                 </c:forEach>
                             </select>
                         </div>
+                          <div class="col-md-2">
+                            <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
+                        </div>
