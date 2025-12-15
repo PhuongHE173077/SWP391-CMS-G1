@@ -3,7 +3,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <jsp:include page="../managerLayout.jsp">    
-    <jsp:param name="pageTitle" value="Deleted Contract Management" />
+    <jsp:param name="pageTitle" value="Thiết Bị Đã Xóa" />
 </jsp:include>
         <style>
 
@@ -137,28 +137,21 @@
 
             .device-table .action-col {
                 text-align: center;
-                width: 280px;
-                padding: 8px;
-            }
-
-            .device-table .action-col {
-                text-align: center;
-                width: 300px; /* Tăng chiều rộng để các nút vừa vặn */
+                width: 300px;
                 padding: 8px;
             }
 
             .action-col-wrapper {
                 display: flex;
-                justify-content: center; /* Căn giữa các nút */
-                gap: 8px; /* Tăng khoảng cách giữa các nút */
+                justify-content: center;
+                gap: 8px;
                 padding: 0;
                 margin: 0;
             }
 
-            /* Đảm bảo style cho cả thẻ <a> và <button> */
             .action-col-wrapper a, .action-col-wrapper button {
-                padding: 6px 10px; /* Giảm nhẹ padding */
-                border: none; /* Bỏ border để trông hiện đại hơn */
+                padding: 6px 10px;
+                border: none;
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 13px;
@@ -166,41 +159,25 @@
                 transition: background-color 0.2s, box-shadow 0.2s;
                 white-space: nowrap;
                 text-decoration: none;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Thêm đổ bóng nhẹ */
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
 
             /* Xem Chi tiết (Info/Màu xám) */
             .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
-                background-color: #f8f9fa; /* Màu xám nhạt */
+                background-color: #f8f9fa;
                 color: #495057;
             }
             .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
                 background-color: #e2e6ea;
             }
 
-            /* Sửa Sản Phẩm (Warning/Màu vàng) */
+            /* Khôi phục (Success/Màu xanh lá) */
             .action-col-wrapper a:nth-child(2), .action-col-wrapper button:nth-child(2) {
-                background-color: #ffc107;
-                color: #343a40;
-            }
-            .action-col-wrapper a:nth-child(2):hover, .action-col-wrapper button:nth-child(2):hover {
-                background-color: #e0a800;
-            }
-
-            /* Xóa Sản Phẩm (Danger/Màu đỏ) */
-            .action-col-wrapper a:nth-child(3), .action-col-wrapper button:nth-child(3) {
-                background-color: #dc3545;
+                background-color: #28a745;
                 color: #fff;
             }
-            .action-col-wrapper a:nth-child(3):hover, .action-col-wrapper button:nth-child(3):hover {
-                background-color: #c82333;
-            }
-            .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
-                background-color: #f8f9fa; /* Màu xám nhạt */
-                color: #495057;
-            }
-            .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
-                background-color: #e2e6ea;
+            .action-col-wrapper a:nth-child(2):hover, .action-col-wrapper button:nth-child(2):hover {
+                background-color: #218838;
             }
 
             .pagination {
@@ -213,7 +190,7 @@
                 padding: 8px 14px;
                 margin-left: 5px;
                 text-decoration: none;
-                color: #007bff; /* Màu chữ mặc định */
+                color: #007bff;
                 background-color: #fff;
                 border: 1px solid #ddd;
                 border-radius: 4px;
@@ -222,21 +199,18 @@
                 transition: background-color 0.2s, color 0.2s, border-color 0.2s;
             }
 
-            /* Kiểu cho trang hiện tại (active) - BÔI XANH Ở ĐÂY */
             .pagination a.active {
                 font-weight: 600;
-                color: #fff; /* Chữ trắng */
-                background-color: #007bff; /* Nền xanh */
+                color: #fff;
+                background-color: #007bff;
                 border-color: #007bff;
-                cursor: default; /* Thay đổi con trỏ chuột */
+                cursor: default;
             }
 
-            /* Hover chỉ áp dụng cho các trang KHÔNG phải trang hiện tại */
             .pagination a:hover:not(.active) {
                 background-color: #e9ecef;
                 border-color: #c9c9c9;
             }
-
 
             .description-cell {
                 max-width: 200px;
@@ -245,21 +219,42 @@
                 text-overflow: ellipsis;
             }
 
+            .deleted-badge {
+                background-color: #dc3545;
+                color: #fff;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
         </style>
     </head>
     <body>
 
         <div class="container">
+            <!-- Hiển thị thông báo -->
+            <c:if test="${not empty sessionScope.msg}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                    <i class="fas fa-check-circle me-2"></i>${sessionScope.msg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="msg" scope="session" />
+            </c:if>
+            <c:if test="${not empty sessionScope.error}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-circle me-2"></i>${sessionScope.error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="error" scope="session" />
+            </c:if>
 
             <div class="header">
-                <h1>🛠️ Danh sách Thiết bị</h1>
-                <div style="display: flex; gap: 10px;">
-                    <a href="ViewDeletedDevices" class="add-device-btn" style="background-color: #6c757d;">🗑️ Thiết Bị Đã Xóa</a>
-                    <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a> 
-                </div>
+                <h1>🗑️ Thiết Bị Đã Xóa</h1>
+                <a href="ViewListDevice" class="add-device-btn">← Quay lại Danh sách</a> 
             </div>
 
-            <form action="ViewListDevice" method="get" id="filterForm">
+            <form action="ViewDeletedDevices" method="get" id="filterForm">
                 <div class="filter-bar">
                     <select id="category_id" name="category_id" onchange="document.getElementById('filterForm').submit()">
                         <option value="0" ${selectedCategoryId == 0 ? 'selected' : ''}>-- Tất cả Danh mục --</option>
@@ -282,7 +277,8 @@
                         <th>Mô tả</th>
                         <th>Thương hiệu</th>
                         <th>Thời gian Bảo trì</th>
-                        <th>Ngày Tạo </th>
+                        <th>Ngày Tạo</th>
+                        <th>Trạng thái</th>
                         <th class="action-col">Hành động</th>
                     </tr>
                 </thead>
@@ -294,25 +290,30 @@
                             <td class="description-cell">${d.description}</td>
                             <td>${d.category.name}</td>
                             <td>${d.maintenanceTime}</td>
-                            <td >
-                                ${d.createdAt}
+                            <td>${d.createdAt}</td>
+                            <td>
+                                <span class="deleted-badge">Đã xóa</span>
                             </td>
                             <td>
                                 <div class="action-col-wrapper">
                                     <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
-                                    <a href="EditDevice?id=${d.id}">Sửa Sản Phẩm</a>
-                                    <a href="#" onClick= " showMess(${d.id})">Xóa Sản Phẩm</a>
+                                    <a href="#" onclick="restoreDevice('${d.id}'); return false;">Khôi phục</a>
                                 </div>
                             </td>
                         </tr>
                     </c:forEach>
-
+                    
+                    <c:if test="${empty devices}">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #6c757d;">
+                                <h5>Không có thiết bị nào đã bị xóa</h5>
+                            </td>
+                        </tr>
+                    </c:if>
                 </tbody>
             </table>
 
-
             <div class="pagination">
-
                 <c:set var="urlParams" value=""/>
                 <c:if test="${selectedCategoryId > 0}">
                     <c:set var="urlParams" value="${urlParams}&category_id=${selectedCategoryId}"/>
@@ -324,26 +325,27 @@
                 <c:forEach begin="1" end="${maxp}" var="i">
                     <c:choose>
                         <c:when test="${crPage == i}">
-                            <a href="ViewListDevice?page=${i}${urlParams}" class="active">${i}</a>
+                            <a href="ViewDeletedDevices?page=${i}${urlParams}" class="active">${i}</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="ViewListDevice?page=${i}${urlParams}">${i}</a>
+                            <a href="ViewDeletedDevices?page=${i}${urlParams}">${i}</a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-
             </div>
 
         </div>
 
     </body>
     <script>
-        function showMess(id) {
-            var option = confirm("Are you sure to delete ?");
+        function restoreDevice(id) {
+            var option = confirm("Bạn có chắc chắn muốn khôi phục thiết bị này?");
             if (option === true) {
-                window.location.href = "DeleteDevice?id=" + id;
+                window.location.href = "RestoreDevice?id=" + id;
             }
+            return false;
         }
     </script>
     
     <jsp:include page="../managerFooter.jsp" />
+
