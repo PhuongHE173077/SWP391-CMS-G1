@@ -70,4 +70,12 @@
                             </div>
                         </div>
                     </div>
-                      
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                            <select name="status" class="form-select">
+                                <option value="">All Status</option>
+                                <c:forEach items="${statusList}" var="s">
+                                    <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
