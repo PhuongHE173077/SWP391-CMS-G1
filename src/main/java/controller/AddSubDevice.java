@@ -42,7 +42,7 @@ public class AddSubDevice extends HttpServlet {
             }
 
             request.setAttribute("device", device);
-            request.getRequestDispatcher("device/addSubDevice.jsp").forward(request, response);
+            request.getRequestDispatcher("manager/device/addSubDevice.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("ViewListDevice");
@@ -74,7 +74,7 @@ public class AddSubDevice extends HttpServlet {
             } catch (Exception e) {
                 // Ignore
             }
-            request.getRequestDispatcher("device/addSubDevice.jsp").forward(request, response);
+            request.getRequestDispatcher("manager/device/addSubDevice.jsp").forward(request, response);
             return;
         }
 
@@ -95,7 +95,7 @@ public class AddSubDevice extends HttpServlet {
                 request.setAttribute("error", "Số seri này đã tồn tại trong hệ thống.");
                 request.setAttribute("device", device);
                 request.setAttribute("seriId", seriIdTrimmed);
-                request.getRequestDispatcher("device/addSubDevice.jsp").forward(request, response);
+                request.getRequestDispatcher("manager/device/addSubDevice.jsp").forward(request, response);
                 return;
             }
 
@@ -115,7 +115,7 @@ public class AddSubDevice extends HttpServlet {
                 request.setAttribute("error", "Có lỗi xảy ra khi thêm Sub Device.");
                 request.setAttribute("device", device);
                 request.setAttribute("seriId", seriIdTrimmed);
-                request.getRequestDispatcher("device/addSubDevice.jsp").forward(request, response);
+                request.getRequestDispatcher("manager/device/addSubDevice.jsp").forward(request, response);
             }
 
         } catch (NumberFormatException e) {
@@ -133,7 +133,7 @@ public class AddSubDevice extends HttpServlet {
             } catch (Exception ex) {
                 // Ignore
             }
-            request.getRequestDispatcher("device/addSubDevice.jsp").forward(request, response);
+            request.getRequestDispatcher("manager/device/addSubDevice.jsp").forward(request, response);
         }
     }
 }
