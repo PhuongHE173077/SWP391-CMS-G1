@@ -170,23 +170,25 @@
             </div>
         </div>
         <div class="card-footer bg-white d-flex justify-content-center py-3">
-                <c:if test="${totalPages > 0}">
-                    <nav aria-label="Page navigation">
-        <ul class="pagination m-0">
-                            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="customer-maintenance?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+            <c:if test="${totalPages > 0}">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination m-0">
+                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="customer-maintenance?page=${currentPage - 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Previous</a>
+                        </li>
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="customer-maintenance?page=${i}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
                             </li>
-                            <c:forEach begin="1" end="${totalPages}" var="i">
-                                <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="customer-maintenance?page=${i}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">${i}</a>
-                                </li>
-                            </c:forEach>
-                            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="customer-maintenance?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
-                            </li>
-                        </ul>
-                            </nav>
-                </c:if>
-            </div>
+                        </c:forEach>
+                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="customer-maintenance?page=${currentPage + 1}&search=${searchValue}&status=${statusValue}&fromDate=${fromDateValue}&toDate=${toDateValue}&sortBy=${sortBy}&sortOrder=${sortOrder}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </c:if>
         </div>
     </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
