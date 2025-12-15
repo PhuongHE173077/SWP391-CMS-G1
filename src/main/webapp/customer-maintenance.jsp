@@ -30,3 +30,16 @@
                 <i class="fas fa-plus-circle me-2"></i>New Request
             </a>
         </div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-search me-2"></i>Search & Filter</h5>
+            </div>
+            <div class="card-body">
+                <form action="customer-maintenance" method="get">
+                    <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
+                        <div class="col-md-8 d-flex align-items-center gap-3 flex-wrap">
+                            <span class="fw-bold text-dark">Sort by:</span>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
+                                <label class="form-check-label">Date Sent</label>
+                            </div>
