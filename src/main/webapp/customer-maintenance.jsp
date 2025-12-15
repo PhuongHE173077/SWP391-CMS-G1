@@ -156,3 +156,5 @@
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>
+                                    </tr>
+                            </c:forEach>
