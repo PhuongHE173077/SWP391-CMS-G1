@@ -111,8 +111,12 @@
                                 <th class="py-3">Device Name</th>
                                 <th class="py-3">Device Serial Number</th>
                                 <th class="py-3" style="width: 30%;">Issue Content</th>
-                                <th class="py-3 text-center">Date Sent</th>
+                                <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 100px;">Action</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            <c:forEach items="${requestList}" var="r">
+                                <tr>
+                                    <td class="fw-bold text-center text-secondary">#${r.id}</td>
