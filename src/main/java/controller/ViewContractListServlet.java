@@ -65,14 +65,22 @@ public class ViewContractListServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             createById = 0;
         }
-        if (indexPage == null) {
-            indexPage = "1";
+        int pageIndex = 1;
+        if (indexPage != null && !indexPage.isEmpty()) {
+            try {
+                pageIndex = Integer.parseInt(indexPage);
+            } catch (NumberFormatException e) {
+                pageIndex = 1;
+            }
         }
-        if (sortBy == null) {
+       if (sortBy == null || sortBy.isEmpty()) {
             sortBy = "id";
         }
-        if (sortOrder == null) {
+        if (sortOrder == null || sortOrder.isEmpty()) {
             sortOrder = "ASC";
+        }
+        if (search != null) {
+            search = search.trim();
         }
         try {
             int pageIndex = Integer.parseInt(indexPage);
@@ -81,13 +89,13 @@ public class ViewContractListServlet extends HttpServlet {
             ContractDAO dao = new ContractDAO();
 
             // TÍNH TỔNG SỐ RECORDS
-            int totalRecords = dao.countAllContracts(search,createById);
+            int totalRecords = dao.countAllContracts(search, createById);
 
             //totalRecords và pageSize đều là int => khi chia lấy thương,ví dụ 23:5= 4,6 thì thương nó sẽ lấy là kiểu int (cắt bỏ phần thập phân phía sau)
             //=> totalPages là 4 + 1= 5
             int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
 
-            List<Contract> list = dao.getAllActiveContracts(search,createById, pageIndex, pageSize, sortBy, sortOrder);
+            List<Contract> list = dao.getAllActiveContracts(search, createById, pageIndex, pageSize, sortBy, sortOrder);
             UserDAO userDao = new UserDAO();
             List<Users> lstManagerSaleStaff = userDao.getAllManagerSaleStaff();
             // Gửi dữ liệu sang JSP
