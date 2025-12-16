@@ -292,6 +292,7 @@
                             display: none;
                         }
                     }
+                    
                 </style>
             </head>
 
@@ -299,7 +300,7 @@
                 <!-- Sidebar -->
                 <aside class="manager-sidebar" id="managerSidebar">
                     <div class="sidebar-header">
-                        <a href="${pageContext.request.contextPath}/" class="sidebar-logo">
+                        <a href="${pageContext.request.contextPath}/Dashboard" class="sidebar-logo">
                             <i class="fas fa-cube"></i>
                             <span>CMS Manager</span>
                         </a>
@@ -312,7 +313,7 @@
                         <div class="menu-title">Main Menu</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/HomePage.jsp" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/Dashboard" class="nav-link">
                                     <i class="fas fa-home"></i>
                                     <span class="nav-text">Dashboard</span>
                                 </a>
@@ -419,3 +420,4 @@
 
                     <!-- Page Content -->
                     <main class="manager-content">
+                        

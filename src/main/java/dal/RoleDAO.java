@@ -20,8 +20,7 @@ public class RoleDAO extends DBContext {
     public List<Roles> getAllRoleses() {
         List<Roles> roleses = new ArrayList<>();
         String query = "SELECT * FROM roles as r where r.id != 1";
-        try (PreparedStatement ps = connection.prepareStatement(query);
-                ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Roles role = new Roles();
                 role.setId(rs.getInt("id"));
@@ -149,11 +148,16 @@ public class RoleDAO extends DBContext {
         return permissionList;
     }
 
-    public static void main(String[] args) {
-        RoleDAO dao = new RoleDAO();
-        List<Roles> roles = dao.getAllRoleses();
-        for (Roles role : roles) {
-            System.out.println(role);
+    public int getCountAllRole() {
+        String query = "SELECT count(*) FROM swp391.roles\n";
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return 0;
     }
 }

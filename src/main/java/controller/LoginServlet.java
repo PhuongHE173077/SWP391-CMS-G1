@@ -99,7 +99,7 @@ public class LoginServlet extends HttpServlet {
         if (a.getRoles() != null && a.getRoles().getId() == 1) {
             response.sendRedirect("/ViewRole");
         } else {
-            response.sendRedirect("/contract-list");
+            response.sendRedirect("/Dashboard");
         }
 
     }
