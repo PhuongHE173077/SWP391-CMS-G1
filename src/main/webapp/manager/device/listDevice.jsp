@@ -1,8 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<jsp:include page="../managerLayout.jsp">    
+<jsp:include page="../managerLayout.jsp">   
     <jsp:param name="pageTitle" value="View List Device" />
 </jsp:include>
         <style>
@@ -102,13 +101,19 @@
                 border-radius: 6px;
                 overflow: hidden;
             }
-
+            
+            /* SỬA ĐỔI CHÍNH: Căn giữa tất cả các ô trong bảng */
             .device-table th, .device-table td {
                 padding: 12px 15px;
-                text-align: left;
+                text-align: center; /* ĐÃ SỬA: Căn giữa nội dung toàn bộ ô */
                 border-bottom: 1px solid #f0f0f0;
                 color: #333;
                 font-size: 14px;
+            }
+            
+            /* BỔ SUNG: Class để giữ các cột văn bản dài căn trái (tùy chọn) */
+            .text-left-col {
+                text-align: left;
             }
 
             .device-table th {
@@ -133,31 +138,26 @@
                 object-fit: cover;
                 width: 80px;
                 height: 60px;
+                margin: 0 auto; /* Căn giữa hình ảnh */
             }
 
             .device-table .action-col {
                 text-align: center;
-                width: 280px;
-                padding: 8px;
-            }
-
-            .device-table .action-col {
-                text-align: center;
-                width: 300px; 
+                width: 300px;
                 padding: 8px;
             }
 
             .action-col-wrapper {
                 display: flex;
-                justify-content: center; 
-                gap: 8px; 
+                justify-content: center;  
+                gap: 8px;  
                 padding: 0;
                 margin: 0;
             }
 
             .action-col-wrapper a, .action-col-wrapper button {
-                padding: 6px 10px; 
-                border: none; 
+                padding: 6px 10px;  
+                border: none;  
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 13px;
@@ -165,11 +165,11 @@
                 transition: background-color 0.2s, box-shadow 0.2s;
                 white-space: nowrap;
                 text-decoration: none;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);  
             }
 
             .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
-                background-color: #f8f9fa; 
+                background-color: #f8f9fa;  
                 color: #495057;
             }
             .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
@@ -191,8 +191,9 @@
             .action-col-wrapper a:nth-child(3):hover, .action-col-wrapper button:nth-child(3):hover {
                 background-color: #c82333;
             }
+            /* Lặp lại không cần thiết, đã có ở trên */
             .action-col-wrapper a:nth-child(1), .action-col-wrapper button:nth-child(1) {
-                background-color: #f8f9fa; 
+                background-color: #f8f9fa;  
                 color: #495057;
             }
             .action-col-wrapper a:nth-child(1):hover, .action-col-wrapper button:nth-child(1):hover {
@@ -220,10 +221,10 @@
 
             .pagination a.active {
                 font-weight: 600;
-                color: #fff; 
+                color: #fff;  
                 background-color: #007bff;
                 border-color: #007bff;
-                cursor: default; 
+                cursor: default;  
             }
 
             .pagination a:hover:not(.active) {
@@ -271,8 +272,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tên</th>
-                        <th>Mô tả</th>
+                        <th class="text-left-col">Tên</th>
+                        <th class="text-left-col">Mô tả</th>
                         <th>Thương hiệu</th>
                         <th>Thời gian Bảo trì</th>
                         <th>Ngày Tạo </th>
@@ -283,8 +284,8 @@
                     <c:forEach var="d" items="${devices}">
                         <tr>
                             <td>${d.id}</td>
-                            <td>${d.name}</td>
-                            <td class="description-cell">${d.description}</td>
+                            <td class="text-left-col">${d.name}</td>
+                            <td class="description-cell text-left-col">${d.description}</td>
                             <td>${d.category.name}</td>
                             <td>${d.maintenanceTime}</td>
                             <td >
