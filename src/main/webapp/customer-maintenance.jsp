@@ -156,14 +156,14 @@
                                     </td>
                                     <td class="text-center">
                                         <c:choose>
-                                            <c:when test="${r.status == 'Pending'}">
-                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            <c:when test="${r.status == 'PENDING'}">
+                                                <span class="badge bg-warning text-dark">PENDING</span>
                                             </c:when>
-                                            <c:when test="${r.status == 'Completed'}">
-                                                <span class="badge bg-success">Completed</span>
+                                            <c:when test="${r.status == 'APPROVE'}">
+                                                <span class="badge bg-success">APPROVE</span>
                                             </c:when>
-                                            <c:when test="${r.status == 'Rejected'}">
-                                                <span class="badge bg-danger">Rejected</span>
+                                            <c:when test="${r.status == 'REJECT'}">
+                                                <span class="badge bg-danger">REJECT</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badge bg-secondary">${r.status}</span>
