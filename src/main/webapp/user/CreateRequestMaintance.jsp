@@ -180,6 +180,16 @@
                 </div>
 
                 <form action="CreateRequestMaintance" method="POST" id="maintenanceForm">
+                    <!-- Tiêu đề yêu cầu -->
+                    <div class="mb-4">
+                        <label for="title" class="form-label">
+                            Tiêu đề yêu cầu <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               placeholder="Ví dụ: Máy in không hoạt động, Máy lạnh kêu to, ..." required>
+                        <small class="text-muted">Nhập tiêu đề ngắn gọn mô tả vấn đề cần bảo trì</small>
+                    </div>
+
                     <!-- Chọn Contract Item -->
                     <div class="mb-4">
                         <label for="contractItemId" class="form-label">
@@ -253,6 +263,15 @@
                         <small class="text-muted">Vui lòng mô tả chi tiết vấn đề cần bảo trì để chúng tôi có thể hỗ trợ bạn tốt nhất</small>
                     </div>
 
+                    <!-- Ảnh minh họa (URL) -->
+                    <div class="mb-4">
+                        <label for="image" class="form-label">
+                            Ảnh minh họa (URL)
+                        </label>
+                        <input type="text" class="form-control" id="image" name="image"
+                               placeholder="Dán link ảnh mô tả lỗi vào đấy">
+                    </div>
+
                     <!-- Nút hành động -->
                     <div class="d-flex justify-content-between gap-3">
                         <a href="javascript:history.back()" class="btn btn-cancel">
@@ -291,8 +310,15 @@
 
         // Validation form
         document.getElementById('maintenanceForm').addEventListener('submit', function(e) {
+            const title = document.getElementById('title').value.trim();
             const contractItemId = document.getElementById('contractItemId').value;
             const content = document.getElementById('content').value.trim();
+
+            if (!title) {
+                e.preventDefault();
+                alert('Vui lòng nhập tiêu đề yêu cầu!');
+                return false;
+            }
 
             if (!contractItemId) {
                 e.preventDefault();

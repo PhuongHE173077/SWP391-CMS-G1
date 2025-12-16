@@ -66,10 +66,18 @@ public class CreateRequestMaintance extends HttpServlet {
 
         try {
             // Lấy tham số từ form
+            String title = request.getParameter("title");
             String contractItemIdStr = request.getParameter("contractItemId");
             String content = request.getParameter("content");
+            String image = request.getParameter("image"); 
 
             // Validation
+            if (title == null || title.trim().isEmpty()) {
+                session.setAttribute("error", "Vui lòng nhập tiêu đề yêu cầu!");
+                response.sendRedirect("CreateRequestMaintance");
+                return;
+            }
+
             if (contractItemIdStr == null || contractItemIdStr.trim().isEmpty()) {
                 session.setAttribute("error", "Vui lòng chọn thiết bị!");
                 response.sendRedirect("CreateRequestMaintance");
@@ -101,9 +109,14 @@ public class CreateRequestMaintance extends HttpServlet {
 
             // Tạo maintenance request
             MaintanceRequest maintenanceRequest = new MaintanceRequest();
+            maintenanceRequest.setTitle(title.trim());
             maintenanceRequest.setContent(content.trim());
             maintenanceRequest.setUser(user);
             maintenanceRequest.setStatus(MaintenanceStatus.PENDING); // Mặc định là chưa xử lý
+            // Image có thể null hoặc rỗng nếu user không nhập
+            if (image != null && !image.trim().isEmpty()) {
+                maintenanceRequest.setImage(image.trim());
+            }
             maintenanceRequest.setContractItem(contractItem);
 
             // Insert vào database
