@@ -7,12 +7,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%--<jsp:include page="../../main/webapp/manager/managerLayout.jsp">
+<%--<jsp:include page="../managerLayout.jsp">
     <jsp:param name="pageTitle" value="Maintenance Requests" />
 </jsp:include>--%>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
@@ -34,8 +31,9 @@
             </div>
             <div class="card-body">
                 <form action="seller-maintenance" method="get">
+
                     <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">
-                        <div class="col-md-7 d-flex align-items-center gap-3 flex-wrap">
+                        <div class="col-md-8 d-flex align-items-center gap-3 flex-wrap">
                             <span class="fw-bold text-dark">Sort by:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}>
@@ -45,14 +43,13 @@
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
                                 <label class="form-check-label">Created At</label>
                             </div>
-
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
                                 <label class="form-check-label">Content</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
-                                <label class="form-check-label">Customer Name</label>
+                                <label class="form-check-label">Customer</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
@@ -60,60 +57,71 @@
                             </div>
                         </div>
 
-                        <div class="col-md-5 d-flex align-items-center gap-3 justify-content-end">
+                        <div class="col-md-4 d-flex align-items-center gap-3 justify-content-end">
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label>
+                                <label class="form-check-label">Asc</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label>
+                                <label class="form-check-label">Desc</label>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-md-2">
-                            <select name="status" class="form-select">
-                                <option value="">All Status</option>
-                                <c:forEach items="${statusList}" var="s">
-                                    <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
-                                </c:forEach>
-                            </select>
+                            <div class="form-floating">
+                                <select name="status" class="form-select" id="statusSelect">
+                                    <option value="">All Status</option>
+                                    <c:forEach items="${statusList}" var="s">
+                                        <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
+                                    </c:forEach>
+                                </select>
+                                <label for="statusSelect">Status</label>
+                            </div>
                         </div>
+
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input type="date" name="fromDate" class="form-control" id="fromDate" value="${fromDateValue}">
                                 <label for="fromDate">From Date</label>
                             </div>
                         </div>
+
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input type="date" name="toDate" class="form-control" id="toDate" value="${toDateValue}">
                                 <label for="toDate">To Date</label>
                             </div>
                         </div>
+
                         <div class="col-md-2">
-                            <select name="customerId" class="form-select">
-                                <option value="">All Customers</option>
-                                <c:forEach items="${customerList}" var="cus">
-                                    <option value="${cus.id}" ${customerIdValue == cus.id ? 'selected' : ''}>${cus.displayname}</option>
-                                </c:forEach>
-                            </select>
+                            <div class="form-floating">
+                                <select name="customerId" class="form-select" id="customerSelect">
+                                    <option value="">All Customers</option>
+                                    <c:forEach items="${customerList}" var="cus">
+                                        <option value="${cus.id}" ${customerIdValue == cus.id ? 'selected' : ''}>${cus.displayname}</option>
+                                    </c:forEach>
+                                </select>
+                                <label for="customerSelect">Customer</label>
+                            </div>
                         </div>
-                        <div class="col-md-3">
+
+                        <div class="col-md-4">
                             <div class="input-group">
-                                <input type="text" name="search" class="form-control" placeholder="Search keyword..." value="${searchValue}">
-                                <button type="submit" class="btn btn-primary fw-bold">Search</button>
+                                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                                <input type="text" name="search" class="form-control" placeholder="Search keyword..." value="${searchValue}" style="height: 58px;">
+
+                                <button type="submit" class="btn btn-primary fw-bold px-3">Search</button>
+                                <a href="seller-maintenance" class="btn btn-outline-secondary d-flex align-items-center px-3" title="Reset Filter">
+                                    <i class="fas fa-sync-alt"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-2">
-                        <div class="col-12 text-end">
-                            <a href="seller-maintenance" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
-                        </div>
-                    </div>
+
                 </form>
             </div>
         </div>
@@ -125,10 +133,10 @@
                         <thead class="table-light text-secondary">
                             <tr>
                                 <th class="py-3 ps-3 text-center">Req ID</th>
-                                <th class="py-3">Customer Name</th>
-                                <th class="py-3">Device Name</th>
-                                <th class="py-3">Device Serial Number</th>
-                                <th class="py-3" style="width: 25%;">Content</th>
+                                <th class="py-3 text-center">Customer Name</th>
+                                <th class="py-3 text-center">Device Name</th>
+                                <th class="py-3 text-center">Device Serial Number</th>
+                                <th class="py-3 text-center" style="width: 25%;">Content</th>
                                 <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 200px;">Action</th>
@@ -137,12 +145,12 @@
                         <tbody>
                             <c:forEach items="${requestList}" var="r">
                                 <tr>
-                                    <td class="fw-bold text-center">#${r.id}</td>
-                                    <td class="fw-bold text-primary">${r.user.displayname}</td>
-                                    <td class="fw-bold text-dark">
+                                    <td class="text-center fw-bold text-secondary">#${r.id}</td>
+                                    <td class="text-center fw-bold text-primary">${r.user.displayname}</td>
+                                    <td class="text-center fw-bold text-dark">
                                         ${r.contractItem.subDevice.device.name}
                                     </td>
-                                    <td class="text-secondary font-monospace">
+                                    <td class="text-center font-monospace text-secondary">
                                         ${r.contractItem.subDevice.seriId}
                                     </td>
                                     <td class="text-muted">
@@ -156,13 +164,16 @@
                                     <td class="text-center">
                                         <c:choose>
                                             <c:when test="${r.status == 'Pending'}">
-                                                <span class="badge bg-warning text-dark">Pending</span>
+                                                <span class="badge bg-warning text-dark border border-warning"><i class="fas fa-clock me-1"></i>Pending</span>
                                             </c:when>
                                             <c:when test="${r.status == 'Completed'}">
-                                                <span class="badge bg-success">Completed</span>
+                                                <span class="badge bg-success border border-success"><i class="fas fa-check-circle me-1"></i>Completed</span>
                                             </c:when>
                                             <c:when test="${r.status == 'Rejected'}">
-                                                <span class="badge bg-danger">Rejected</span>
+                                                <span class="badge bg-danger border border-danger"><i class="fas fa-times-circle me-1"></i>Rejected</span>
+                                            </c:when>
+                                            <c:when test="${r.status == 'Processing'}">
+                                                <span class="badge bg-info text-dark border border-info"><i class="fas fa-spinner me-1"></i>Processing</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badge bg-secondary">${r.status}</span>
@@ -174,7 +185,6 @@
                                             <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
                                                 View
                                             </a>
-
                                             <a href="send-reply?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
                                                 <i class="fas fa-paper-plane me-1"></i>Reply
                                             </a>
@@ -185,8 +195,8 @@
 
                             <c:if test="${empty requestList}">
                                 <tr>
-                                    <td colspan="7" class="text-center py-5 text-muted">
-                                        <i class="fas fa-inbox fa-3x mb-3"></i><br>
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3 text-secondary"></i><br>
                                         No maintenance requests found matching your criteria.
                                     </td>
                                 </tr>
@@ -220,4 +230,4 @@
         </div>
     </div>
 </body>
-<%--<jsp:include page="../../managerFooter.jsp" />--%>
+<%--<jsp:include page="../managerFooter.jsp" />--%>
