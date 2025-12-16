@@ -597,13 +597,36 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public List<String> getExistingGenders() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT gender FROM _user WHERE gender IS NOT NULL ORDER BY gender ASC";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                boolean genderBit = rs.getBoolean("gender");
+                int id = genderBit ? 1 : 0;
+                String name = genderBit ? "Male" : "Female";
+                list.add(name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-        Users user = u.login("vana@example.com", "hashedpass1");
-        if (user != null) {
-            System.out.println("Login success: " + user.getDisplayname());
-        } else {
-            System.out.println("Login failed");
+        List<String> lst = u.getExistingGenders();
+        for(String x : lst){
+            System.out.println(x);
         }
+//        Users user = u.login("vana@example.com", "hashedpass1");
+//        if (user != null) {
+//            System.out.println("Login success: " + user.getDisplayname());
+//        } else {
+//            System.out.println("Login failed");
+//        }
     }
 }

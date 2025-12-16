@@ -31,7 +31,7 @@ public class ViewUserList extends HttpServlet {
         String msg = (String) session.getAttribute("msg");
         String error = (String) session.getAttribute("error");
 
-         if (msg != null) {
+        if (msg != null) {
             request.setAttribute("msg", msg);
             session.removeAttribute("msg");
         }
@@ -47,7 +47,6 @@ public class ViewUserList extends HttpServlet {
         String indexPage = request.getParameter("page");
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
-        
 
         // Xử lý null (Mặc định sort theo ID và DESC)
         if (sortBy == null) {
@@ -68,8 +67,10 @@ public class ViewUserList extends HttpServlet {
             List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex, pageSize, sortBy, sortOrder);
             RoleDAO roleDAO = new RoleDAO();
             List<Roles> roleList = roleDAO.getAllRoleses();
+            List<String> genderList = dao.getExistingGenders();
             request.setAttribute("userList", userList);
             request.setAttribute("roleList", roleList);
+            request.setAttribute("genderList", genderList);
             request.setAttribute("totalPages", totalPages); // Gửi tổng số trang
             request.setAttribute("currentPage", pageIndex); // Gửi trang đang xem
             request.setAttribute("searchValue", search);
@@ -82,6 +83,6 @@ public class ViewUserList extends HttpServlet {
         } catch (Exception e) {
             // Nếu người dùng nhập page=abc thì quay về trang 1
             response.sendRedirect("user-list");
-        }      
+        }
     }
 }
