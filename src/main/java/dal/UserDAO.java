@@ -284,6 +284,7 @@ public class UserDAO extends DBContext {
                 Users user = new Users();
                 user.setId(rs.getInt("id"));
                 user.setDisplayname(rs.getString("displayname"));
+                user.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setPhone(rs.getString("phone"));
