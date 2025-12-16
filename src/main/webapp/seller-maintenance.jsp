@@ -167,17 +167,14 @@
                                     </td>
                                     <td class="text-center">
                                         <c:choose>
-                                            <c:when test="${r.status == 'Pending'}">
-                                                <span class="badge bg-warning text-dark border border-warning"><i class="fas fa-clock me-1"></i>Pending</span>
+                                            <c:when test="${r.status == 'PENDING'}">
+                                                <span class="badge bg-warning text-dark border border-warning"><i class="fas fa-clock me-1"></i>PENDING</span>
                                             </c:when>
-                                            <c:when test="${r.status == 'Completed'}">
-                                                <span class="badge bg-success border border-success"><i class="fas fa-check-circle me-1"></i>Completed</span>
+                                            <c:when test="${r.status == 'APPROVE'}">
+                                                <span class="badge bg-success border border-success"><i class="fas fa-check-circle me-1"></i>APPROVE</span>
                                             </c:when>
-                                            <c:when test="${r.status == 'Rejected'}">
-                                                <span class="badge bg-danger border border-danger"><i class="fas fa-times-circle me-1"></i>Rejected</span>
-                                            </c:when>
-                                            <c:when test="${r.status == 'Processing'}">
-                                                <span class="badge bg-info text-dark border border-info"><i class="fas fa-spinner me-1"></i>Processing</span>
+                                            <c:when test="${r.status == 'REJECT'}">
+                                                <span class="badge bg-danger border border-danger"><i class="fas fa-times-circle me-1"></i>REJECT</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badge bg-secondary">${r.status}</span>
