@@ -5,6 +5,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -125,7 +126,7 @@
                             <tr>
                                 <th class="py-3 ps-3">ID</th>
                                 <th class="py-3">Full Name</th>
-                                <th class="py-3">Created At</th>
+                                <th class="py-3 text-center">Created At</th>
                                 <th class="py-3">Email</th>
                                 <th class="py-3 text-center">Gender</th>
                                 <th class="py-3 text-center">Role</th>
@@ -144,6 +145,7 @@
                                     <td class="text-center">
                                         <fmt:formatDate value="${u.createdAtDate}" pattern="dd-MMM-yyyy"/>
                                     </td>
+
                                     <td class="text-muted">${u.email}</td>
                                     <td class="text-center">
                                         <c:if test="${u.gender}"><span class="badge bg-light text-primary border">Male</span></c:if>
