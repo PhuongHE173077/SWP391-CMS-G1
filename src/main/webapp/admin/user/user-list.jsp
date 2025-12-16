@@ -81,7 +81,7 @@
                      
                     <div class="row g-3">
                         <div class="col-md-2">
-                            <select name="role" class="form-select">
+                            <select name="gender" class="form-select">
                                 <option value="">All Genders</option>
                                 <c:forEach items="${genderList}" var="g"> 
                                     <option value="${g}" ${genderValue == g ? 'selected' : ''}>${g == 1 ? 'Male' : 'Female'}</option>
