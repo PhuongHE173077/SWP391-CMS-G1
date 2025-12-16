@@ -78,13 +78,20 @@ public class MaintenanceRequestDAO extends DBContext {
 
     // Insert maintenance request
     public boolean insertMaintenanceRequest(MaintanceRequest request) {
-        String sql = "INSERT INTO maintenance_request (content, user_id, status, contact_detail_id, created_at) "
-                + "VALUES (?, ?, ?, ?, NOW())";
+        
+        String sql = "INSERT INTO maintenance_request "
+                + "(title, content, image, user_id, status, contact_detail_id, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, request.getContent());
-            ps.setInt(2, request.getUser().getId());
-//            ps.setString(3, request.getStatus() != null ? request.getStatus(): MaintenanceStatus.PENDING);
-            ps.setInt(4, request.getContractItem().getId());
+            ps.setString(1, request.getTitle());
+            ps.setString(2, request.getContent());
+            ps.setString(3, request.getImage());
+            ps.setInt(4, request.getUser().getId());
+            String statusValue = (request.getStatus() != null
+                    ? request.getStatus().name()
+                    : MaintenanceStatus.PENDING.name());
+            ps.setString(5, statusValue);
+            ps.setInt(6, request.getContractItem().getId());
             
             int affected = ps.executeUpdate();
             return affected > 0;
