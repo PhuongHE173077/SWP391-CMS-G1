@@ -52,7 +52,7 @@
 
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
-                                <label class="form-check-label">Customer</label> 
+                                <label class="form-check-label">Customer Name</label> 
                             </div>
                         </div>
 
