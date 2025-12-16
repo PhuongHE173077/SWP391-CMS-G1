@@ -51,7 +51,7 @@ public class ContractDAO extends DBContext {
                     listSort = " ORDER BY u2.displayname " + orderBy;
                     break;
                 default:
-                    listSort = " ORDER BY c.id ASC";
+                    listSort = " ORDER BY c.id "+orderBy;
                     break;
             }
         }
@@ -190,15 +190,14 @@ public class ContractDAO extends DBContext {
     }
 
     public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate,
-            int pageIndex, int pageSize) {
+            int pageIndex, int pageSize, String sortBy, String sortOrder) { // <--- Thêm tham số sortBy, sortOrder
 
         List<ContractItem> list = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
-        // SQL Join 3 bảng: contract_item -> sub_device -> device (để lấy tên máy)
         String sql = "SELECT ci.*, sd.seri_id, d.name as device_name, d.id as device_real_id "
                 + "FROM contract_item ci "
-                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id " // Chú ý: sub_devicel_id
+                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
                 + "INNER JOIN device d ON sd.device_id = d.id "
                 + "WHERE ci.contract_id = ? ";
 
@@ -212,7 +211,28 @@ public class ContractDAO extends DBContext {
             sql += " AND ci.endDate <= ? ";
         }
 
-        sql += " ORDER BY ci.id DESC LIMIT ? OFFSET ?";
+        // --- PHẦN XỬ LÝ SORT MỚI ---
+        String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("DESC")) ? "DESC" : "ASC";
+        String listSort = " ORDER BY ci.id ASC"; // Mặc định
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "deviceId": // Id of Electric Generator
+                    listSort = " ORDER BY d.id " + orderBy;
+                    break;
+                case "deviceName": // Name of Electric Generator
+                    listSort = " ORDER BY d.name " + orderBy;
+                    break;
+                case "serial": // Serial Number
+                    listSort = " ORDER BY sd.seri_id " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY ci.id " + orderBy;
+                    break;
+            }
+        }
+        sql += listSort;
+        sql += " LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -225,10 +245,10 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, searchPattern);
             }
             if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(index++, startDate);
+                ps.setString(index++, startDate );
             }
             if (endDate != null && !endDate.isEmpty()) {
-                ps.setString(index++, endDate);
+                ps.setString(index++, endDate );
             }
 
             ps.setInt(index++, pageSize);
@@ -249,6 +269,7 @@ public class ContractDAO extends DBContext {
                 d.setId(rs.getInt("device_real_id"));
                 d.setName(rs.getString("device_name"));
                 sd.setDevice(d);
+                
                 item.setSubDevice(sd);
                 list.add(item);
             }
@@ -256,48 +277,6 @@ public class ContractDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
-    }
-
-    // Hàm đếm tổng số Item (Để phân trang)
-    public int countItems(int contractId, String keyword, String startDate, String endDate) {
-        String sql = "SELECT COUNT(*) FROM contract_item ci "
-                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
-                + "INNER JOIN device d ON sd.device_id = d.id "
-                + "WHERE ci.contract_id = ? ";
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += " AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
-        }
-        if (startDate != null && !startDate.isEmpty()) {
-            sql += " AND ci.startAt >= ? ";
-        }
-        if (endDate != null && !endDate.isEmpty()) {
-            sql += " AND ci.endDate <= ? ";
-        }
-
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            int index = 1;
-            ps.setInt(index++, contractId);
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
-                ps.setString(index++, "%" + keyword + "%");
-            }
-            if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(index++, startDate + " 00:00:00");
-            }
-            if (endDate != null && !endDate.isEmpty()) {
-                ps.setString(index++, endDate + " 23:59:59");
-            }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     public List<Contract> getDeletedContracts(String keyword, int pageIndex, int pageSize, String sortBy,

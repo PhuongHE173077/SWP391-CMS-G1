@@ -49,7 +49,7 @@ public class ViewContractDetailServlet extends HttpServlet {
             String pageRaw = request.getParameter("page");
 
             int pageIndex = (pageRaw == null) ? 1 : Integer.parseInt(pageRaw);
-            int pageSize = 5; // 5 máy mỗi trang
+            int pageSize = 2;  
 
             // 4. Gọi DAO lấy danh sách Item
             ContractDAO itemDAO = new ContractDAO();
