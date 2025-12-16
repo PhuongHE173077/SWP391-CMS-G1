@@ -84,7 +84,7 @@
                             <select name="role" class="form-select">
                                 <option value="">All Genders</option>
                                 <c:forEach items="${genderList}" var="g"> 
-                                    <option value="${g.id}" ${genderValue == g.id ? 'selected' : ''}>${g.name}</option>
+                                    <option value="${g}" ${genderValue == g ? 'selected' : ''}>${g.name}</option>
                                 </c:forEach>
                             </select>
                         </div>

@@ -597,18 +597,18 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public List<String> getExistingGenders() {
-        List<String> list = new ArrayList<>();
-        String sql = "SELECT DISTINCT gender FROM _user WHERE gender IS NOT NULL ORDER BY gender ASC";
+   public List<Integer> getExistingGenders() {
+        List<Integer> list = new ArrayList<>();
+        // Query lấy các giá trị 0 hoặc 1 đang có trong bảng
+        String sql = "SELECT DISTINCT gender FROM _user WHERE gender IS NOT NULL ORDER BY gender DESC";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                boolean genderBit = rs.getBoolean("gender");
-                int id = genderBit ? 1 : 0;
-                String name = genderBit ? "Male" : "Female";
-                list.add(name);
+                // Lấy thẳng giá trị boolean, convert sang int (1 hoặc 0)
+                int genderId = rs.getBoolean("gender") ? 1 : 0;
+                list.add(genderId);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -618,15 +618,12 @@ public class UserDAO extends DBContext {
 
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-        List<String> lst = u.getExistingGenders();
-        for(String x : lst){
-            System.out.println(x);
+       
+        Users user = u.login("vana@example.com", "hashedpass1");
+        if (user != null) {
+            System.out.println("Login success: " + user.getDisplayname());
+        } else {
+            System.out.println("Login failed");
         }
-//        Users user = u.login("vana@example.com", "hashedpass1");
-//        if (user != null) {
-//            System.out.println("Login success: " + user.getDisplayname());
-//        } else {
-//            System.out.println("Login failed");
-//        }
     }
 }
