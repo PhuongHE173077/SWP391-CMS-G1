@@ -11,6 +11,7 @@ import model.Device;
 import model.MaintanceRequest;
 import model.SubDevice;
 import model.Users;
+import utils.MaintenanceStatus;
 
 public class MaintenanceRequestDAO extends DBContext {
 
@@ -82,7 +83,7 @@ public class MaintenanceRequestDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, request.getContent());
             ps.setInt(2, request.getUser().getId());
-            ps.setBoolean(3, request.getStatus() != null ? request.getStatus() : false);
+//            ps.setString(3, request.getStatus() != null ? request.getStatus(): MaintenanceStatus.PENDING);
             ps.setInt(4, request.getContractItem().getId());
             
             int affected = ps.executeUpdate();
