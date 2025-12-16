@@ -346,6 +346,13 @@
                                     <span class="nav-text">Quản lý hợp đồng đã xóa</span>
                                 </a>
                             </li>
+                            
+                             <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/seller-maintenance" class="nav-link">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span class="nav-text">Quản lý Maintenance Request</span>
+                                </a>
+                            </li>
                         </ul>
 
                         <div class="menu-title">Hệ thống</div>
