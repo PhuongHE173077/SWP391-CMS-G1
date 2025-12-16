@@ -147,7 +147,7 @@ public class UserDAO extends DBContext {
         // Nếu có nhập từ khóa (Search)
         // 1
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += " AND u.displayname LIKE ? ";
+            sql += " AND (u.displayname LIKE ? OR u.email LIKE ?) ";
         }
 
         // Nếu có chọn Role (Khác rỗng)
@@ -233,7 +233,6 @@ public class UserDAO extends DBContext {
                 user.setActive(rs.getBoolean("active"));
                 user.setAddress(rs.getString("address"));
                 user.setGender(rs.getBoolean("gender"));
-
                 user.setRoles(role);
                 list.add(user);
             }
