@@ -51,6 +51,10 @@
                                 <label class="form-check-label">ID</label>
                             </div>
                             <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="createdAt" ${sortBy == 'createdAt' ? 'checked' : ''}>
+                                <label class="form-check-label">Created At</label>
+                            </div>
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="fullname" ${sortBy == 'fullname' ? 'checked' : ''}>
                                 <label class="form-check-label">Full Name</label>
                             </div>
@@ -121,6 +125,7 @@
                             <tr>
                                 <th class="py-3 ps-3">ID</th>
                                 <th class="py-3">Full Name</th>
+                                <th class="py-3">Created At</th>
                                 <th class="py-3">Email</th>
                                 <th class="py-3 text-center">Gender</th>
                                 <th class="py-3 text-center">Role</th>
@@ -135,6 +140,9 @@
                                         <div class="d-flex align-items-center">
                                             <span class="fw-bold text-dark">${u.displayname}</span>
                                         </div>
+                                    </td>
+                                    <td class="text-center">
+
                                     </td>
                                     <td class="text-muted">${u.email}</td>
                                     <td class="text-center">
