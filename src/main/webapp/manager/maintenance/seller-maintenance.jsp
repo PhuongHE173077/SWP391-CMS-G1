@@ -72,7 +72,7 @@
                         </div>
                     </div>
 
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <select name="status" class="form-select" id="statusSelect">
@@ -111,21 +111,21 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
                             <div class="form-floating">
                                 <input type="text" name="search" class="form-control" id="searchInput" value="${searchValue}">
                                 <label for="searchInput"><i class="fas fa-search me-1"></i>Search by keyword</label>
                             </div>
                         </div>
 
-                        <div class="col-md-1">
+                        <div class="col-auto">
                             <button type="submit" class="btn btn-primary fw-bold w-100 h-100">
                                 Search
                             </button>
                         </div>
 
-                        <div class="col-md-1">
-                            <a href="customer-maintenance" class="btn btn-outline-secondary w-100 h-100 d-flex align-items-center justify-content-center" title="Reset Filter">
+                        <div class="col-auto">
+                            <a href="seller-maintenance" class="btn btn-outline-secondary w-100 h-100 d-flex align-items-center justify-content-center" title="Reset Filter">
                                 <i class="fas fa-sync-alt"></i>
                             </a>
                         </div>

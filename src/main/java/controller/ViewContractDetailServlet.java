@@ -22,6 +22,8 @@ import model.*;
 @WebServlet(name = "ViewContractDetailServlet", urlPatterns = {"/contract-detail"})
 public class ViewContractDetailServlet extends HttpServlet {
 
+        String URL_CONTRACT_DETAIL_DIRECTION = "manager/contract/contract-detail.jsp";
+
     @Override
      protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -88,7 +90,7 @@ public class ViewContractDetailServlet extends HttpServlet {
             request.setAttribute("sortBy", sortBy);
             request.setAttribute("sortOrder", sortOrder);
 
-            request.getRequestDispatcher("manager/contract/contract-detail.jsp").forward(request, response);
+            request.getRequestDispatcher(URL_CONTRACT_DETAIL_DIRECTION).forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
