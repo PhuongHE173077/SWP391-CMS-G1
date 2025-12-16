@@ -2,10 +2,14 @@ package model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 import utils.BaseEntity;
 
 /**
@@ -30,6 +34,9 @@ public class MaintanceRequest extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "contact_detail_id", nullable = false)
     private ContractItem contractItem;
+
+    @OneToMany(mappedBy = "maintanceRequest", fetch = FetchType.LAZY)
+    private Set<ReplyMaintanceRequest> replyMaintanceRequests = new HashSet<>();
 
     public MaintanceRequest() {
     }
@@ -71,5 +78,13 @@ public class MaintanceRequest extends BaseEntity {
 
     public void setContractItem(ContractItem contractItem) {
         this.contractItem = contractItem;
+    }
+
+    public Set<ReplyMaintanceRequest> getReplyMaintanceRequests() {
+        return replyMaintanceRequests;
+    }
+
+    public void setReplyMaintanceRequests(Set<ReplyMaintanceRequest> replyMaintanceRequests) {
+        this.replyMaintanceRequests = replyMaintanceRequests;
     }
 }

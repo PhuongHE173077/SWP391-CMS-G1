@@ -137,7 +137,7 @@
                                         <c:if test="${!canEdit}">
                                             <div class="edit-disabled-notice">
                                                 <i class="fas fa-exclamation-triangle text-warning me-2"></i>
-                                                <strong>Lưu ý:</strong> Hợp đồng đã được tạo quá 6 ngày, bạn không thể
+                                                <strong>Lưu ý:</strong> Hợp đồng đã được tạo quá 3 ngày, bạn không thể
                                                 thêm hoặc xóa sản phẩm.
                                             </div>
                                         </c:if>
@@ -249,9 +249,16 @@
 
                                         <!-- Submit Button -->
                                         <div class="mt-auto">
-                                            <button type="button" id="submit-button" class="btn btn-primary w-100">
+                                            <c:if test="${!canEdit}">
+                                                <button disabled="true" type="button" id="submit-button" class="btn btn-primary w-100">
                                                 Cập nhật hợp đồng
                                             </button>
+                                            </c:if>
+                                            <c:if test="${canEdit}">
+                                                <button disabled="true" type="button" id="submit-button" class="btn btn-primary w-100">
+                                                Cập nhật hợp đồng
+                                            </button>
+                                            </c:if>
                                         </div>
                                     </div>
                                 </div>

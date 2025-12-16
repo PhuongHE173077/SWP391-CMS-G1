@@ -17,7 +17,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import model.Users;
+import jakarta.servlet.http.HttpSession;
+import utils.CloudinaryUtil;
+import utils.ContractPdfGenerator;
 
 @WebServlet(name = "UpdateContractServlet", urlPatterns = { "/update-contract" })
 public class UpdateContractServlet extends HttpServlet {
@@ -46,7 +51,7 @@ public class UpdateContractServlet extends HttpServlet {
             if (contract.getCreatedAt() != null) {
                 OffsetDateTime now = OffsetDateTime.now();
                 long daysBetween = ChronoUnit.DAYS.between(contract.getCreatedAt(), now);
-                canEdit = daysBetween <= 6;
+                canEdit = daysBetween <= 3;
             }
 
             // Lấy danh sách contract items
@@ -140,8 +145,66 @@ public class UpdateContractServlet extends HttpServlet {
                 }
             }
 
+            // Generate PDF mới và upload lên Cloudinary
+            String pdfUrl = null;
+            try {
+                // Lấy lại thông tin contract sau khi update
+                Contract updatedContract = contractDAO.getContractWithCreatedAt(contractId);
+
+                // Lấy thông tin khách hàng
+                int userId = updatedContract.getUser().getId();
+                String[] customerInfo = contractDAO.getUserInfoById(userId);
+                String customerName = customerInfo != null ? customerInfo[0] : "N/A";
+                String customerEmail = customerInfo != null ? customerInfo[1] : "N/A";
+                String customerPhone = customerInfo != null ? customerInfo[2] : "N/A";
+                String customerAddress = customerInfo != null ? customerInfo[3] : "N/A";
+
+                // Lấy thông tin người tạo từ session
+                HttpSession session = request.getSession();
+                Users currentUser = (Users) session.getAttribute("user");
+                String creatorName = currentUser != null ? currentUser.getDisplayname()
+                        : (updatedContract.getCreateBy() != null ? updatedContract.getCreateBy().getDisplayname()
+                                : "N/A");
+
+                // Lấy danh sách thiết bị mới nhất từ database
+                List<ContractItem> contractItems = contractDAO.getAllItemsByContractId(contractId);
+                List<String[]> deviceList = new ArrayList<>();
+                for (ContractItem item : contractItems) {
+                    String deviceName = item.getSubDevice().getDevice().getName();
+                    String serialId = item.getSubDevice().getSeriId();
+                    String maintenanceTime = item.getSubDevice().getDevice().getMaintenanceTime();
+                    deviceList.add(
+                            new String[] { deviceName, serialId, maintenanceTime != null ? maintenanceTime : "0" });
+                }
+
+                // Generate PDF
+                byte[] pdfBytes = ContractPdfGenerator.generateContractPdf(
+                        contractId,
+                        customerName,
+                        customerEmail,
+                        customerPhone,
+                        customerAddress,
+                        creatorName,
+                        updatedContract.getContent(),
+                        deviceList);
+
+                // Upload to Cloudinary
+                if (pdfBytes != null) {
+                    pdfUrl = CloudinaryUtil.uploadContractPdfBytes(pdfBytes, contractId);
+                    if (pdfUrl != null) {
+                        contractDAO.updateContractUrl(contractId, pdfUrl);
+                    }
+                }
+            } catch (Exception pdfEx) {
+                pdfEx.printStackTrace();
+                // Không fail toàn bộ request nếu PDF generation thất bại
+            }
+
             result.addProperty("success", true);
             result.addProperty("message", "Cập nhật hợp đồng thành công");
+            if (pdfUrl != null) {
+                result.addProperty("pdfUrl", pdfUrl);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
