@@ -183,11 +183,11 @@ public class UserDAO extends DBContext {
                 case "id":
                     listSort = " ORDER BY u.id " + orderBy;
                     break;
-                case "createdAt": // Đã sửa từ 'created_at' để khớp với biến JSP
+                case "createdAt":  
                     listSort = " ORDER BY u.created_at " + orderBy;
                     break;
                 default:
-                    listSort = " ORDER BY u.id DESC"; // Mặc định
+                    listSort = " ORDER BY u.id ASC";
                     break;
             }
         }
@@ -345,9 +345,9 @@ public class UserDAO extends DBContext {
             // Copy y nguyên phần set tham số (index)
             int index = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
-               String searchPattern = "%" + keyword + "%";
-                ps.setString(index++, searchPattern);  
-                ps.setString(index++, searchPattern);  
+                String searchPattern = "%" + keyword + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
             }
             if (roleId != null && !roleId.isEmpty()) {
                 ps.setInt(index++, Integer.parseInt(roleId));
