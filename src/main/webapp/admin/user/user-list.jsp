@@ -78,12 +78,14 @@
                         </div>
                     </div>
 
+                     
                     <div class="row g-3">
                         <div class="col-md-2">
-                            <select name="gender" class="form-select">
+                            <select name="role" class="form-select">
                                 <option value="">All Genders</option>
-                                <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
-                                <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
+                                <c:forEach items="${genderList}" var="g"> 
+                                    <option value="${g.id}" ${genderValue == g.id ? 'selected' : ''}>${g.name}</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="col-md-2">
