@@ -82,9 +82,11 @@
                     <div class="row g-3">
                         <div class="col-md-2">
                             <select name="gender" class="form-select">
-                                <option value="">All Genders</option>
+                                <option value="" ${empty genderValue ? 'selected' : ''}>All Genders</option>
                                 <c:forEach items="${genderList}" var="g"> 
-                                    <option value="${g}" ${genderValue == g ? 'selected' : ''}>${g == 1 ? 'Male' : 'Female'}</option>
+                                    <option value="${g}" ${String.valueOf(g) == genderValue ? 'selected' : ''}>
+                                        ${g == 1 ? 'Male' : 'Female'}
+                                    </option>
                                 </c:forEach>
                             </select>
                         </div>
