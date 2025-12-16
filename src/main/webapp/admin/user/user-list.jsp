@@ -78,7 +78,7 @@
                         </div>
                     </div>
 
-                     
+
                     <div class="row g-3">
                         <div class="col-md-2">
                             <select name="gender" class="form-select">
@@ -99,8 +99,11 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
-                                <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
+                                <c:forEach items="${statusList}" var="s">
+                                    <option value="${s}" ${String.valueOf(s) == statusValue ? 'selected' : ''}>
+                                        ${s == 1 ? 'Active' : 'Inactive'}
+                                    </option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="col-md-4">
