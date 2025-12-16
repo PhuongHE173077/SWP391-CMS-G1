@@ -83,12 +83,18 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
+                            <div class="form-floating">
+                                <input type="date" name="fromDate" class="form-control" id="fromDate" value="${fromDateValue}">
+                                <label for="fromDate">From Date</label>
+                            </div>
                         </div>
                         <div class="col-md-2">
-                            <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
+                            <div class="form-floating">
+                                <input type="date" name="toDate" class="form-control" id="toDate" value="${toDateValue}">
+                                <label for="toDate">To Date</label>
+                            </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select name="customerId" class="form-select">
                                 <option value="">All Customers</option>
                                 <c:forEach items="${customerList}" var="cus">
@@ -118,7 +124,7 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light text-secondary">
                             <tr>
-                                <th class="text-center">Req ID</th>
+                                <th class="py-3 ps-3 text-center">Req ID</th>
                                 <th class="py-3">Customer Name</th>
                                 <th class="py-3">Device Name</th>
                                 <th class="py-3">Device Serial Number</th>

@@ -37,7 +37,7 @@ public class MaintenanceRequestDAO extends DBContext {
             sql += " AND mr.created_at >= ? ";
         }
         if (toDate != null && !toDate.isEmpty()) {
-            sql += " AND mr.created_at <= ? "; // Lưu ý: Nếu muốn lấy hết ngày thì nên dùng < (toDate + 1 day) hoặc so sánh DATE()
+            sql += " AND mr.created_at <= ? ";  
         }
 
         try {
