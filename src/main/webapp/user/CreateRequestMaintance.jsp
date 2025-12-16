@@ -176,10 +176,12 @@
                 <!-- Thông tin hướng dẫn -->
                 <div class="info-box">
                     <i class="fas fa-info-circle"></i>
-                    <strong>Hướng dẫn:</strong> Vui lòng chọn thiết bị từ hợp đồng của bạn và mô tả chi tiết vấn đề cần bảo trì.
+                    <strong>Hướng dẫn:</strong> Vui lòng kiểm tra lại thông tin thiết bị trong hợp đồng của bạn và mô tả chi tiết vấn đề cần bảo trì.
                 </div>
 
                 <form action="CreateRequestMaintance" method="POST" id="maintenanceForm">
+                    <!-- Ẩn contractItemId để gửi theo form -->
+                    <input type="hidden" name="contractItemId" id="contractItemId" value="${contractItem.id}" />
                     <!-- Tiêu đề yêu cầu -->
                     <div class="mb-4">
                         <label for="title" class="form-label">
@@ -190,62 +192,37 @@
                         <small class="text-muted">Nhập tiêu đề ngắn gọn mô tả vấn đề cần bảo trì</small>
                     </div>
 
-                    <!-- Chọn Contract Item -->
+                    <!-- Thông tin thiết bị trong hợp đồng (hiển thị cố định) -->
                     <div class="mb-4">
-                        <label for="contractItemId" class="form-label">
-                            Chọn Thiết Bị <span class="required">*</span>
-                        </label>
-                        <select class="form-select" id="contractItemId" name="contractItemId" required>
-                            <option value="">-- Chọn thiết bị --</option>
-                            <c:if test="${not empty contractItems}">
-                                <c:forEach var="item" items="${contractItems}">
-                                    <c:if test="${item.subDevice != null && item.subDevice.device != null}">
-                                        <option value="${item.id}" 
-                                            data-device-name="${item.subDevice.device.name}"
-                                            data-serial="${item.subDevice.seriId}"
-                                            data-start-date="<fmt:formatDate value="${item.startAt}" pattern="dd/MM/yyyy" />"
-                                            data-end-date="<fmt:formatDate value="${item.endDate}" pattern="dd/MM/yyyy" />">
-                                            ${item.subDevice.device.name} - 
-                                            Serial: ${item.subDevice.seriId} 
-                                            (<fmt:formatDate value="${item.startAt}" pattern="dd/MM/yyyy" /> - 
-                                            <fmt:formatDate value="${item.endDate}" pattern="dd/MM/yyyy" />)
-                                        </option>
-                                    </c:if>
-                                </c:forEach>
-                            </c:if>
-                        </select>
-                        <c:if test="${empty contractItems}">
-                            <div class="alert alert-warning mt-2" role="alert">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                Bạn chưa có thiết bị nào trong hợp đồng. Vui lòng liên hệ với nhân viên để được hỗ trợ.
-                            </div>
-                        </c:if>
-                        <small class="text-muted">Chọn thiết bị từ hợp đồng của bạn để tạo yêu cầu bảo trì</small>
-                    </div>
-
-                    <!-- Hiển thị thông tin thiết bị đã chọn -->
-                    <div id="selectedDeviceInfo" class="mb-4" style="display: none;">
                         <div class="card bg-light">
                             <div class="card-body">
-                                <h6 class="card-title"><i class="fas fa-info-circle me-2"></i>Thông tin thiết bị đã chọn:</h6>
+                                <h6 class="card-title"><i class="fas fa-info-circle me-2"></i>Thông tin thiết bị bảo hành:</h6>
                                 <div class="row mt-3">
                                     <div class="col-md-6">
                                         <strong>Tên thiết bị:</strong>
-                                        <p id="deviceName" class="mb-0"></p>
+                                        <p class="mb-0">
+                                            <c:out value="${contractItem.subDevice.device.name}" />
+                                        </p>
                                     </div>
                                     <div class="col-md-6">
                                         <strong>Số Serial:</strong>
-                                        <p id="serialId" class="mb-0"></p>
+                                        <p class="mb-0">
+                                            <c:out value="${contractItem.subDevice.seriId}" />
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <strong>Ngày bắt đầu:</strong>
-                                        <p id="startDate" class="mb-0"></p>
+                                        <p class="mb-0">
+                                            <fmt:formatDate value="${contractItem.startAt}" pattern="dd/MM/yyyy" />
+                                        </p>
                                     </div>
                                     <div class="col-md-6">
                                         <strong>Ngày kết thúc:</strong>
-                                        <p id="endDate" class="mb-0"></p>
+                                        <p class="mb-0">
+                                            <fmt:formatDate value="${contractItem.endDate}" pattern="dd/MM/yyyy" />
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -292,37 +269,14 @@
         crossorigin="anonymous"></script>
 
     <script>
-        // Hiển thị thông tin thiết bị khi chọn
-        document.getElementById('contractItemId').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const infoDiv = document.getElementById('selectedDeviceInfo');
-            
-            if (this.value && selectedOption.dataset.deviceName) {
-                document.getElementById('deviceName').textContent = selectedOption.dataset.deviceName;
-                document.getElementById('serialId').textContent = selectedOption.dataset.serial;
-                document.getElementById('startDate').textContent = selectedOption.dataset.startDate;
-                document.getElementById('endDate').textContent = selectedOption.dataset.endDate;
-                infoDiv.style.display = 'block';
-            } else {
-                infoDiv.style.display = 'none';
-            }
-        });
-
         // Validation form
         document.getElementById('maintenanceForm').addEventListener('submit', function(e) {
             const title = document.getElementById('title').value.trim();
-            const contractItemId = document.getElementById('contractItemId').value;
             const content = document.getElementById('content').value.trim();
 
             if (!title) {
                 e.preventDefault();
                 alert('Vui lòng nhập tiêu đề yêu cầu!');
-                return false;
-            }
-
-            if (!contractItemId) {
-                e.preventDefault();
-                alert('Vui lòng chọn thiết bị!');
                 return false;
             }
 

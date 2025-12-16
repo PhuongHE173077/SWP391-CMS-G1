@@ -2,7 +2,6 @@ package controller;
 
 import dal.MaintenanceRequestDAO;
 import java.io.IOException;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,10 +36,41 @@ public class CreateRequestMaintance extends HttpServlet {
         }
 
         try {
-            // Lấy danh sách contract items của user
-            List<ContractItem> contractItems = maintenanceRequestDAO.getContractItemsByUserId(user.getId());
-            
-            request.setAttribute("contractItems", contractItems);
+            // Lấy contractItemId từ param (user click từ danh sách hợp đồng)
+            String contractItemIdStr = request.getParameter("contractItemId");
+            if (contractItemIdStr == null || contractItemIdStr.trim().isEmpty()) {
+                if (session != null) {
+                    session.setAttribute("error", "Thiếu thông tin thiết bị trong hợp đồng!");
+                }
+                response.sendRedirect("customer/ViewListContact");
+                return;
+            }
+
+            int contractItemId = Integer.parseInt(contractItemIdStr);
+
+            // Lấy contract item theo id
+            ContractItem contractItem = maintenanceRequestDAO.getContractItemById(contractItemId);
+            if (contractItem == null) {
+                if (session != null) {
+                    session.setAttribute("error", "Thiết bị trong hợp đồng không tồn tại!");
+                }
+                response.sendRedirect("customer/ViewListContact");
+                return;
+            }
+
+            // Đảm bảo contract item thuộc về user hiện tại
+            if (contractItem.getContract() == null
+                    || contractItem.getContract().getUser() == null
+                    || contractItem.getContract().getUser().getId() != user.getId()) {
+                if (session != null) {
+                    session.setAttribute("error", "Bạn không có quyền tạo yêu cầu bảo trì cho thiết bị này!");
+                }
+                response.sendRedirect("customer/ViewListContact");
+                return;
+            }
+
+            // Truyền contractItem sang JSP để hiển thị cố định
+            request.setAttribute("contractItem", contractItem);
             request.getRequestDispatcher("user/CreateRequestMaintance.jsp").forward(request, response);
             
         } catch (Exception e) {

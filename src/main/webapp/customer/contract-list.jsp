@@ -404,10 +404,7 @@
 
                     // Function để gửi yêu cầu bảo hành
                     function sendWarrantyRequest(itemId) {
-                        // TODO: Implement logic để gửi yêu cầu bảo hành
-                        // Có thể redirect đến form hoặc hiển thị modal
-                        window.location.href = '/CreateRequestMaintance?id=' + itemId;
-                        // Ví dụ: window.location.href = 'warranty-request?itemId=' + itemId;
+                        window.location.href = '${pageContext.request.contextPath}/CreateRequestMaintance?contractItemId=' + itemId;
                     }
                 </script>
             </body>
