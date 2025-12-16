@@ -73,7 +73,7 @@ public class ViewContractListServlet extends HttpServlet {
                 pageIndex = 1;
             }
         }
-       if (sortBy == null || sortBy.isEmpty()) {
+        if (sortBy == null || sortBy.isEmpty()) {
             sortBy = "id";
         }
         if (sortOrder == null || sortOrder.isEmpty()) {
@@ -83,9 +83,7 @@ public class ViewContractListServlet extends HttpServlet {
             search = search.trim();
         }
         try {
-            int pageIndex = Integer.parseInt(indexPage);
-            //set 2 record trên 1 trang
-            int pageSize = 5;
+             int pageSize = 5;
             ContractDAO dao = new ContractDAO();
 
             // TÍNH TỔNG SỐ RECORDS

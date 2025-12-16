@@ -109,65 +109,67 @@
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Id of Electric Generator</th>
-                                <th>Name of Electric Generator</th>
-                                <th>Serial Number</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
+                                <th class="py-3 ps-3 text-center">Id of Electric Generator</th>
+                                <th class="py-3 ps-3 text-center">Name of Electric Generator</th>
+                                <th class="py-3 ps-3 text-center">Serial Number</th>
+                                <th class="py-3 ps-3 text-center">Start Date</th>
+                                <th class="py-3 ps-3 text-center">End Date</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${itemList}" var="item">
                                 <tr>
-                                    <td>${item.subDevice.device.id}</td>
-                                    <td class="fw-bold text-primary">${item.subDevice.device.name}</td>
-                                    <td><span
-                                            class="badge bg-light text-dark border">${item.subDevice.seriId}</span>
+                                    <td class="text-center">${item.subDevice.device.id}</td>
+                                    <td class="fw-bold text-center">${item.subDevice.device.name}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-dark border">${item.subDevice.seriId}</span>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <fmt:formatDate value="${item.startAt}" pattern="dd-MM-yyyy" />
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <fmt:formatDate value="${item.endDate}" pattern="dd-MM-yyyy" />
                                     </td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty itemList}">
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">No items found
-                                        in this contract.</td>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        No items found in this contract.</td>
                                 </tr>
                             </c:if>
                         </tbody>
                     </table>
                 </div>
 
-                <c:if test="${totalPages > 0}">
-                    <nav class="mt-3 d-flex justify-content-center">
-                        <ul class="pagination">
-                            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link"
-                                   href="contract-detail?id=${c.id}&page=${currentPage - 1}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-
-                            <c:forEach begin="1" end="${totalPages}" var="i">
-                                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                <div class="card-footer bg-white d-flex justify-content-center py-3">
+                    <c:if test="${totalPages > 0}">
+                        <nav class="mt-3 d-flex justify-content-center">
+                            <ul class="pagination">
+                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                     <a class="page-link"
-                                       href="contract-detail?id=${c.id}&page=${i}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">${i}</a>
+                                       href="contract-detail?id=${c.id}&page=${currentPage - 1}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
                                 </li>
-                            </c:forEach>
 
-                            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link"
-                                   href="contract-detail?id=${c.id}&page=${currentPage + 1}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </c:if>
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                        <a class="page-link"
+                                           href="contract-detail?id=${c.id}&page=${i}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">${i}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       href="contract-detail?id=${c.id}&page=${currentPage + 1}&searchItem=${searchItem}&startDate=${startDate}&endDate=${endDate}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </c:if>
+                </div>
 
                 <div class="mt-3 d-flex justify-content-between align-items-center">
                     <a href="contract-list" class="text-decoration-none fw-bold"><i

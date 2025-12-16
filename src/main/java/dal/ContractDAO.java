@@ -220,8 +220,9 @@ public class ContractDAO extends DBContext {
             ps.setInt(index++, contractId);
 
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
-                ps.setString(index++, "%" + keyword + "%");
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
             }
             if (startDate != null && !startDate.isEmpty()) {
                 ps.setString(index++, startDate);
