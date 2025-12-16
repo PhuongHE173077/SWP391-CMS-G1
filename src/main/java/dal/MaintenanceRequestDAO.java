@@ -15,7 +15,8 @@ import utils.MaintenanceStatus;
 
 public class MaintenanceRequestDAO extends DBContext {
 
-    //Lấy tất cả contract items (sub-device có seri) đã được thêm vào hợp đồng của user    
+    // Lấy tất cả contract items (sub-device có seri) đã được thêm vào hợp đồng của
+    // user
     public List<ContractItem> getContractItemsByUserId(int userId) {
         List<ContractItem> list = new ArrayList<>();
         String sql = "SELECT ci.id as ci_id, ci.startAt, ci.endDate, ci.created_at as ci_created_at, "
@@ -27,7 +28,7 @@ public class MaintenanceRequestDAO extends DBContext {
                 + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
                 + "INNER JOIN device d ON sd.device_id = d.id "
                 + "WHERE c.user_id = ? " // Chỉ lấy contracts của user này
-                + "AND c.isDelete = 0 " // Contract chưa bị xóa       
+                + "AND c.isDelete = 0 " // Contract chưa bị xóa
                 + "AND ci.sub_devicel_id IS NOT NULL "
                 + "ORDER BY ci.id DESC";
 
@@ -335,6 +336,81 @@ public class MaintenanceRequestDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // Lấy maintenance request theo ID
+    public MaintanceRequest getMaintenanceRequestById(int id) {
+        String sql = "SELECT mr.*, u.displayname as customer_name, d.name as device_name, sd.seri_id, "
+                + "d.id as device_id, d.image as device_image "
+                + "FROM maintenance_request mr "
+                + "JOIN _user u ON mr.user_id = u.id "
+                + "JOIN contract_item ci ON mr.contact_detail_id = ci.id "
+                + "JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                + "JOIN device d ON sd.device_id = d.id "
+                + "WHERE mr.id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    MaintanceRequest req = new MaintanceRequest();
+                    req.setId(rs.getInt("id"));
+                    req.setTitle(rs.getString("title"));
+                    req.setContent(rs.getString("content"));
+                    req.setImage(rs.getString("image"));
+                    req.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
+
+                    String statusStr = rs.getString("status");
+                    if (statusStr != null) {
+                        req.setStatus(MaintenanceStatus.valueOf(statusStr));
+                    }
+
+                    // Map User
+                    Users u = new Users();
+                    u.setId(rs.getInt("user_id"));
+                    u.setDisplayname(rs.getString("customer_name"));
+                    req.setUser(u);
+
+                    // Map ContractItem -> SubDevice -> Device
+                    ContractItem ci = new ContractItem();
+                    ci.setId(rs.getInt("contact_detail_id"));
+
+                    SubDevice sd = new SubDevice();
+                    sd.setSeriId(rs.getString("seri_id"));
+
+                    Device d = new Device();
+                    d.setId(rs.getInt("device_id"));
+                    d.setName(rs.getString("device_name"));
+                    d.setImage(rs.getString("device_image"));
+
+                    sd.setDevice(d);
+                    ci.setSubDevice(sd);
+                    req.setContractItem(ci);
+
+                    return req;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Update maintenance request
+    public boolean updateMaintenanceRequest(MaintanceRequest request) {
+        String sql = "UPDATE maintenance_request SET title = ?, content = ?, image = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, request.getTitle());
+            ps.setString(2, request.getContent());
+            ps.setString(3, request.getImage());
+            ps.setInt(4, request.getId());
+
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
