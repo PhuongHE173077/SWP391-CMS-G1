@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import model.ContractItem;
 import model.MaintanceRequest;
 import model.Users;
+import utils.MaintenanceStatus;
 
 @WebServlet(name = "CreateRequestMaintance", urlPatterns = {"/CreateRequestMaintance"})
 public class CreateRequestMaintance extends HttpServlet {
@@ -102,7 +103,7 @@ public class CreateRequestMaintance extends HttpServlet {
             MaintanceRequest maintenanceRequest = new MaintanceRequest();
             maintenanceRequest.setContent(content.trim());
             maintenanceRequest.setUser(user);
-            maintenanceRequest.setStatus(false); // Mặc định là chưa xử lý
+            maintenanceRequest.setStatus(MaintenanceStatus.PENDING); // Mặc định là chưa xử lý
             maintenanceRequest.setContractItem(contractItem);
 
             // Insert vào database
