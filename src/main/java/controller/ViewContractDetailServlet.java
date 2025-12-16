@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.*;
 
@@ -22,11 +23,18 @@ import model.*;
 @WebServlet(name = "ViewContractDetailServlet", urlPatterns = {"/contract-detail"})
 public class ViewContractDetailServlet extends HttpServlet {
 
-        String URL_CONTRACT_DETAIL_DIRECTION = "manager/contract/contract-detail.jsp";
+    String URL_CONTRACT_DETAIL_DIRECTION = "manager/contract/contract-detail.jsp";
 
     @Override
-     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user"); // Giả sử object user lưu trong session tên là "user"
+
+        if (user == null) {
+            response.sendRedirect("login.jsp"); // Chưa đăng nhập thì đá về login
+            return;
+        }
         try {
             String idRaw = request.getParameter("id");
             if (idRaw == null) {
