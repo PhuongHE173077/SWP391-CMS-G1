@@ -597,7 +597,7 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-   public List<Integer> getExistingGenders() {
+    public List<Integer> getExistingGenders() {
         List<Integer> list = new ArrayList<>();
         // Query lấy các giá trị 0 hoặc 1 đang có trong bảng
         String sql = "SELECT DISTINCT gender FROM _user WHERE gender IS NOT NULL ORDER BY gender DESC";
@@ -618,7 +618,7 @@ public class UserDAO extends DBContext {
 
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-       
+
         Users user = u.login("vana@example.com", "hashedpass1");
         if (user != null) {
             System.out.println("Login success: " + user.getDisplayname());

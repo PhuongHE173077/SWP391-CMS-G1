@@ -67,7 +67,7 @@ public class ViewUserList extends HttpServlet {
             List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex, pageSize, sortBy, sortOrder);
             RoleDAO roleDAO = new RoleDAO();
             List<Roles> roleList = roleDAO.getAllRoleses();
-            List<String> genderList = dao.getExistingGenders();
+            List<Integer> genderList = dao.getExistingGenders();
             request.setAttribute("userList", userList);
             request.setAttribute("roleList", roleList);
             request.setAttribute("genderList", genderList);
