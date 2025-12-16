@@ -16,6 +16,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import model.TopContractUser;
 
 /**
  *
@@ -75,6 +78,10 @@ public class Dashboard extends HttpServlet {
         UserDAO user = new UserDAO();
         int totalUser = user.getCountAllUser();
         request.setAttribute("totalUser", totalUser);
+        
+        List<TopContractUser> topContractUser = new ArrayList<>();
+        topContractUser = con.getTopContractUsers();
+        request.setAttribute("topContractUser", topContractUser);
         
         request.getRequestDispatcher("manager/dashboard.jsp").forward(request, response);
     } 

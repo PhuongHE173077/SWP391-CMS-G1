@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,8 +13,6 @@
 <jsp:include page="managerLayout.jsp">
     <jsp:param name="pageTitle" value="Device Category List" />
 </jsp:include>
-
-
 
 <style>
     /* --- Global Styles and Variables --- */
@@ -249,7 +248,6 @@
         opacity: 0.9;
         font-weight: 500;
     }
-
     /* --- Section Container and Table --- */
     .section-container {
         background-color: var(--text-light);
@@ -275,7 +273,7 @@
     .data-table th,
     .data-table td {
         padding: 12px 15px;
-        text-align: left;
+        text-align: center;
         border-bottom: 1px solid #eee;
         font-size: 14px;
     }
@@ -314,285 +312,285 @@
         color: #cd7f32;
         font-size: 1em;
     }
- :root {
-                        --sidebar-width: 260px;
-                        --sidebar-bg: #1e293b;
-                        --sidebar-hover: #334155;
-                        --primary-color: #10b981;
-                        --text-light: #e2e8f0;
-                        --text-muted: #94a3b8;
-                    }
+    :root {
+        --sidebar-width: 260px;
+        --sidebar-bg: #1e293b;
+        --sidebar-hover: #334155;
+        --primary-color: #10b981;
+        --text-light: #e2e8f0;
+        --text-muted: #94a3b8;
+    }
 
-                    * {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-                    body {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                        background-color: #f1f5f9;
-                    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f1f5f9;
+    }
 
-                    /* Sidebar */
-                    .manager-sidebar {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: var(--sidebar-width);
-                        height: 100vh;
-                        background: var(--sidebar-bg);
-                        color: var(--text-light);
-                        z-index: 1000;
-                        transition: all 0.3s ease;
-                        overflow-y: auto;
-                    }
+    /* Sidebar */
+    .manager-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--sidebar-bg);
+        color: var(--text-light);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+    }
 
-                    .manager-sidebar.collapsed {
-                        width: 70px;
-                    }
+    .manager-sidebar.collapsed {
+        width: 70px;
+    }
 
-                    .sidebar-header {
-                        padding: 20px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        border-bottom: 1px solid var(--sidebar-hover);
-                    }
+    .sidebar-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--sidebar-hover);
+    }
 
-                    .sidebar-logo {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        text-decoration: none;
-                        color: var(--text-light);
-                    }
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--text-light);
+    }
 
-                    .sidebar-logo i {
-                        font-size: 28px;
-                        color: var(--primary-color);
-                    }
+    .sidebar-logo i {
+        font-size: 28px;
+        color: var(--primary-color);
+    }
 
-                    .sidebar-logo span {
-                        font-size: 20px;
-                        font-weight: 700;
-                    }
+    .sidebar-logo span {
+        font-size: 20px;
+        font-weight: 700;
+    }
 
-                    .manager-sidebar.collapsed .sidebar-logo span,
-                    .manager-sidebar.collapsed .nav-text,
-                    .manager-sidebar.collapsed .menu-title {
-                        display: none;
-                    }
+    .manager-sidebar.collapsed .sidebar-logo span,
+    .manager-sidebar.collapsed .nav-text,
+    .manager-sidebar.collapsed .menu-title {
+        display: none;
+    }
 
-                    .toggle-btn {
-                        background: none;
-                        border: none;
-                        color: var(--text-muted);
-                        cursor: pointer;
-                        font-size: 18px;
-                        padding: 5px;
-                        transition: color 0.3s;
-                    }
+    .toggle-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 18px;
+        padding: 5px;
+        transition: color 0.3s;
+    }
 
-                    .toggle-btn:hover {
-                        color: var(--text-light);
-                    }
+    .toggle-btn:hover {
+        color: var(--text-light);
+    }
 
-                    /* Navigation Menu */
-                    .sidebar-nav {
-                        padding: 15px 0;
-                    }
+    /* Navigation Menu */
+    .sidebar-nav {
+        padding: 15px 0;
+    }
 
-                    .menu-title {
-                        padding: 10px 20px;
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-                        color: var(--text-muted);
-                        margin-top: 10px;
-                    }
+    .menu-title {
+        padding: 10px 20px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-top: 10px;
+    }
 
-                    .nav-item {
-                        list-style: none;
-                    }
+    .nav-item {
+        list-style: none;
+    }
 
-                    .nav-link {
-                        display: flex;
-                        align-items: center;
-                        padding: 12px 20px;
-                        color: var(--text-muted);
-                        text-decoration: none;
-                        transition: all 0.3s ease;
-                        gap: 12px;
-                        border-left: 3px solid transparent;
-                    }
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        gap: 12px;
+        border-left: 3px solid transparent;
+    }
 
-                    .nav-link:hover {
-                        background: var(--sidebar-hover);
-                        color: var(--text-light);
-                        border-left-color: var(--primary-color);
-                    }
+    .nav-link:hover {
+        background: var(--sidebar-hover);
+        color: var(--text-light);
+        border-left-color: var(--primary-color);
+    }
 
-                    .nav-link.active {
-                        background: var(--sidebar-hover);
-                        color: var(--primary-color);
-                        border-left-color: var(--primary-color);
-                    }
+    .nav-link.active {
+        background: var(--sidebar-hover);
+        color: var(--primary-color);
+        border-left-color: var(--primary-color);
+    }
 
-                    .nav-link i {
-                        width: 20px;
-                        text-align: center;
-                        font-size: 16px;
-                    }
+    .nav-link i {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+    }
 
-                    .nav-text {
-                        font-size: 14px;
-                    }
+    .nav-text {
+        font-size: 14px;
+    }
 
-                    /* Main Content */
-                    .manager-main {
-                        margin-left: var(--sidebar-width);
-                        min-height: 100vh;
-                        transition: margin-left 0.3s ease;
-                    }
+    /* Main Content */
+    .manager-main {
+        margin-left: var(--sidebar-width);
+        min-height: 100vh;
+        transition: margin-left 0.3s ease;
+    }
 
-                    .manager-main.expanded {
-                        margin-left: 70px;
-                    }
+    .manager-main.expanded {
+        margin-left: 70px;
+    }
 
-                    /* Top Header */
-                    .manager-header {
-                        background: #ffffff;
-                        padding: 15px 30px;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-                        position: sticky;
-                        top: 0;
-                        z-index: 100;
-                    }
+    /* Top Header */
+    .manager-header {
+        background: #ffffff;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
 
-                    .header-search {
-                        position: relative;
-                        width: 300px;
-                    }
+    .header-search {
+        position: relative;
+        width: 300px;
+    }
 
-                    .header-search input {
-                        width: 100%;
-                        padding: 10px 15px 10px 40px;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        transition: border-color 0.3s;
-                    }
+    .header-search input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
 
-                    .header-search input:focus {
-                        outline: none;
-                        border-color: var(--primary-color);
-                    }
+    .header-search input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
 
-                    .header-search i {
-                        position: absolute;
-                        left: 15px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        color: var(--text-muted);
-                    }
+    .header-search i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
 
-                    .header-actions {
-                        display: flex;
-                        align-items: center;
-                        gap: 20px;
-                    }
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
 
-                    .header-icon {
-                        position: relative;
-                        color: #64748b;
-                        font-size: 18px;
-                        cursor: pointer;
-                        transition: color 0.3s;
-                    }
+    .header-icon {
+        position: relative;
+        color: #64748b;
+        font-size: 18px;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
 
-                    .header-icon:hover {
-                        color: var(--primary-color);
-                    }
+    .header-icon:hover {
+        color: var(--primary-color);
+    }
 
-                    .notification-badge {
-                        position: absolute;
-                        top: -5px;
-                        right: -5px;
-                        background: #ef4444;
-                        color: white;
-                        font-size: 10px;
-                        padding: 2px 5px;
-                        border-radius: 10px;
-                    }
+    .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 10px;
+    }
 
-                    .user-profile {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        cursor: pointer;
-                        padding: 5px 10px;
-                        border-radius: 8px;
-                        transition: background 0.3s;
-                    }
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 8px;
+        transition: background 0.3s;
+    }
 
-                    .user-profile:hover {
-                        background: #f1f5f9;
-                    }
+    .user-profile:hover {
+        background: #f1f5f9;
+    }
 
-                    .user-avatar {
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 50%;
-                        background: var(--primary-color);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: white;
-                        font-weight: 600;
-                    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+    }
 
-                    .user-info {
-                        text-align: left;
-                    }
+    .user-info {
+        text-align: left;
+    }
 
-                    .user-name {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #1e293b;
-                    }
+    .user-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+    }
 
-                    .user-role {
-                        font-size: 12px;
-                        color: var(--text-muted);
-                    }
+    .user-role {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
 
-                    /* Content Area */
-                    .manager-content {
-                        padding: 30px;
-                    }
+    /* Content Area */
+    .manager-content {
+        padding: 30px;
+    }
 
-                    /* Responsive */
-                    @media (max-width: 768px) {
-                        .manager-sidebar {
-                            transform: translateX(-100%);
-                        }
+    /* Responsive */
+    @media (max-width: 768px) {
+        .manager-sidebar {
+            transform: translateX(-100%);
+        }
 
-                        .manager-sidebar.show {
-                            transform: translateX(0);
-                        }
+        .manager-sidebar.show {
+            transform: translateX(0);
+        }
 
-                        .manager-main {
-                            margin-left: 0;
-                        }
+        .manager-main {
+            margin-left: 0;
+        }
 
-                        .header-search {
-                            display: none;
-                        }
-                    }
+        .header-search {
+            display: none;
+        }
+    }
 </style>
 
 <body>
@@ -638,37 +636,25 @@
                 <div class="section-container">
                     <h3>Top 3 Khách hàng mua nhiều nhất (Doanh số)</h3>
                     <table class="data-table">
-                        <thead>
+                        <thead class="text-center-col">
                             <tr>
                                 <th>#</th>
-                                <th>Tên Khách hàng</th>
-                                <th>Mã Khách hàng</th>
-                                <th>Tổng doanh số</th>
-                                <th>Số lượng SP đã mua</th>
+                                <th >Tên Khách hàng</th>
+                                <th >Email</th>
+                                <th >Địa chỉ</th>
+                                <th>Tổng số đơn đã mua</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="top-rank rank-1"><i class="fas fa-trophy"></i> 1</td>
-                                <td>Nguyễn Văn A</td>
-                                <td>KH0001</td>
-                                <td>150,000,000 VNĐ</td>
-                                <td>85</td>
-                            </tr>
-                            <tr>
-                                <td class="top-rank rank-2"><i class="fas fa-medal"></i> 2</td>
-                                <td>Trần Thị B</td>
-                                <td>KH0015</td>
-                                <td>120,500,000 VNĐ</td>
-                                <td>60</td>
-                            </tr>
-                            <tr>
-                                <td class="top-rank rank-3"><i class="fas fa-award"></i> 3</td>
-                                <td>Lê Hoàng C</td>
-                                <td>KH0101</td>
-                                <td>95,200,000 VNĐ</td>
-                                <td>42</td>
-                            </tr>
+                        <tbody > 
+                            <c:forEach var="top" items="${topContractUser}" varStatus="loop">
+                                <tr class="text-center-col">
+                                    <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
+                                    <td >${top.displayName}</td>
+                                    <td >${top.email}</td>
+                                    <td>${top.address}</td>
+                                    <td >${top.totalContracts}</td>
+                                </tr>
+                            </c:forEach>                           
                         </tbody>
                     </table>
                 </div>              
@@ -677,5 +663,5 @@
         </div>
     </div>
 </body>
- <jsp:include page="managerFooter.jsp" />
+<jsp:include page="managerFooter.jsp" />
 
