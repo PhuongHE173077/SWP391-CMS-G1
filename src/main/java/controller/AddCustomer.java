@@ -1,9 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dal.RoleDAO;
+import dal.UserDAO;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,78 +12,165 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Roles;
+import model.Users;
+import org.mindrot.jbcrypt.BCrypt;
+import utils.SendMail;
 
-/**
- *
- * @author admin
- */
-@WebServlet(name = "AddCustomer", urlPatterns = { "/AddCustomer" })
+@WebServlet(name = "AddCustomer", urlPatterns = {"/AddCustomer"})
 public class AddCustomer extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AddCustomer</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AddCustomer at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    private static final String DEFAULT_PASSWORD = "Cms123456";
+    private static final int CUSTOMER_ROLE_ID = 4;
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
+    private UserDAO userDAO;
+    private RoleDAO roleDAO;
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    public void init() throws ServletException {
+        userDAO = new UserDAO();
+        roleDAO = new RoleDAO();
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+
+        JsonObject jsonResponse = new JsonObject();
+        Gson gson = new Gson();
+
+        try (PrintWriter out = response.getWriter()) {
+            // Read JSON body
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JsonObject jsonRequest = gson.fromJson(sb.toString(), JsonObject.class);
+
+            String name = jsonRequest.has("name") ? jsonRequest.get("name").getAsString().trim() : "";
+            String phone = jsonRequest.has("phone") ? jsonRequest.get("phone").getAsString().trim() : "";
+            String email = jsonRequest.has("email") ? jsonRequest.get("email").getAsString().trim() : "";
+            String address = jsonRequest.has("address") ? jsonRequest.get("address").getAsString().trim() : "";
+
+            // Validate required fields
+            if (name.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Vui lòng nhập đầy đủ thông tin bắt buộc!");
+                out.print(gson.toJson(jsonResponse));
+                return;
+            }
+
+            // Check email exists
+            if (userDAO.checkEmailExists(email)) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Email này đã tồn tại trong hệ thống!");
+                out.print(gson.toJson(jsonResponse));
+                return;
+            }
+
+            // Check phone exists
+            if (userDAO.checkPhoneExists(phone)) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Số điện thoại này đã tồn tại trong hệ thống!");
+                out.print(gson.toJson(jsonResponse));
+                return;
+            }
+
+            // Get customer role
+            Roles customerRole = roleDAO.getRoleById(CUSTOMER_ROLE_ID);
+            if (customerRole == null) {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Không tìm thấy vai trò khách hàng!");
+                out.print(gson.toJson(jsonResponse));
+                return;
+            }
+
+            // Create user with default password
+            Users user = new Users();
+            user.setDisplayname(name);
+            user.setEmail(email);
+            user.setPhone(phone);
+            user.setAddress(address.isEmpty() ? null : address);
+            user.setGender(true);
+            user.setActive(true);
+            user.setRoles(customerRole);
+
+            // Hash default password
+            String hashedPassword = BCrypt.hashpw(DEFAULT_PASSWORD, BCrypt.gensalt());
+            user.setPassword(hashedPassword);
+
+            boolean success = userDAO.insertUser(user);
+
+            if (success) {
+                // Send email notification
+                new Thread(() -> {
+                    try {
+                        sendWelcomeEmail(email, name, DEFAULT_PASSWORD);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+
+                // Get the newly created user to return
+                Users newUser = userDAO.getUserByEmail(email);
+
+                jsonResponse.addProperty("success", true);
+                jsonResponse.addProperty("message", "Tạo tài khoản khách hàng thành công!");
+
+                // Return customer info for auto-select
+                JsonObject customerInfo = new JsonObject();
+                if (newUser != null) {
+                    customerInfo.addProperty("id", newUser.getId());
+                    customerInfo.addProperty("name", newUser.getDisplayname());
+                    customerInfo.addProperty("phone", newUser.getPhone());
+                    customerInfo.addProperty("email", newUser.getEmail());
+                }
+                jsonResponse.add("customer", customerInfo);
+
+            } else {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Có lỗi xảy ra khi tạo tài khoản!");
+            }
+
+            out.print(gson.toJson(jsonResponse));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Lỗi hệ thống: " + e.getMessage());
+            try (PrintWriter out = response.getWriter()) {
+                out.print(new Gson().toJson(jsonResponse));
+            }
+        }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private void sendWelcomeEmail(String toEmail, String customerName, String password) {
+        try {
+            String subject = "Chào mừng bạn đến với CMS - Thông tin tài khoản";
+            String content = "Xin chào " + customerName + ",\n\n"
+                    + "Tài khoản của bạn đã được tạo thành công trên hệ thống CMS.\n\n"
+                    + "Thông tin đăng nhập:\n"
+                    + "- Email: " + toEmail + "\n"
+                    + "- Mật khẩu: " + password + "\n\n"
+                    + "Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu.\n\n"
+                    + "Trân trọng,\n"
+                    + "Đội ngũ CMS";
+
+            SendMail.send(toEmail, subject, content);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Lỗi khi gửi email chào mừng: " + e.getMessage());
+        }
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Add Customer Servlet";
+    }
 }

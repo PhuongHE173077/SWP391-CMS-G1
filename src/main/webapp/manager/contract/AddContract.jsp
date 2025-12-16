@@ -199,7 +199,7 @@
 
                                         <div class="mb-2 small d-flex">
                                             <h6 class="me-2 text-muted" style="width: 110px;">Địa chỉ:</h6>
-                                            <h6 class="flex-grow-1"></h6>
+                                            <h6 class="adress flex-grow-1"></h6>
                                         </div>
 
                                         <div class="d-flex gap-2 mt-2">
@@ -254,7 +254,7 @@
                         <div class="d-flex gap-2 justify-content-end mt-3">
                             <button type="button" class="btn btn-secondary btn-sm"
                                 id="cancelCreateCustomer">Hủy</button>
-                            <button type="submit" class="btn btn-primary btn-sm" id="submitCreateCustomer">Tạo</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="submitCreateCustomer">Tạo</button>
                         </div>
                     </form>
                 </div>

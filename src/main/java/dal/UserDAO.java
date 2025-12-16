@@ -102,8 +102,8 @@ public class UserDAO extends DBContext {
     }
 
     public boolean insertUser(Users user) {
-        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO _user (displayname, email, password, phone, active, address, gender, role_id,created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, user.getDisplayname());
             ps.setString(2, user.getEmail());
@@ -183,7 +183,7 @@ public class UserDAO extends DBContext {
                 case "id":
                     listSort = " ORDER BY u.id " + orderBy;
                     break;
-                case "createdAt":  
+                case "createdAt":
                     listSort = " ORDER BY u.created_at " + orderBy;
                     break;
                 default:
@@ -648,5 +648,32 @@ public class UserDAO extends DBContext {
         } else {
             System.out.println("Login failed");
         }
+    }
+
+    public int getCountAllCustomer() {
+        String query = "SELECT count(*) FROM swp391._user\n"
+                + "where role_id = 4;";
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getCountAllUser() {
+        String query = "SELECT count(*) FROM swp391._user\n";
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
