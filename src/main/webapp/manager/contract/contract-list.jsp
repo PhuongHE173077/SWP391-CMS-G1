@@ -58,8 +58,7 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
                                 <label class="form-check-label">Customer Name</label> 
-                            </div>                           
-                                
+                            </div>                            
                         </div>
 
                         <div class="col-md-6 d-flex align-items-center gap-3">                   
@@ -106,11 +105,12 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center">ID</th>
-                                <th class="py-3 text-center" style="width: 150px">Customer Name</th>
-                                <th class="py-3 text-center" style="width: 150px">URL Contract</th>
-                                <th class="py-3 text-center" style="width: 100px">Create By</th>
-                                <th class="py-3 text-center" style="width: 100px">Status</th>
+                                <th class="py-3 ps-3 text-center">ID</th>
+                                <th class="py-3 text-center">Customer Name</th>
+                                <th class="py-3 text-center">Created At</th>
+                                <th class="py-3 text-center">URL Contract</th>
+                                <th class="py-3 text-center">Create By</th>
+                                <th class="py-3 text-center">Status</th>
                                 <!--chỉ lấy những contract có status là active-->
                                 <th class="py-3 text-center" style="width: 250px;">Action</th>
                             </tr>
@@ -118,15 +118,19 @@
                         <tbody>
                             <c:forEach items="${contractList}" var="c">
                                 <tr>
-                                    <td class="fw-bold text-secondary text-center" style="width: 60px;">${c.id}</td>
-                                    <td class="text-primary text-center">${c.user.displayname}</td>
+                                    <td class="ps-3 fw-bold text-secondary text-center">${c.id}</td>
+                                    <td class="text-center">${c.user.displayname}</td>
+                                    <td class="text-center">
+                                        <fmt:formatDate value="${c.createdAtDate}" pattern="dd-MMM-yyyy"/>
+                                    </td>
 
                                     <td class="text-center">
                                         <c:if test="${not empty c.urlContract}">
                                             <a href="${c.urlContract}" target="_blank" class="text-info"><i class="fas fa-file-pdf fa-lg"></i></a>
                                             </c:if>
-                                            <c:if test="${empty c.urlContract}">-</c:if>
+                                            <c:if test="${empty c.urlContract}">No file attached</c:if>
                                         </td>
+
                                         <td class="text-center">
                                         ${c.createBy.displayname}
                                     </td>

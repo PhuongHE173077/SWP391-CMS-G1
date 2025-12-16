@@ -31,25 +31,17 @@ public class ContractDAO extends DBContext {
             sql += " AND c.createBy = ?";
         }
         // SORT
-        // default khi hiện list là order by user Id
+        // default khi hiện list là order by contract id
         String listSort = " ORDER BY c.id ASC";
-        String orderCondition = "";
-        // SORT
-        // default khi hiện list là order by user Id
+        
         if (sortBy != null && !sortBy.isEmpty()) {
-            if ((sortOrder != null && sortOrder.equalsIgnoreCase("ASC"))) {
-                orderCondition = "ASC";
-            } else {
-                orderCondition = "DESC";
-            }
-        }
-
+            String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
         switch (sortBy) {
             case "customer":
-                listSort = " ORDER BY u1.displayname " + orderCondition;
+                listSort = " ORDER BY u1.displayname " + orderBy;
                 break;
             case "id":
-                listSort = " ORDER BY c.id " + orderCondition;
+                listSort = " ORDER BY c.id " + orderBy;
                 break;
         }
 
