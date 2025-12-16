@@ -44,7 +44,7 @@
                 <form action="contract-list" method="get">
                     <div class="row mb-3 align-items-center bg-light p-2 rounded mx-0">           
                         <div class="col-md-6 d-flex align-items-center gap-3">                            
-                            <span class="fw-bold text-dark">Sort:</span>
+                            <span class="fw-bold text-dark">Sort by:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="id" ${sortBy == 'id' ? 'checked' : ''}>
                                 <label class="form-check-label">ID</label> 
