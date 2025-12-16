@@ -183,6 +183,9 @@ public class UserDAO extends DBContext {
                 case "id":
                     listSort = " ORDER BY u.id " + orderBy;
                     break;
+                case "createdAt": // Đã sửa từ 'created_at' để khớp với biến JSP
+                    listSort = " ORDER BY u.created_at " + orderBy;
+                    break;
                 default:
                     listSort = " ORDER BY u.id DESC"; // Mặc định
                     break;

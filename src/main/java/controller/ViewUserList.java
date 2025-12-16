@@ -47,6 +47,7 @@ public class ViewUserList extends HttpServlet {
         String indexPage = request.getParameter("page");
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
+        
 
         // Xử lý null (Mặc định sort theo ID và DESC)
         if (sortBy == null) {
