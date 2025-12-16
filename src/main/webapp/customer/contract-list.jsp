@@ -406,7 +406,7 @@
                     function sendWarrantyRequest(itemId) {
                         // TODO: Implement logic để gửi yêu cầu bảo hành
                         // Có thể redirect đến form hoặc hiển thị modal
-                        alert('Gửi yêu cầu bảo hành cho item ID: ' + itemId);
+                        window.location.href = '/CreateRequestMaintance?id=' + itemId;
                         // Ví dụ: window.location.href = 'warranty-request?itemId=' + itemId;
                     }
                 </script>
