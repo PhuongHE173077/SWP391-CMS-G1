@@ -11,6 +11,9 @@
     <jsp:param name="pageTitle" value="Maintenance Requests" />
 </jsp:include>--%>
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
 
@@ -61,11 +64,11 @@
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Asc</label>
+                                <label class="form-check-label">Ascending</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Desc</label>
+                                <label class="form-check-label">Descending</label>
                             </div>
                         </div>
                     </div>
@@ -112,7 +115,7 @@
                         <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search keyword..." value="${searchValue}" style="height: 58px;">
+                                <input type="text" name="search" class="form-control" placeholder="Search by Request ID, Customer Name,Device Name,Device Serial Number, Content" value="${searchValue}" style="height: 58px;">
 
                                 <button type="submit" class="btn btn-primary fw-bold px-3">Search</button>
                                 <a href="seller-maintenance" class="btn btn-outline-secondary d-flex align-items-center px-3" title="Reset Filter">
@@ -132,7 +135,7 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light text-secondary">
                             <tr>
-                                <th class="py-3 ps-3 text-center">Req ID</th>
+                                <th class="py-3 ps-3 text-center">Request ID</th>
                                 <th class="py-3 text-center">Customer Name</th>
                                 <th class="py-3 text-center">Device Name</th>
                                 <th class="py-3 text-center">Device Serial Number</th>
@@ -145,12 +148,12 @@
                         <tbody>
                             <c:forEach items="${requestList}" var="r">
                                 <tr>
-                                    <td class="text-center fw-bold text-secondary">#${r.id}</td>
-                                    <td class="text-center fw-bold text-primary">${r.user.displayname}</td>
-                                    <td class="text-center fw-bold text-dark">
+                                    <td class="text-center">${r.id}</td>
+                                    <td class="text-center">${r.user.displayname}</td>
+                                    <td class="text-center">
                                         ${r.contractItem.subDevice.device.name}
                                     </td>
-                                    <td class="text-center font-monospace text-secondary">
+                                    <td class="text-center">
                                         ${r.contractItem.subDevice.seriId}
                                     </td>
                                     <td class="text-muted">
