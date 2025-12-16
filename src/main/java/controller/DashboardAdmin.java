@@ -5,9 +5,7 @@
 
 package controller;
 
-import dal.CategoryDAO;
-import dal.DeviceDAO;
-import dal.ContractDAO;
+import dal.RoleDAO;
 import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,16 +14,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.TopContractUser;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="Dashboard", urlPatterns={"/Dashboard"})
-public class Dashboard extends HttpServlet {
+@WebServlet(name="DashboardAdmin", urlPatterns={"/DashboardAdmin"})
+public class DashboardAdmin extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -42,10 +37,10 @@ public class Dashboard extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Dashboard</title>");  
+            out.println("<title>Servlet DashboardAdmin</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Dashboard at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet DashboardAdmin at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,28 +57,17 @@ public class Dashboard extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        DeviceDAO dev = new DeviceDAO();
-        int totalDevice = dev.getCountAllDevice();
-        request.setAttribute("totalDevice", totalDevice);
-        
-        ContractDAO con = new ContractDAO();
-        int totalContract = con.getCountAllContract();
-        request.setAttribute("totalContract", totalContract);
-        
-        
-        CategoryDAO cate = new CategoryDAO();
-        int totalCategory = cate.getCountAllCategory();
-        request.setAttribute("totalCategory", totalCategory);
         
         UserDAO user = new UserDAO();
         int totalUser = user.getCountAllUser();
         request.setAttribute("totalUser", totalUser);
         
-        List<TopContractUser> topContractUser = new ArrayList<>();
-        topContractUser = con.getTopContractUsers();
-        request.setAttribute("topContractUser", topContractUser);
+        RoleDAO role = new RoleDAO();
+        int totalRole = role.getCountAllRole();
+        request.setAttribute("totalRole", totalRole);
+                
         
-        request.getRequestDispatcher("manager/dashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/dashboardAdmin.jsp").forward(request, response);
     } 
 
     /** 

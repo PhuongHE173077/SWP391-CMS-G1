@@ -570,9 +570,21 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public int getCountAllUser() {
+    public int getCountAllCustomer() {
         String query = "SELECT count(*) FROM swp391._user\n"
                 + "where role_id = 4;";
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+     public int getCountAllUser() {
+        String query = "SELECT count(*) FROM swp391._user\n";              
         try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
