@@ -27,7 +27,7 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        String MAINTENANCE_LIST_URL = "manager/maintenance/seller-maintenance.jsp";
         // 1. Nhận tham số từ Request
         String search = request.getParameter("search");
         String status = request.getParameter("status");
@@ -78,7 +78,7 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
         List<Users> customerList = userDao.getAllCustomers(); // Bạn cần viết hàm này trong UserDAO
 
         // 4. Set Attribute gửi sang JSP
-        request.setAttribute("statusList", statusList);  
+        request.setAttribute("statusList", statusList);
         request.setAttribute("requestList", list);
         request.setAttribute("customerList", customerList);
         request.setAttribute("totalPages", totalPages);
@@ -94,6 +94,6 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
         request.setAttribute("sortOrder", sortOrder);
 
         // 5. Forward về JSP
-        request.getRequestDispatcher("/seller-maintenance.jsp").forward(request, response);
+        request.getRequestDispatcher(MAINTENANCE_LIST_URL).forward(request, response);
     }
 }
