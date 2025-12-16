@@ -9,7 +9,7 @@
                 <head>
                     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
                     <title>Cập Nhật Hợp Đồng</title>
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
                         rel="stylesheet"
                         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
                         crossorigin="anonymous">
@@ -137,7 +137,7 @@
                                         <c:if test="${!canEdit}">
                                             <div class="edit-disabled-notice">
                                                 <i class="fas fa-exclamation-triangle text-warning me-2"></i>
-                                                <strong>Lưu ý:</strong> Hợp đồng đã được tạo quá 6 ngày, bạn không thể
+                                                <strong>Lưu ý:</strong> Hợp đồng đã được tạo quá 3 ngày, bạn không thể
                                                 thêm hoặc xóa sản phẩm.
                                             </div>
                                         </c:if>
@@ -249,9 +249,16 @@
 
                                         <!-- Submit Button -->
                                         <div class="mt-auto">
-                                            <button type="button" id="submit-button" class="btn btn-primary w-100">
+                                            <c:if test="${!canEdit}">
+                                                <button disabled="true" type="button" id="submit-button" class="btn btn-primary w-100">
                                                 Cập nhật hợp đồng
                                             </button>
+                                            </c:if>
+                                            <c:if test="${canEdit}">
+                                                <button disabled="true" type="button" id="submit-button" class="btn btn-primary w-100">
+                                                Cập nhật hợp đồng
+                                            </button>
+                                            </c:if>
                                         </div>
                                     </div>
                                 </div>

@@ -4,40 +4,29 @@
  */
 package controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializer;
-
-import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Users;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "SearchUser", urlPatterns = { "/search-user" })
-public class SearchUser extends HttpServlet {
+@WebServlet(name = "ReplyMantanaceRequest", urlPatterns = {"/ReplyMantanace"})
+public class ReplyMantanaceRequest extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,55 +36,37 @@ public class SearchUser extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SearchUser</title>");
+            out.println("<title>Servlet ReplyMantanaceRequest</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SearchUser at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ReplyMantanaceRequest at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String keyword = request.getParameter("keyword");
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        UserDAO dao = new UserDAO();
-        List<Users> users = dao.searchUsersByPhone(keyword,10);
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(OffsetDateTime.class,
-                        (JsonSerializer<OffsetDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-                .registerTypeAdapter(LocalDateTime.class,
-                        (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-                .create();
-
-        String json = gson.toJson(users);
-        response.getWriter().write(json);
+        request.getRequestDispatcher("manager/replyRequest.jsp").forward(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

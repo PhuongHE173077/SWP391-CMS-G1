@@ -28,13 +28,10 @@ public class ViewUserList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        // === PHẦN 1: XỬ LÝ MESSAGE TỪ CÁC SERVLET KHÁC GỬI VỀ ===
-        // Logic: Lấy từ Session -> Nạp vào Request -> Xóa khỏi Session
         String msg = (String) session.getAttribute("msg");
         String error = (String) session.getAttribute("error");
 
-        // 2. Nếu có, lấy ra nhét vào request để JSP hiện
-        if (msg != null) {
+         if (msg != null) {
             request.setAttribute("msg", msg);
             session.removeAttribute("msg");
         }
@@ -43,8 +40,6 @@ public class ViewUserList extends HttpServlet {
             request.setAttribute("error", error);
             session.removeAttribute("error"); // QUAN TRỌNG: Xóa ngay
         }
-        // ===========================
-// === PHẦN 2: LOGIC LẤY DANH SÁCH (GIỮ NGUYÊN CODE CỦA BẠN) ===
         String search = request.getParameter("search");
         String role = request.getParameter("role");
         String status = request.getParameter("status");
@@ -86,28 +81,6 @@ public class ViewUserList extends HttpServlet {
         } catch (Exception e) {
             // Nếu người dùng nhập page=abc thì quay về trang 1
             response.sendRedirect("user-list");
-        }
-        int pageIndex = Integer.parseInt(indexPage);
-        // 2. Gọi hàm search bên DAO
-        UserDAO dao = new UserDAO();
-        int pageSize = 5;
-        int totalRecords = dao.countUsers(search, role, status, gender);
-        int totalPages = (totalRecords % pageSize == 0) ? (totalRecords / pageSize) : (totalRecords / pageSize + 1);
-        List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex,pageSize, sortBy, sortOrder);
-        
-        RoleDAO roleDAO = new RoleDAO();
-        List<Roles> roleList = roleDAO.getAllRoleses();
-        // 3. Gửi danh sách kết quả sang JSP
-        request.setAttribute("userList", userList);
-        request.setAttribute("roleList", roleList);
-                
-        request.setAttribute("totalPages", totalPages); // Gửi tổng số trang
-        request.setAttribute("currentPage", pageIndex); // Gửi trang đang xem
-        request.setAttribute("searchValue", search);
-        request.setAttribute("roleValue", role);
-        request.setAttribute("statusValue", status);
-        request.setAttribute("genderValue", gender);
-        request.getRequestDispatcher("admin/user/user-list.jsp").forward(request, response);
-
+        }      
     }
 }

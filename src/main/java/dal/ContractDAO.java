@@ -12,8 +12,8 @@ import java.util.*;
 import model.*;
 
 public class ContractDAO extends DBContext {
-    // HÀM LẤY LIST CONTRACTS CỦA STAFF
 
+    // HÀM LẤY LIST CONTRACTS CỦA STAFF
     public List<Contract> getAllActiveContracts(String keyword, int createById, int pageIndex, int pageSize, String sortBy,
             String sortOrder) {
         List<Contract> lst = new ArrayList<>();
@@ -128,12 +128,6 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
-    public static void main(String[] args) {
-        ContractDAO dao = new ContractDAO();
-        int total = dao.countAllContracts("", 7);
-        System.out.println(total);
-    }
-
     public void changeContractStatus(int id, int status) {
         String sql = "UPDATE contract SET isDelete = ? WHERE id = ?";
         try {
@@ -146,8 +140,6 @@ public class ContractDAO extends DBContext {
         }
     }
 
-    //
-    // Hàm lấy chi tiết 1 hợp đồng theo ID
     public Contract getContractById(int id) {
         String sql = "SELECT c.*, "
                 + "u1.displayname AS customer_name, "
@@ -189,7 +181,7 @@ public class ContractDAO extends DBContext {
             System.out.println("Error getContractById: " + e.getMessage());
             e.printStackTrace();
         }
-        return null; // Không tìm thấy hoặc lỗi
+        return null;
     }
 
     public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate,
@@ -205,7 +197,6 @@ public class ContractDAO extends DBContext {
                 + "INNER JOIN device d ON sd.device_id = d.id "
                 + "WHERE ci.contract_id = ? ";
 
-        // --- FILTER ---
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
         }
@@ -244,16 +235,14 @@ public class ContractDAO extends DBContext {
                 item.setStartAt(rs.getTimestamp("startAt"));
                 item.setEndDate(rs.getTimestamp("endDate"));
 
-                // Map SubDevice & Device Info
                 SubDevice sd = new SubDevice();
                 sd.setId(rs.getInt("sub_devicel_id"));
                 sd.setSeriId(rs.getString("seri_id"));
 
-                // Giả sử SubDevice có thuộc tính Device
                 Device d = new Device();
                 d.setId(rs.getInt("device_real_id"));
                 d.setName(rs.getString("device_name"));
-                sd.setDevice(d); // Bạn cần đảm bảo Model SubDevice có hàm setDevice
+                sd.setDevice(d);
                 item.setSubDevice(sd);
                 list.add(item);
             }
@@ -319,7 +308,7 @@ public class ContractDAO extends DBContext {
                 + "WHERE c.isDelete = 1 ";
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += "AND (c.id LIKE ? OR c.content LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
+            sql += "AND (c.id LIKE ? OR u.displayname LIKE ? OR cb.displayname LIKE ?) ";
         }
 
         if (sortBy != null && !sortBy.isEmpty()) {
@@ -334,7 +323,6 @@ public class ContractDAO extends DBContext {
             int paramIndex = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
-                ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
@@ -410,13 +398,12 @@ public class ContractDAO extends DBContext {
         return false;
     }
 
-    // Xóa cứng contract (xóa contract và contract_item khỏi database)
     public boolean hardDeleteContract(int contractId) {
         try {
             // Bắt đầu transaction
             connection.setAutoCommit(false);
 
-            // 1. Xóa contract_item trước
+            // 1. Xóa contract_item trước 
             String deleteItemsSql = "DELETE FROM contract_item WHERE contract_id = ?";
             try (PreparedStatement ps = connection.prepareStatement(deleteItemsSql)) {
                 ps.setInt(1, contractId);
@@ -587,7 +574,6 @@ public class ContractDAO extends DBContext {
         return null;
     }
 
-    // Lấy contract với created_at để kiểm tra điều kiện 6 ngày
     public Contract getContractWithCreatedAt(int contractId) {
         String sql = "SELECT c.*, c.created_at, "
                 + "u1.id as customer_id, u1.displayname AS customer_name, u1.phone as customer_phone, "
@@ -607,7 +593,6 @@ public class ContractDAO extends DBContext {
                     c.setUrlContract(rs.getString("url_contract"));
                     c.setIsDelete(rs.getBoolean("isDelete"));
 
-                    // Set created_at
                     java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
                     if (timestamp != null) {
                         c.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
@@ -634,9 +619,8 @@ public class ContractDAO extends DBContext {
         return null;
     }
 
-    // Xóa contract item theo ID
     public boolean deleteContractItem(int contractItemId) {
-        // Lấy sub_device_id trước khi xóa để restore isDelete
+
         String getSql = "SELECT sub_devicel_id FROM contract_item WHERE id = ?";
         int subDeviceId = -1;
         try (PreparedStatement ps = connection.prepareStatement(getSql)) {
@@ -651,13 +635,11 @@ public class ContractDAO extends DBContext {
             return false;
         }
 
-        // Xóa contract item
         String deleteSql = "DELETE FROM contract_item WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
             ps.setInt(1, contractItemId);
             boolean deleted = ps.executeUpdate() > 0;
 
-            // Restore sub_device isDelete = false
             if (deleted && subDeviceId > 0) {
                 updateSubDeviceIsDelete(subDeviceId, false);
             }
@@ -668,7 +650,6 @@ public class ContractDAO extends DBContext {
         return false;
     }
 
-    // Lấy tất cả contract items của một contract (không phân trang)
     public List<ContractItem> getAllItemsByContractId(int contractId) {
         List<ContractItem> list = new ArrayList<>();
         String sql = "SELECT ci.*, sd.seri_id, sd.id as sub_device_id, d.name as device_name, d.id as device_id, d.image as device_image, d.maintenance_time as maintenance_time "
@@ -708,7 +689,6 @@ public class ContractDAO extends DBContext {
         return list;
     }
 
-    // Cập nhật nội dung contract
     public boolean updateContractContent(int contractId, String content) {
         String sql = "UPDATE contract SET content = ? WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -948,9 +928,60 @@ public class ContractDAO extends DBContext {
             }
         } catch (SQLException e) {
             System.err.println("Error counting contracts by user ID: " + e.getMessage());
+        }
+        return 0;
+    }
+    public int getCountAllContract() {
+        String query = "SELECT count(*) FROM swp391.contract";
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
+    public List<TopContractUser> getTopContractUsers() {
+
+        List<TopContractUser> topUsers = new ArrayList<>();
+
+        String query = "SELECT u.id AS user_id, u.displayname, u.email, u.address, T.TotalContracts\n"
+                + "FROM swp391._user u\n"
+                + "INNER JOIN\n"
+                + " ( SELECT user_id,COUNT(id) AS TotalContracts\n"
+                + " FROM swp391.contract GROUP BY user_id\n"
+                + " HAVING TotalContracts >= (\n"
+                + " SELECT COUNT(id) AS Rank3Count FROM swp391.contract\n"
+                + "GROUP BY user_id ORDER BY Rank3Count LIMIT 1 OFFSET 2 )) \n"
+                + "AS T ON u.id = T.user_id\n"
+                + "ORDER BY T.TotalContracts DESC;";
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                TopContractUser top = new TopContractUser();
+
+                top.setUser_id(rs.getInt("user_id"));
+                top.setTotalContracts(rs.getInt("TotalContracts"));
+
+                top.setAddress(rs.getString("address"));
+                top.setEmail(rs.getString("email"));
+                top.setDisplayName(rs.getString("displayname"));
+
+                topUsers.add(top);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return topUsers;
+    }
+
+    public static void main(String[] args) {
+        ContractDAO c = new ContractDAO();
+        System.out.println(c.getTopContractUsers());
+    }
 }

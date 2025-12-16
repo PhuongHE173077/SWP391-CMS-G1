@@ -141,7 +141,6 @@ public class CategoryDAO extends DBContext {
         return true; // lỗi thì coi như đang được dùng -> tránh xóa nhầm
     }
 
-
     public boolean deleteCategory(int id) {
         String sql = "DELETE FROM device_category WHERE id = ?";
         try {
@@ -155,4 +154,17 @@ public class CategoryDAO extends DBContext {
         return false;
     }
 
+    public int getCountAllCategory() {
+        String query = "SELECT count(*) FROM swp391.device_category";
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

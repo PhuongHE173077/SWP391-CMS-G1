@@ -299,7 +299,7 @@
                 <!-- Sidebar -->
                 <aside class="admin-sidebar" id="adminSidebar">
                     <div class="sidebar-header">
-                        <a href="${pageContext.request.contextPath}/" class="sidebar-logo">
+                        <a href="${pageContext.request.contextPath}/DashboardAdmin" class="sidebar-logo">
                             <i class="fas fa-cube"></i>
                             <span>CMS Admin</span>
                         </a>
@@ -312,7 +312,7 @@
                         <div class="menu-title">Main Menu</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/admin/dashboard" class="nav-link">
+                                <a href="${pageContext.request.contextPath}/DashboardAdmin" class="nav-link">
                                     <i class="fas fa-home"></i>
                                     <span class="nav-text">Dashboard</span>
                                 </a>
