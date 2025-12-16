@@ -53,10 +53,16 @@ public class ViewUserList extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null) {
-            sortOrder = "DESC";
+            sortOrder = "ASC";
         }
         if (indexPage == null) {
             indexPage = "1";
+        }
+        if (search != null) {
+            search = search.trim();
+            if (search.isEmpty()) {
+                search = null;
+            }
         }
         try {
             int pageIndex = Integer.parseInt(indexPage);
