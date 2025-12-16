@@ -33,16 +33,27 @@ public class ContractDAO extends DBContext {
         // SORT
         // default khi hiện list là order by contract id
         String listSort = " ORDER BY c.id ASC";
-        
+
         if (sortBy != null && !sortBy.isEmpty()) {
             String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
-        switch (sortBy) {
-            case "customer":
-                listSort = " ORDER BY u1.displayname " + orderBy;
-                break;
-            case "id":
-                listSort = " ORDER BY c.id " + orderBy;
-                break;
+            switch (sortBy) {
+                case "customer":
+                    listSort = " ORDER BY u1.displayname " + orderBy;
+                    break;
+                case "createdAt": // Added case for Created At
+                    listSort = " ORDER BY c.created_at " + orderBy;
+                    break;
+                case "id":
+                    listSort = " ORDER BY c.id " + orderBy;
+                    break;
+                // Add more cases if needed, e.g., for Creator Name
+                case "creator":
+                    listSort = " ORDER BY u2.displayname " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY c.id ASC";
+                    break;
+            }
         }
 
         sql += listSort;
@@ -51,8 +62,9 @@ public class ContractDAO extends DBContext {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
-                ps.setString(index++, "%" + keyword + "%");
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
             }
             if (createById > 0) {
                 ps.setInt(index++, createById);
@@ -64,6 +76,7 @@ public class ContractDAO extends DBContext {
                 Contract c = new Contract();
                 c.setId(rs.getInt("id"));
                 c.setContent(rs.getString("content"));
+                c.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
                 c.setUrlContract(rs.getString("url_contract"));
                 c.setIsDelete(rs.getBoolean("isDelete"));
                 // Map Customer Name
