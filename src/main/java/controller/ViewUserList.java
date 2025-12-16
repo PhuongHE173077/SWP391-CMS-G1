@@ -68,6 +68,8 @@ public class ViewUserList extends HttpServlet {
             RoleDAO roleDAO = new RoleDAO();
             List<Roles> roleList = roleDAO.getAllRoleses();
             List<Integer> genderList = dao.getExistingGenders();
+            List<Integer> statusList = dao.getExistingStatuses();
+            request.setAttribute("statusList", statusList);
             request.setAttribute("userList", userList);
             request.setAttribute("roleList", roleList);
             request.setAttribute("genderList", genderList);
