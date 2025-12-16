@@ -223,6 +223,7 @@ public class UserDAO extends DBContext {
                 Users user = new Users();
                 user.setId(rs.getInt("id"));
                 user.setDisplayname(rs.getString("displayname"));
+                user.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setPhone(rs.getString("phone"));
@@ -498,7 +499,7 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-    
+
     public List<Users> searchUsersByPhone(String keyword, int pageSize) {
         List<Users> list = new ArrayList<>();
         String sql = "SELECT u.*, r.name as role_name "
@@ -513,7 +514,6 @@ public class UserDAO extends DBContext {
             String searchPattern = "%" + keyword + "%";
             ps.setString(1, searchPattern);
             ps.setInt(2, pageSize);
-            
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -569,11 +569,12 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+
     // Hàm lấy danh sách tất cả Customer để đổ vào Dropdown Filter
     public List<Users> getAllCustomers() {
         List<Users> list = new ArrayList<>();
         // role_id = 4 là Customer (dựa theo dữ liệu insert roles của bạn)
-        String sql = "SELECT * FROM _user WHERE role_id = 4"; 
+        String sql = "SELECT * FROM _user WHERE role_id = 4";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -584,7 +585,7 @@ public class UserDAO extends DBContext {
                 u.setEmail(rs.getString("email"));
                 u.setPhone(rs.getString("phone"));
                 u.setAddress(rs.getString("address"));
-                u.setActive(rs.getBoolean("active"));                
+                u.setActive(rs.getBoolean("active"));
                 list.add(u);
             }
         } catch (Exception e) {

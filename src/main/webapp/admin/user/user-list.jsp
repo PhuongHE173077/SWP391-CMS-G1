@@ -142,7 +142,7 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-
+                                        <fmt:formatDate value="${u.createdAtDate}" pattern="dd-MMM-yyyy"/>
                                     </td>
                                     <td class="text-muted">${u.email}</td>
                                     <td class="text-center">
