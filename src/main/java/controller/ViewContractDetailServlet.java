@@ -65,7 +65,7 @@ public class ViewContractDetailServlet extends HttpServlet {
 
             String pageRaw = request.getParameter("page");
             int pageIndex = (pageRaw == null) ? 1 : Integer.parseInt(pageRaw);
-            int pageSize = 5;
+            int pageSize = 2;
 
             // 3. Gọi DAO
             ContractDAO itemDAO = new ContractDAO();
