@@ -19,9 +19,15 @@ import utils.BaseEntity;
 @Entity
 @Table(name = "maintenance_request")
 public class MaintanceRequest extends BaseEntity {
+    
+     @Column(name = "title")
+    private String title;
 
     @Column(name = "content")
     private String content;
+    
+    @Column(name = "image")
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -41,11 +47,21 @@ public class MaintanceRequest extends BaseEntity {
     public MaintanceRequest() {
     }
 
-    public MaintanceRequest(String content, Users user, Boolean status, ContractItem contractItem) {
+    public MaintanceRequest(String title, String content, String image, Users user, Boolean status, ContractItem contractItem) {
+        this.title = title;
         this.content = content;
+        this.image = image;
         this.user = user;
         this.status = status;
         this.contractItem = contractItem;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
@@ -54,6 +70,14 @@ public class MaintanceRequest extends BaseEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Users getUser() {
@@ -87,4 +111,8 @@ public class MaintanceRequest extends BaseEntity {
     public void setReplyMaintanceRequests(Set<ReplyMaintanceRequest> replyMaintanceRequests) {
         this.replyMaintanceRequests = replyMaintanceRequests;
     }
+    
+    
+
+   
 }
