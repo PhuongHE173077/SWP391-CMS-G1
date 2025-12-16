@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import dal.UserDAO;
@@ -13,30 +12,36 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Users;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="ViewUserDetailServlet", urlPatterns={"/user-detail"})
+@WebServlet(name = "ViewUserDetailServlet", urlPatterns = {"/user-detail"})
 public class ViewUserDetailServlet extends HttpServlet {
-   
-      
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession();
+            Users currentUser = (Users) session.getAttribute("user");
+
+            if (currentUser == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
             String idRaw = request.getParameter("id");
-            int id = Integer.parseInt(idRaw);          
+            int id = Integer.parseInt(idRaw);
             UserDAO dao = new UserDAO();
-            Users user = dao.getUserById(id);         
-            request.setAttribute("user", user);           
-            request.getRequestDispatcher("admin/user/user-detail.jsp").forward(request, response);         
+            Users user = dao.getUserById(id);
+            request.setAttribute("user", user);
+            request.getRequestDispatcher("admin/user/user-detail.jsp").forward(request, response);
         } catch (Exception e) {
             response.sendRedirect("admin/user/user-list");
         }
-    } 
- 
- 
+    }
+
 }
