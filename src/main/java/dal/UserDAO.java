@@ -328,7 +328,7 @@ public class UserDAO extends DBContext {
 
         // Copy y nguyên phần nối chuỗi điều kiện ở hàm search cũ
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += " AND u.displayname LIKE ? ";
+            sql += " AND (u.displayname LIKE ? OR u.email LIKE ?) ";
         }
         if (roleId != null && !roleId.isEmpty()) {
             sql += " AND u.role_id = ? ";
@@ -345,7 +345,9 @@ public class UserDAO extends DBContext {
             // Copy y nguyên phần set tham số (index)
             int index = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
+               String searchPattern = "%" + keyword + "%";
+                ps.setString(index++, searchPattern); // Cho displayname
+                ps.setString(index++, searchPattern); // Cho email
             }
             if (roleId != null && !roleId.isEmpty()) {
                 ps.setInt(index++, Integer.parseInt(roleId));
