@@ -23,10 +23,9 @@ import model.*;
 public class ViewContractDetailServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // 1. Lấy ID Contract
             String idRaw = request.getParameter("id");
             if (idRaw == null) {
                 response.sendRedirect("contract-list");
@@ -34,7 +33,7 @@ public class ViewContractDetailServlet extends HttpServlet {
             }
             int contractId = Integer.parseInt(idRaw);
 
-            // 2. Lấy thông tin Hợp đồng (Phần trên cùng)
+            // 1. Lấy thông tin Hợp đồng
             ContractDAO contractDAO = new ContractDAO();
             Contract contract = contractDAO.getContractById(contractId);
             if (contract == null) {
@@ -42,31 +41,52 @@ public class ViewContractDetailServlet extends HttpServlet {
                 return;
             }
 
-            // 3. Lấy tham số Filter cho Item (Phần dưới)
+            // 2. Lấy tham số Filter & Sort
             String searchItem = request.getParameter("searchItem");
+            if (searchItem != null) {
+                searchItem = searchItem.trim();
+            }
+
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
+
+            // --- THÊM PHẦN NÀY ---
+            String sortBy = request.getParameter("sortBy");
+            String sortOrder = request.getParameter("sortOrder");
+
+            // Mặc định
+            if (sortBy == null) {
+                sortBy = "id"; // Mặc định sort item id (hoặc deviceId tùy bạn)
+            }
+            if (sortOrder == null) {
+                sortOrder = "ASC";
+            }
+            // ---------------------
+
             String pageRaw = request.getParameter("page");
-
             int pageIndex = (pageRaw == null) ? 1 : Integer.parseInt(pageRaw);
-            int pageSize = 2;  
+            int pageSize = 5;
 
-            // 4. Gọi DAO lấy danh sách Item
+            // 3. Gọi DAO
             ContractDAO itemDAO = new ContractDAO();
             int totalItems = itemDAO.countItems(contractId, searchItem, startDate, endDate);
             int totalPages = (totalItems % pageSize == 0) ? (totalItems / pageSize) : (totalItems / pageSize + 1);
-            List<ContractItem> itemList = itemDAO.getItemsByContractId(contractId, searchItem, startDate, endDate, pageIndex, pageSize);
 
-            // 5. Gửi hết sang JSP
+            // Gọi hàm getItemsByContractId MỚI (có thêm sortBy, sortOrder)
+            List<ContractItem> itemList = itemDAO.getItemsByContractId(contractId, searchItem, startDate, endDate, pageIndex, pageSize, sortBy, sortOrder);
+
+            // 4. Gửi sang JSP
             request.setAttribute("c", contract);
             request.setAttribute("itemList", itemList);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("currentPage", pageIndex);
 
-            // Giữ lại tham số filter
+            // Giữ lại tham số filter & sort
             request.setAttribute("searchItem", searchItem);
             request.setAttribute("startDate", startDate);
             request.setAttribute("endDate", endDate);
+            request.setAttribute("sortBy", sortBy);
+            request.setAttribute("sortOrder", sortOrder);
 
             request.getRequestDispatcher("manager/contract/contract-detail.jsp").forward(request, response);
 
@@ -76,5 +96,3 @@ public class ViewContractDetailServlet extends HttpServlet {
         }
     }
 }
-
-

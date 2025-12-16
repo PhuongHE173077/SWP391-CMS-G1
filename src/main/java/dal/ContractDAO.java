@@ -51,7 +51,7 @@ public class ContractDAO extends DBContext {
                     listSort = " ORDER BY u2.displayname " + orderBy;
                     break;
                 default:
-                    listSort = " ORDER BY c.id "+orderBy;
+                    listSort = " ORDER BY c.id " + orderBy;
                     break;
             }
         }
@@ -245,10 +245,10 @@ public class ContractDAO extends DBContext {
                 ps.setString(index++, searchPattern);
             }
             if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(index++, startDate );
+                ps.setString(index++, startDate);
             }
             if (endDate != null && !endDate.isEmpty()) {
-                ps.setString(index++, endDate );
+                ps.setString(index++, endDate);
             }
 
             ps.setInt(index++, pageSize);
@@ -269,7 +269,7 @@ public class ContractDAO extends DBContext {
                 d.setId(rs.getInt("device_real_id"));
                 d.setName(rs.getString("device_name"));
                 sd.setDevice(d);
-                
+
                 item.setSubDevice(sd);
                 list.add(item);
             }
@@ -277,6 +277,61 @@ public class ContractDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // Hàm đếm tổng số Item (Để tính toán phân trang)
+    public int countItems(int contractId, String keyword, String startDate, String endDate) {
+        // Join 3 bảng để đếm dựa trên điều kiện lọc tên thiết bị/số seri
+        String sql = "SELECT COUNT(*) FROM contract_item ci "
+                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                + "INNER JOIN device d ON sd.device_id = d.id "
+                + "WHERE ci.contract_id = ? ";
+
+        // 1. Filter: Keyword (Tìm theo Tên thiết bị HOẶC Số Seri)
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
+        }
+
+        // 2. Filter: Start Date (Lớn hơn hoặc bằng ngày bắt đầu)
+        if (startDate != null && !startDate.isEmpty()) {
+            sql += " AND ci.startAt >= ? ";
+        }
+
+        // 3. Filter: End Date (Nhỏ hơn hoặc bằng ngày kết thúc)
+        if (endDate != null && !endDate.isEmpty()) {
+            sql += " AND ci.endDate <= ? ";
+        }
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int index = 1;
+            ps.setInt(index++, contractId);
+
+            // Set tham số Keyword
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern); // Cho d.name
+                ps.setString(index++, searchPattern); // Cho sd.seri_id
+            }
+
+            // Set tham số Start Date (Thêm 00:00:00 để lấy từ đầu ngày)
+            if (startDate != null && !startDate.isEmpty()) {
+                ps.setString(index++, startDate);
+            }
+
+            // Set tham số End Date (Thêm 23:59:59 để lấy đến cuối ngày)
+            if (endDate != null && !endDate.isEmpty()) {
+                ps.setString(index++, endDate);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public List<Contract> getDeletedContracts(String keyword, int pageIndex, int pageSize, String sortBy,
