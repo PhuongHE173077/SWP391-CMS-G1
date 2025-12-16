@@ -77,18 +77,16 @@
                         </div>
                     </div>
 
-                    <div class="row g-3">
+                    <div class="row g-3"> 
                         <div class="col-md-2">
                             <div class="form-floating">
-
-                                <select name="status" class="form-select">
+                                <select name="status" id="statusSelect" class="form-select">
                                     <option value="">All Status</option>
                                     <c:forEach items="${statusList}" var="s">
                                         <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
                                     </c:forEach>
                                 </select>
                                 <label for="statusSelect">Status</label>
-
                             </div>
                         </div>
 
@@ -101,20 +99,28 @@
 
                         <div class="col-md-2">
                             <div class="form-floating">
-                                <input type="date" name="fromDate" class="form-control" id="fromDate" value="${fromDateValue}">
-                                <label for="fromDate">From Date</label>
+                                <input type="date" name="toDate" class="form-control" id="toDate" value="${toDateValue}">
+                                <label for="toDate">To Date</label>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search device name, content..." value="${searchValue}" style="height: 58px;">
-                                <button type="submit" class="btn btn-primary fw-bold px-3">Search</button>
-                                <a href="customer-maintenance" class="btn btn-outline-secondary d-flex align-items-center px-3">
-                                    <i class="fas fa-sync-alt"></i>Reset Filter
-                                </a>
+                            <div class="form-floating">
+                                <input type="text" name="search" class="form-control" id="searchInput" placeholder="Search..." value="${searchValue}">
+                                <label for="searchInput"><i class="fas fa-search me-1"></i>Search device name...</label>
                             </div>
+                        </div>
+
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary fw-bold w-100 h-100">
+                                Search
+                            </button>
+                        </div>
+
+                        <div class="col-md-1">
+                            <a href="customer-maintenance" class="btn btn-outline-secondary w-100 h-100 d-flex align-items-center justify-content-center" title="Reset Filter">
+                                <i class="fas fa-sync-alt"></i>
+                            </a>
                         </div>
                     </div>
                 </form>
@@ -128,9 +134,9 @@
                         <thead class="table-light text-secondary">
                             <tr>
                                 <th class="ps-3 py-3 text-center">Req ID</th>
-                                <th class="py-3">Device Name</th>
-                                <th class="py-3">Device Serial Number</th>
-                                <th class="py-3" style="width: 25%;">Content</th>
+                                <th class="py-3 text-center">Device Name</th>
+                                <th class="py-3 text-center">Device Serial Number</th>
+                                <th class="py-3 text-center" style="width: 25%;">Content</th>
                                 <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 150px;">Action</th>

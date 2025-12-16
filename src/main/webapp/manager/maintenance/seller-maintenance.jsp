@@ -7,11 +7,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<jsp:include page="../../main/webapp/manager/managerLayout.jsp">
+<jsp:include page="../../manager/managerLayout.jsp">
     <jsp:param name="pageTitle" value="Maintenance Requests" />
 </jsp:include>
 
- 
+
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
@@ -72,7 +72,7 @@
                         </div>
                     </div>
 
-                    <div class="row g-2">
+                    <div class="row g-3">
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <select name="status" class="form-select" id="statusSelect">
@@ -111,16 +111,23 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search by Request ID, Customer Name,Device Name,Device Serial Number, Content" value="${searchValue}" style="height: 58px;">
-
-                                <button type="submit" class="btn btn-primary fw-bold px-3">Search</button>
-                                <a href="seller-maintenance" class="btn btn-outline-secondary d-flex align-items-center px-3" title="Reset Filter">
-                                    <i class="fas fa-sync-alt"></i>
-                                </a>
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input type="text" name="search" class="form-control" id="searchInput" value="${searchValue}">
+                                <label for="searchInput"><i class="fas fa-search me-1"></i>Search by keyword</label>
                             </div>
+                        </div>
+
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary fw-bold w-100 h-100">
+                                Search
+                            </button>
+                        </div>
+
+                        <div class="col-md-1">
+                            <a href="customer-maintenance" class="btn btn-outline-secondary w-100 h-100 d-flex align-items-center justify-content-center" title="Reset Filter">
+                                <i class="fas fa-sync-alt"></i>
+                            </a>
                         </div>
                     </div>
 
@@ -170,8 +177,8 @@
                                             </c:when>
                                             <c:when test="${r.status == 'APPROVE'}">
                                                 <span class="badge bg-success border border-success"><i class="fas fa-check-circle me-1"></i>APPROVE</span>
-                                            </c:when>
-                                            <c:when test="${r.status == 'REJECT'}">
+                                                </c:when>
+                                                <c:when test="${r.status == 'REJECT'}">
                                                 <span class="badge bg-danger border border-danger"><i class="fas fa-times-circle me-1"></i>REJECT</span>
                                             </c:when>
                                             <c:otherwise>
@@ -229,4 +236,4 @@
         </div>
     </div>
 </body>
-<jsp:include page="../../main/webapp/manager/managerFooter.jsp" />
+<jsp:include page="../../manager/managerFooter.jsp" />

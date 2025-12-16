@@ -28,6 +28,7 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        String MAINTENANCE_LIST_URL ="customer/maintenance/customer-maintenance.jsp";
        // 1. Kiểm tra đăng nhập (BẮT BUỘC)
         HttpSession session = request.getSession();
         Users user = (Users) session.getAttribute("user"); // Giả sử object user lưu trong session tên là "user"
@@ -81,7 +82,7 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
         request.setAttribute("sortOrder", sortOrder);
 
         // 6. Forward về giao diện Customer
-        request.getRequestDispatcher("/customer-maintenance.jsp").forward(request, response);
+        request.getRequestDispatcher(MAINTENANCE_LIST_URL).forward(request, response);
     } 
  
 }
