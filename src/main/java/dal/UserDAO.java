@@ -200,7 +200,9 @@ public class UserDAO extends DBContext {
 
             // ? của search Keyword
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
+                String searchPattern = "%" + keyword + "%";
+                ps.setString(index++, searchPattern); // Cho displayname
+                ps.setString(index++, searchPattern); // Cho email
             }
             if (roleId != null && !roleId.isEmpty()) {
                 ps.setInt(index++, Integer.parseInt(roleId));
