@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.MaintanceRequest;
 import model.Users;
@@ -28,6 +29,13 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String MAINTENANCE_LIST_URL = "manager/maintenance/seller-maintenance.jsp";
+        HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user"); // Giả sử object user lưu trong session tên là "user"
+
+        if (user == null) {
+            response.sendRedirect("login.jsp"); // Chưa đăng nhập thì đá về login
+            return;
+        }
         // 1. Nhận tham số từ Request
         String search = request.getParameter("search");
         String status = request.getParameter("status");
