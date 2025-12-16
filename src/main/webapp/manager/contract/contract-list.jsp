@@ -51,9 +51,15 @@
                             </div>
 
                             <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="createdAt" ${sortBy == 'createdAt' ? 'checked' : ''}>
+                                <label class="form-check-label">Created At</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
                                 <label class="form-check-label">Customer Name</label> 
-                            </div>
+                            </div>                           
+                                
                         </div>
 
                         <div class="col-md-6 d-flex align-items-center gap-3">                   
