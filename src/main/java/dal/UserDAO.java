@@ -616,6 +616,25 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public List<Integer> getExistingStatuses() {
+        List<Integer> list = new ArrayList<>();
+        // Lấy các giá trị active khác nhau (thường là 0 và 1)
+        String sql = "SELECT DISTINCT active FROM _user WHERE active IS NOT NULL ORDER BY active DESC";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                // Lấy giá trị boolean, chuyển thành int (1 hoặc 0)
+                int statusId = rs.getBoolean("active") ? 1 : 0;
+                list.add(statusId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
 
