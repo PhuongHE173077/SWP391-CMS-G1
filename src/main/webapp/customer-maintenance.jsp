@@ -13,6 +13,8 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
@@ -20,7 +22,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary fw-bold"><i class="fas fa-history me-2"></i>My Maintenance Requests</h2>
             <a href="create-request" class="btn btn-primary shadow-sm fw-bold">
-                <i class="fas fa-plus me-2"></i>New Request
+                <i class="fas fa-plus me-2"></i>Create New Request
             </a>
         </div>
 
@@ -76,32 +78,43 @@
                     </div>
 
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <select name="status" class="form-select">
-                                <option value="">All Status</option>
-                                <c:forEach items="${statusList}" var="s">
-                                    <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
                         <div class="col-md-2">
-                            <input type="date" name="fromDate" class="form-control" value="${fromDateValue}" title="From Date">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" name="toDate" class="form-control" value="${toDateValue}" title="To Date">
-                        </div>
+                            <div class="form-floating">
 
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <input type="text" name="search" class="form-control" placeholder="Search device name, content..." value="${searchValue}">
-                                <button type="submit" class="btn btn-primary fw-bold">Search</button>
+                                <select name="status" class="form-select">
+                                    <option value="">All Status</option>
+                                    <c:forEach items="${statusList}" var="s">
+                                        <option value="${s}" ${statusValue == s ? 'selected' : ''}>${s}</option>
+                                    </c:forEach>
+                                </select>
+                                <label for="statusSelect">Status</label>
+
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row mt-2">
-                        <div class="col-12 text-end">
-                            <a href="customer-maintenance" class="text-secondary text-decoration-none"><i class="fas fa-sync-alt me-1"></i>Reset Filter</a>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input type="date" name="fromDate" class="form-control" id="fromDate" value="${fromDateValue}">
+                                <label for="fromDate">From Date</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input type="date" name="fromDate" class="form-control" id="fromDate" value="${fromDateValue}">
+                                <label for="fromDate">From Date</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                                <input type="text" name="search" class="form-control" placeholder="Search device name, content..." value="${searchValue}" style="height: 58px;">
+                                <button type="submit" class="btn btn-primary fw-bold px-3">Search</button>
+                                <a href="customer-maintenance" class="btn btn-outline-secondary d-flex align-items-center px-3">
+                                    <i class="fas fa-sync-alt"></i>Reset Filter
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -114,7 +127,7 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light text-secondary">
                             <tr>
-                                <th class="text-center">Req ID</th>
+                                <th class="ps-3 py-3 text-center">Req ID</th>
                                 <th class="py-3">Device Name</th>
                                 <th class="py-3">Device Serial Number</th>
                                 <th class="py-3" style="width: 25%;">Content</th>
@@ -126,11 +139,11 @@
                         <tbody>
                             <c:forEach items="${requestList}" var="r">
                                 <tr>
-                                    <td class="fw-bold text-center">#${r.id}</td>
-                                    <td class="fw-bold text-dark">
+                                    <td class="text-center">${r.id}</td>
+                                    <td class="text-center">
                                         ${r.contractItem.subDevice.device.name}
                                     </td>
-                                    <td class="text-secondary font-monospace">
+                                    <td class="text-center">
                                         ${r.contractItem.subDevice.seriId}
                                     </td>
                                     <td class="text-muted">
@@ -204,6 +217,4 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<%--<jsp:include page="../../managerFooter.jsp" />--%>
