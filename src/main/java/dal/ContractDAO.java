@@ -31,26 +31,29 @@ public class ContractDAO extends DBContext {
             sql += " AND c.createBy = ?";
         }
         // SORT
-        // default khi hiện list là order by user Id
+        // default khi hiện list là order by contract id
         String listSort = " ORDER BY c.id ASC";
-        String orderCondition = "";
-        // SORT
-        // default khi hiện list là order by user Id
-        if (sortBy != null && !sortBy.isEmpty()) {
-            if ((sortOrder != null && sortOrder.equalsIgnoreCase("ASC"))) {
-                orderCondition = "ASC";
-            } else {
-                orderCondition = "DESC";
-            }
-        }
 
-        switch (sortBy) {
-            case "customer":
-                listSort = " ORDER BY u1.displayname " + orderCondition;
-                break;
-            case "id":
-                listSort = " ORDER BY c.id " + orderCondition;
-                break;
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
+            switch (sortBy) {
+                case "customer":
+                    listSort = " ORDER BY u1.displayname " + orderBy;
+                    break;
+                case "createdAt": // Added case for Created At
+                    listSort = " ORDER BY c.created_at " + orderBy;
+                    break;
+                case "id":
+                    listSort = " ORDER BY c.id " + orderBy;
+                    break;
+                // Add more cases if needed, e.g., for Creator Name
+                case "creator":
+                    listSort = " ORDER BY u2.displayname " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY c.id " + orderBy;
+                    break;
+            }
         }
 
         sql += listSort;
@@ -59,8 +62,9 @@ public class ContractDAO extends DBContext {
             PreparedStatement ps = connection.prepareStatement(sql);
             int index = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
-                ps.setString(index++, "%" + keyword + "%");
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
             }
             if (createById > 0) {
                 ps.setInt(index++, createById);
@@ -72,6 +76,7 @@ public class ContractDAO extends DBContext {
                 Contract c = new Contract();
                 c.setId(rs.getInt("id"));
                 c.setContent(rs.getString("content"));
+                c.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
                 c.setUrlContract(rs.getString("url_contract"));
                 c.setIsDelete(rs.getBoolean("isDelete"));
                 // Map Customer Name
@@ -185,15 +190,14 @@ public class ContractDAO extends DBContext {
     }
 
     public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate,
-            int pageIndex, int pageSize) {
+            int pageIndex, int pageSize, String sortBy, String sortOrder) { // <--- Thêm tham số sortBy, sortOrder
 
         List<ContractItem> list = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
 
-        // SQL Join 3 bảng: contract_item -> sub_device -> device (để lấy tên máy)
         String sql = "SELECT ci.*, sd.seri_id, d.name as device_name, d.id as device_real_id "
                 + "FROM contract_item ci "
-                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id " // Chú ý: sub_devicel_id
+                + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
                 + "INNER JOIN device d ON sd.device_id = d.id "
                 + "WHERE ci.contract_id = ? ";
 
@@ -207,7 +211,28 @@ public class ContractDAO extends DBContext {
             sql += " AND ci.endDate <= ? ";
         }
 
-        sql += " ORDER BY ci.id DESC LIMIT ? OFFSET ?";
+        // --- PHẦN XỬ LÝ SORT MỚI ---
+        String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("DESC")) ? "DESC" : "ASC";
+        String listSort = " ORDER BY ci.id ASC"; // Mặc định
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "deviceId": // Id of Electric Generator
+                    listSort = " ORDER BY d.id " + orderBy;
+                    break;
+                case "deviceName": // Name of Electric Generator
+                    listSort = " ORDER BY d.name " + orderBy;
+                    break;
+                case "serial": // Serial Number
+                    listSort = " ORDER BY sd.seri_id " + orderBy;
+                    break;
+                default:
+                    listSort = " ORDER BY ci.id " + orderBy;
+                    break;
+            }
+        }
+        sql += listSort;
+        sql += " LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -215,8 +240,9 @@ public class ContractDAO extends DBContext {
             ps.setInt(index++, contractId);
 
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
-                ps.setString(index++, "%" + keyword + "%");
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
             }
             if (startDate != null && !startDate.isEmpty()) {
                 ps.setString(index++, startDate);
@@ -243,6 +269,7 @@ public class ContractDAO extends DBContext {
                 d.setId(rs.getInt("device_real_id"));
                 d.setName(rs.getString("device_name"));
                 sd.setDevice(d);
+
                 item.setSubDevice(sd);
                 list.add(item);
             }
@@ -252,19 +279,25 @@ public class ContractDAO extends DBContext {
         return list;
     }
 
-    // Hàm đếm tổng số Item (Để phân trang)
+    // Hàm đếm tổng số Item (Để tính toán phân trang)
     public int countItems(int contractId, String keyword, String startDate, String endDate) {
+        // Join 3 bảng để đếm dựa trên điều kiện lọc tên thiết bị/số seri
         String sql = "SELECT COUNT(*) FROM contract_item ci "
                 + "INNER JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
                 + "INNER JOIN device d ON sd.device_id = d.id "
                 + "WHERE ci.contract_id = ? ";
 
+        // 1. Filter: Keyword (Tìm theo Tên thiết bị HOẶC Số Seri)
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
         }
+
+        // 2. Filter: Start Date (Lớn hơn hoặc bằng ngày bắt đầu)
         if (startDate != null && !startDate.isEmpty()) {
             sql += " AND ci.startAt >= ? ";
         }
+
+        // 3. Filter: End Date (Nhỏ hơn hoặc bằng ngày kết thúc)
         if (endDate != null && !endDate.isEmpty()) {
             sql += " AND ci.endDate <= ? ";
         }
@@ -274,16 +307,23 @@ public class ContractDAO extends DBContext {
             int index = 1;
             ps.setInt(index++, contractId);
 
+            // Set tham số Keyword
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(index++, "%" + keyword + "%");
-                ps.setString(index++, "%" + keyword + "%");
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern); // Cho d.name
+                ps.setString(index++, searchPattern); // Cho sd.seri_id
             }
+
+            // Set tham số Start Date (Thêm 00:00:00 để lấy từ đầu ngày)
             if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(index++, startDate + " 00:00:00");
+                ps.setString(index++, startDate);
             }
+
+            // Set tham số End Date (Thêm 23:59:59 để lấy đến cuối ngày)
             if (endDate != null && !endDate.isEmpty()) {
-                ps.setString(index++, endDate + " 23:59:59");
+                ps.setString(index++, endDate);
             }
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);

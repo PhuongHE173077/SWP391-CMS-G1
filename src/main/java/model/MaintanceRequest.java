@@ -118,6 +118,4 @@ public class MaintanceRequest extends BaseEntity {
         this.replyMaintanceRequests = replyMaintanceRequests;
     }
 
-    
-
 }

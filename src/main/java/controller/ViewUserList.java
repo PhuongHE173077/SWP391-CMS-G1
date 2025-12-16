@@ -28,10 +28,17 @@ public class ViewUserList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        Users currentUser = (Users) session.getAttribute("user");
+
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
         String msg = (String) session.getAttribute("msg");
         String error = (String) session.getAttribute("error");
 
-         if (msg != null) {
+        if (msg != null) {
             request.setAttribute("msg", msg);
             session.removeAttribute("msg");
         }
@@ -53,10 +60,16 @@ public class ViewUserList extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null) {
-            sortOrder = "DESC";
+            sortOrder = "ASC";
         }
         if (indexPage == null) {
             indexPage = "1";
+        }
+        if (search != null) {
+            search = search.trim();
+            if (search.isEmpty()) {
+                search = null;
+            }
         }
         try {
             int pageIndex = Integer.parseInt(indexPage);
@@ -67,8 +80,12 @@ public class ViewUserList extends HttpServlet {
             List<Users> userList = dao.searchUsers(search, role, status, gender, pageIndex, pageSize, sortBy, sortOrder);
             RoleDAO roleDAO = new RoleDAO();
             List<Roles> roleList = roleDAO.getAllRoleses();
+            List<Integer> genderList = dao.getExistingGenders();
+            List<Integer> statusList = dao.getExistingStatuses();
+            request.setAttribute("statusList", statusList);
             request.setAttribute("userList", userList);
             request.setAttribute("roleList", roleList);
+            request.setAttribute("genderList", genderList);
             request.setAttribute("totalPages", totalPages); // Gửi tổng số trang
             request.setAttribute("currentPage", pageIndex); // Gửi trang đang xem
             request.setAttribute("searchValue", search);
@@ -81,6 +98,6 @@ public class ViewUserList extends HttpServlet {
         } catch (Exception e) {
             // Nếu người dùng nhập page=abc thì quay về trang 1
             response.sendRedirect("user-list");
-        }      
+        }
     }
 }

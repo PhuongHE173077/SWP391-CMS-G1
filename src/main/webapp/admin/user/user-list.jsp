@@ -5,6 +5,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -51,8 +52,12 @@
                                 <label class="form-check-label">ID</label>
                             </div>
                             <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sortBy" value="createdAt" ${sortBy == 'createdAt' ? 'checked' : ''}>
+                                <label class="form-check-label">Created At</label>
+                            </div>
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="fullname" ${sortBy == 'fullname' ? 'checked' : ''}>
-                                <label class="form-check-label">Name</label>
+                                <label class="form-check-label">Full Name</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="email" ${sortBy == 'email' ? 'checked' : ''}>
@@ -73,12 +78,16 @@
                         </div>
                     </div>
 
+
                     <div class="row g-3">
                         <div class="col-md-2">
                             <select name="gender" class="form-select">
-                                <option value="">All Genders</option>
-                                <option value="1" ${genderValue == '1' ? 'selected' : ''}>Male</option>
-                                <option value="0" ${genderValue == '0' ? 'selected' : ''}>Female</option>
+                                <option value="" ${empty genderValue ? 'selected' : ''}>All Genders</option>
+                                <c:forEach items="${genderList}" var="g"> 
+                                    <option value="${g}" ${String.valueOf(g) == genderValue ? 'selected' : ''}>
+                                        ${g == 1 ? 'Male' : 'Female'}
+                                    </option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -92,8 +101,11 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="1" ${statusValue == '1' ? 'selected' : ''}>Active</option>
-                                <option value="0" ${statusValue == '0' ? 'selected' : ''}>Inactive</option>
+                                <c:forEach items="${statusList}" var="s">
+                                    <option value="${s}" ${String.valueOf(s) == statusValue ? 'selected' : ''}>
+                                        ${s == 1 ? 'Active' : 'Inactive'}
+                                    </option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -121,6 +133,7 @@
                             <tr>
                                 <th class="py-3 ps-3">ID</th>
                                 <th class="py-3">Full Name</th>
+                                <th class="py-3 text-center">Created At</th>
                                 <th class="py-3">Email</th>
                                 <th class="py-3 text-center">Gender</th>
                                 <th class="py-3 text-center">Role</th>
@@ -136,6 +149,10 @@
                                             <span class="fw-bold text-dark">${u.displayname}</span>
                                         </div>
                                     </td>
+                                    <td class="text-center">
+                                        <fmt:formatDate value="${u.createdAtDate}" pattern="dd-MMM-yyyy"/>
+                                    </td>
+
                                     <td class="text-muted">${u.email}</td>
                                     <td class="text-center">
                                         <c:if test="${u.gender}"><span class="badge bg-light text-primary border">Male</span></c:if>
