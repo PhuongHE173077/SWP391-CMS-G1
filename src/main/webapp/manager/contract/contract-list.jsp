@@ -87,7 +87,7 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                                <input type="text" name="search" class="form-control" placeholder="Search by customer name..." value="${searchValue}">
+                                <input type="text" name="search" class="form-control" placeholder="Search by customer name or Creator Name..." value="${searchValue}">
                             </div>
                         </div>
                         <div class="col-md-3 d-flex gap-2">
