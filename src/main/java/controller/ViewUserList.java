@@ -28,6 +28,13 @@ public class ViewUserList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        Users currentUser = (Users) session.getAttribute("user");
+
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
         String msg = (String) session.getAttribute("msg");
         String error = (String) session.getAttribute("error");
 
