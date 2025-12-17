@@ -145,6 +145,7 @@
                                 <th class="py-3 text-center">Customer Name</th>
                                 <th class="py-3 text-center">Device Name</th>
                                 <th class="py-3 text-center">Device Serial Number</th>
+                                <th class="py-3 text-center">Image</th>
                                 <th class="py-3 text-center" style="width: 25%;">Content</th>
                                 <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
@@ -162,6 +163,25 @@
                                     <td class="text-center">
                                         ${r.contractItem.subDevice.seriId}
                                     </td>
+                                    <td class="text-center">
+                                        <c:choose>
+                                            <c:when test="${not empty r.image}">
+                                                <img src="${r.image}" alt="Request Image"
+                                                     class="img-thumbnail mb-1"
+                                                     style="width: 80px; height: 60px; object-fit: cover;">
+
+                                                <a href="${r.image}" target="_blank"
+                                                   class="d-block small text-decoration-none mt-1">
+                                                    <i class="fas fa-external-link-alt me-1"></i>Xem ảnh
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="text-muted small">
+                                                    <i class="fas fa-image me-1"></i>No Image
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td class="text-muted">
                                         <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
                                             ${r.content}
@@ -177,8 +197,8 @@
                                             </c:when>
                                             <c:when test="${r.status == 'APPROVE'}">
                                                 <span class="badge bg-success border border-success"><i class="fas fa-check-circle me-1"></i>APPROVE</span>
-                                                </c:when>
-                                                <c:when test="${r.status == 'REJECT'}">
+                                            </c:when>
+                                            <c:when test="${r.status == 'REJECT'}">
                                                 <span class="badge bg-danger border border-danger"><i class="fas fa-times-circle me-1"></i>REJECT</span>
                                             </c:when>
                                             <c:otherwise>
