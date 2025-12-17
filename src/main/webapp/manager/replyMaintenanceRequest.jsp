@@ -192,6 +192,15 @@
                 font-weight: bold;
                 transition: background-color 0.3s;
             }
+            .maintenance-image {
+                margin-top: 10px;
+                max-width: 100%;
+                max-height: 300px;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                object-fit: contain;
+            }
+
 
             .reply-form button:hover {
                 background-color: #0056b3;
@@ -213,7 +222,7 @@
                 <h2 class="request-title">${maintanceRequest.title}</h2>
                 <div class="meta-info">
                     <span>${maintanceRequest.id}</span> | 
-                    <span>Người Yêu Cầu: User K. Dinh (ID: 27)</span> |
+                    <span>Người Yêu Cầu: ${user.displayname} (ID: ${user.id})</span> |
                     <span>${maintanceRequest.createdAt}</span>
                 </div>
 
@@ -222,17 +231,16 @@
                 <div class="content-section">
                     <h3>Nội Dung Chi Tiết:</h3>
                     <p>${maintanceRequest.content}</p>
-                    <p><strong>Thông tin liên hệ (ID):</strong> 7</p>
                     <c:if test="${not empty maintanceRequest.image}">
                         <div class="attachment">
-                            <strong>Ảnh đính kèm:</strong>
-                            <a href="${pageContext.request.contextPath}/${maintanceRequest.image}"
-                               target="_blank"
-                               class="view-image-btn">
-                                [Xem ảnh]
-                            </a>
+                            <strong>Ảnh đính kèm:</strong><br>
+
+                            <img src="${pageContext.request.contextPath}/${maintanceRequest.image}"
+                                 alt="Maintenance Request Image"
+                                 class="maintenance-image">
                         </div>
                     </c:if>
+
                 </div>
             </div>
             <hr>
