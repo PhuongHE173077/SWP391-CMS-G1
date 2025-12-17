@@ -11,6 +11,31 @@
     <jsp:param name="pageTitle" value="Deleted Contract Management" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình chi tiết thiết bị -->
+<c:set var="canViewDetailDevice" value="false" />
+<c:set var="canViewRemainingSubDevices" value="false" />
+<c:set var="canEditDevice" value="false" />
+<c:set var="canViewListDevice" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/ViewDetailDevice'}">
+                <c:set var="canViewDetailDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewRemainingSubDevices'}">
+                <c:set var="canViewRemainingSubDevices" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/EditDevice'}">
+                <c:set var="canEditDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewListDevice'}">
+                <c:set var="canViewListDevice" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <style>
     .device-detail-card {
         max-width: 1200px;
@@ -64,6 +89,7 @@
 
 <body class="bg-light">
     <div class="container mt-4 mb-5">
+        <c:if test="${canViewDetailDevice}">
         <div class="card shadow-sm device-detail-card">
             <div class="card-header bg-primary text-white py-3">
                 <div class="d-flex justify-content-between align-items-center">
@@ -170,23 +196,68 @@
                 <div class="row mt-4 pt-3 border-top">
                     <div class="col-12">
                         <div class="action-buttons">
-                            <a href="ViewRemainingSubDevices?deviceId=${device.id}" 
-                               class="btn btn-primary">
-                                <i class="fas fa-list me-2"></i>Xem danh sách Sub Device còn lại
-                            </a>
-                            <a href="EditDevice?id=${device.id}" class="btn btn-warning">
-                                <i class="fas fa-edit me-2"></i>Chỉnh sửa
-                            </a>
-                            <a href="ViewListDevice" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
-                            </a>
+                            <!-- Nút Xem danh sách Sub Device còn lại -->
+                            <c:choose>
+                                <c:when test="${canViewRemainingSubDevices}">
+                                    <a href="ViewRemainingSubDevices?deviceId=${device.id}" 
+                                       class="btn btn-primary">
+                                        <i class="fas fa-list me-2"></i>Xem danh sách Sub Device còn lại
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="button" class="btn btn-primary" disabled
+                                        title="Bạn không có quyền xem danh sách Sub Device">
+                                        <i class="fas fa-list me-2"></i>Xem danh sách Sub Device còn lại
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Nút Chỉnh sửa -->
+                            <c:choose>
+                                <c:when test="${canEditDevice}">
+                                    <a href="EditDevice?id=${device.id}" class="btn btn-warning">
+                                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="button" class="btn btn-warning" disabled
+                                        title="Bạn không có quyền chỉnh sửa thiết bị">
+                                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Nút Quay lại danh sách -->
+                            <c:choose>
+                                <c:when test="${canViewListDevice}">
+                                    <a href="ViewListDevice" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="button" class="btn btn-secondary" disabled
+                                        title="Bạn không có quyền xem danh sách thiết bị">
+                                        <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewDetailDevice}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem chi tiết thiết bị</h4>
+                </div>
+            </div>
+        </c:if>
     </div>
 </body>
 
     <jsp:include page="../managerFooter.jsp" />
+
 

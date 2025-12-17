@@ -43,10 +43,12 @@ public class UpdateRolePermission extends HttpServlet {
             throws ServletException, IOException {
         List<Roles> listRoles = roleDAO.getAllRoleses();
         List<RouterGroup> routerGroups = RouterDefault.getRouterGroups();
+        List<RouterGroup> routerGroupsForCus = RouterDefault.getRouterGroupsForCus();
         List<RolePermission> rolePermissions = rolePermissionDAO.getRolePermission();
 
         request.setAttribute("listRoles", listRoles);
         request.setAttribute("routerGroups", routerGroups);
+        request.setAttribute("routerGroupsForCus", routerGroupsForCus);
         request.setAttribute("rolePermissions", rolePermissions);
 
         request.getRequestDispatcher("admin/role/updateRolePermission.jsp").forward(request, response);
@@ -65,11 +67,19 @@ public class UpdateRolePermission extends HttpServlet {
             throws ServletException, IOException {
         List<Roles> listRoles = roleDAO.getAllRoleses();
         List<RouterGroup> routerGroups = RouterDefault.getRouterGroups();
+        List<RouterGroup> routerGroupsForCus = RouterDefault.getRouterGroupsForCus();
 
         rolePermissionDAO.deleteAllRolePermissions();
 
         for (Roles role : listRoles) {
-            for (RouterGroup group : routerGroups) {
+            List<RouterGroup> targetGroups;
+            if (role.getId() == 4) {
+                targetGroups = routerGroupsForCus;
+            } else {
+                targetGroups = routerGroups;
+            }
+
+            for (RouterGroup group : targetGroups) {
                 for (model.Routers router : group.getRouterses()) {
                     String paramName = "perm_" + role.getId() + "_" + router.getRouter();
                     String paramValue = request.getParameter(paramName);

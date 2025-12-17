@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <%@page import="dal.RolePermissionDAO" %>
             <!DOCTYPE html>
             <html>
 
@@ -296,6 +297,11 @@
             </head>
 
             <body>
+                <%
+                    // Mỗi lần load layout admin, luôn lấy lại rolePermissions từ DB
+                    RolePermissionDAO rpDao = new RolePermissionDAO();
+                    session.setAttribute("rolePermissions", rpDao.getRolePermission());
+                %>
                 <!-- Sidebar -->
                 <aside class="admin-sidebar" id="adminSidebar">
                     <div class="sidebar-header">

@@ -44,10 +44,12 @@ public class ViewRolePermission extends HttpServlet {
 
         List<Roles> listRoles = roleDAO.getAllRoleses();
         List<RouterGroup> routerGroups = RouterDefault.getRouterGroups();
+        List<RouterGroup> routerGroupsForCus = RouterDefault.getRouterGroupsForCus();
         List<RolePermission> rolePermissions = rolePermissionDAO.getRolePermission();
 
         request.setAttribute("listRoles", listRoles);
         request.setAttribute("routerGroups", routerGroups);
+        request.setAttribute("routerGroupsForCus", routerGroupsForCus);
         request.setAttribute("rolePermissions", rolePermissions);
 
         request.getRequestDispatcher("admin/role/listRolePermission.jsp").forward(request, response);

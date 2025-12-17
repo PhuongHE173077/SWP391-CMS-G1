@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <%@page import="dal.RolePermissionDAO" %>
             <!DOCTYPE html>
             <html>
 
@@ -296,6 +297,11 @@
             </head>
 
             <body>
+                <%
+                    // Mỗi lần load layout customer, luôn lấy lại rolePermissions từ DB
+                    RolePermissionDAO rpDao = new RolePermissionDAO();
+                    session.setAttribute("rolePermissions", rpDao.getRolePermission());
+                %>
                 <!-- Sidebar -->
                 <aside class="customer-sidebar" id="customerSidebar">
                     <div class="sidebar-header">
@@ -311,22 +317,44 @@
                     <nav class="sidebar-nav">
                         <div class="menu-title">Main Menu</div>
                         <ul style="padding-left: 0;">
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/customer/ViewListContact" class="nav-link">
-                                    <i class="fas fa-file-contract"></i>
-                                    <span class="nav-text">Danh sách hợp đồng</span>
-                                </a>
-                            </li>
+                            <!-- Danh sách hợp đồng -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasContractPermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/customer/ViewListContact'}">
+                                        <c:set var="hasContractPermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasContractPermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/customer/ViewListContact" class="nav-link">
+                                            <i class="fas fa-file-contract"></i>
+                                            <span class="nav-text">Danh sách hợp đồng</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
                         </ul>
 
                         <div class="menu-title">Bảo hành</div>
                         <ul style="padding-left: 0;">
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/customer-maintenance" class="nav-link">
-                                    <i class="fas fa-tools"></i>
-                                    <span class="nav-text">Yêu cầu bảo hành</span>
-                                </a>
-                            </li>
+                            <!-- Yêu cầu bảo hành -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasMaintenancePermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/customer-maintenance'}">
+                                        <c:set var="hasMaintenancePermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasMaintenancePermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/customer-maintenance" class="nav-link">
+                                            <i class="fas fa-tools"></i>
+                                            <span class="nav-text">Yêu cầu bảo hành</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
                         </ul>
 
                         <div class="menu-title">Hệ thống</div>

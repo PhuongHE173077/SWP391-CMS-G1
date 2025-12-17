@@ -26,6 +26,7 @@ public class RouterDefault {
 
     static {
         initDefaultRouters();
+        initCustomerRouters();
     }
 
     private static void initDefaultRouters() {
@@ -35,14 +36,26 @@ public class RouterDefault {
         addRouterGroup("Quản lý danh mục thiết bị", Arrays.asList(
                 new Routers("Xem danh mục", "/ViewListCategory"),
                 new Routers("Thêm danh mục", "/AddCategory"),
-                new Routers("Update thiết bị", "/UpdateCategory")));
+                new Routers("Update thiết bị", "/UpdateCategory"),
+                new Routers("Xóa thiết bị", "/delete_ViewListCategory")
+        ));
 
         // Manage device
         addRouterGroup("Quản lý thiết bị", Arrays.asList(
                 new Routers("Xem thiết bị", "/ViewListDevice"),
                 new Routers("Thêm danh mục", "/AddDevice"),
                 new Routers("Xem chi tiết thiết bị", "/ViewDetailDevice"),
-                new Routers("Update thiết bị", "/EditDevice")));
+                new Routers("Update thiết bị", "/EditDevice"),
+                new Routers("Xóa thiết bị", "/DeleteDevice"),
+                new Routers("Xem thiết bị con", "/ViewRemainingSubDevices"),
+                new Routers("Thêm thiết bị con", "/AddSubDevice"),
+                new Routers("Xóa hoàn toàn thiết bị con", "/DeleteSubDevice")
+            ));
+        
+        addRouterGroup("Quản lý thiết bị đã xóa", Arrays.asList(
+                new Routers("Xem thiết bị", "/ViewDeletedDevices"),
+                new Routers("Khôi phục", "/Restore_DeleteDevices")
+               ));
 
         addRouterGroup("Quản lý Hợp đồng", Arrays.asList(
                 new Routers("Xem Hợp đồng", "/contract-list"),
@@ -59,10 +72,18 @@ public class RouterDefault {
                 new Routers("Xem Hợp đồng đã xóa", "/list-contract-delete"),
                 new Routers("Xem chi tiết và phản hồi", "/ViewDetaiRequestMaintance"),
                 new Routers("Thay đổi trạng thái", "/UpdateRequestMaintance")));
-
     }
 
-    private static void initDefaultRoutersForCus() {
+    private static void initCustomerRouters() {
+
+        addRouterGroupForCustomer("Hợp đồng của tôi", Arrays.asList(
+                new Routers("Xem danh sách hợp đồng", "/customer/ViewListContact"),
+                new Routers("Chi tiết hợp đồng", "/customer/contract-detail")));
+
+        addRouterGroupForCustomer("Yêu cầu bảo hành", Arrays.asList(
+                new Routers("Danh sách yêu cầu", "/customer-maintenance"),
+                new Routers("Tạo yêu cầu bảo hành", "/CreateRequestMaintance"),
+                new Routers("Chi tiết yêu cầu", "/maintenance-detail")));
 
     }
 
@@ -72,8 +93,18 @@ public class RouterDefault {
         return group;
     }
 
+    public static RouterGroup addRouterGroupForCustomer(String name, List<Routers> routers) {
+        RouterGroup group = new RouterGroup(idCounter++, name, new ArrayList<>(routers));
+        routerGroupsForCus.add(group);
+        return group;
+    }
+
     public static List<RouterGroup> getRouterGroups() {
         return routerGroups;
+    }
+
+    public static List<RouterGroup> getRouterGroupsForCus() {
+        return routerGroupsForCus;
     }
 
     public static String getRouterNameByPath(String routerPath) {

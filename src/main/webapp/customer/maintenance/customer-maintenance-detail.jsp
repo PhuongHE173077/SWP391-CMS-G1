@@ -136,14 +136,45 @@
                 </head>
 
                 <body class="bg-light">
+                    <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+                    
+                    <!-- Tính toán quyền cho màn hình chi tiết yêu cầu bảo hành -->
+                    <c:set var="canViewMaintenanceDetail" value="false" />
+                    <c:set var="canViewOwnMaintenances" value="false" />
+                    
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id}">
+                                <c:if test="${rp.router == '/maintenance-detail'}">
+                                    <c:set var="canViewMaintenanceDetail" value="true" />
+                                </c:if>
+                                <c:if test="${rp.router == '/customer-maintenance'}">
+                                    <c:set var="canViewOwnMaintenances" value="true" />
+                                </c:if>
+                            </c:if>
+                        </c:forEach>
+                    </c:if>
+                    
                     <div class="container-fluid px-4 mt-4">
+                        <c:if test="${canViewMaintenanceDetail}">
 
                         <!-- Header -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="d-flex align-items-center gap-3">
-                                <a href="customer-maintenance" class="btn btn-outline-secondary fw-bold">
-                                    <i class="fas fa-arrow-left me-2"></i>Quay lại
-                                </a>
+                                <!-- Nút Quay lại -->
+                                <c:choose>
+                                    <c:when test="${canViewOwnMaintenances}">
+                                        <a href="customer-maintenance" class="btn btn-outline-secondary fw-bold">
+                                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button type="button" class="btn btn-outline-secondary fw-bold" disabled
+                                            title="Bạn không có quyền xem danh sách yêu cầu">
+                                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
                                 <div>
                                     <h2 class="text-primary fw-bold mb-1">
                                         <i class="fas fa-tools me-2"></i>Chi Tiết Yêu Cầu Bảo Trì
@@ -390,6 +421,16 @@
                             </div>
                         </div>
                     </c:if>
+                    </c:if>
+                    
+                    <c:if test="${!canViewMaintenanceDetail}">
+                        <div class="card shadow-sm">
+                            <div class="card-body text-center py-5">
+                                <h4 class="text-muted">Bạn không có quyền xem chi tiết yêu cầu bảo hành</h4>
+                            </div>
+                        </div>
+                    </c:if>
+                </div>
                 </body>
 
                 </html>

@@ -5,6 +5,27 @@
 <jsp:include page="../managerLayout.jsp">    
     <jsp:param name="pageTitle" value="Thiết Bị Đã Xóa" />
 </jsp:include>
+
+<!-- Tính toán quyền cho màn hình thiết bị đã xóa -->
+<c:set var="canViewDeletedDevices" value="false" />
+<c:set var="canRestoreDevices" value="false" />
+<c:set var="canViewDetailDevice" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/ViewDeletedDevices'}">
+                <c:set var="canViewDeletedDevices" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/Restore_DeleteDevices'}">
+                <c:set var="canRestoreDevices" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewDetailDevice'}">
+                <c:set var="canViewDetailDevice" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
         <style>
 
             body {
@@ -269,6 +290,7 @@
                 </div>
             </form>
 
+            <c:if test="${canViewDeletedDevices}">
             <table class="device-table">
                 <thead>
                     <tr>
@@ -296,8 +318,27 @@
                             </td>
                             <td>
                                 <div class="action-col-wrapper">
-                                    <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
-                                    <a href="#" onclick="restoreDevice('${d.id}'); return false;">Khôi phục</a>
+                                    <!-- Nút Xem Chi tiết -->
+                                    <c:choose>
+                                        <c:when test="${canViewDetailDevice}">
+                                            <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" style="opacity: 0.6; cursor: not-allowed;" disabled
+                                                title="Bạn không có quyền xem chi tiết">Xem Chi tiết</button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    
+                                    <!-- Nút Khôi phục -->
+                                    <c:choose>
+                                        <c:when test="${canRestoreDevices}">
+                                            <a href="#" onclick="restoreDevice('${d.id}'); return false;">Khôi phục</a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" style="opacity: 0.6; cursor: not-allowed;" disabled
+                                                title="Bạn không có quyền khôi phục thiết bị">Khôi phục</button>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </td>
                         </tr>
@@ -333,6 +374,13 @@
                     </c:choose>
                 </c:forEach>
             </div>
+            </c:if>
+            
+            <c:if test="${!canViewDeletedDevices}">
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <h3>Bạn không có quyền xem danh sách thiết bị đã xóa</h3>
+                </div>
+            </c:if>
 
         </div>
 

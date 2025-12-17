@@ -11,6 +11,31 @@
     <jsp:param name="pageTitle" value="Deleted Contract Management" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình Sub Device -->
+<c:set var="canViewRemainingSubDevices" value="false" />
+<c:set var="canAddSubDevice" value="false" />
+<c:set var="canDeleteSubDevice" value="false" />
+<c:set var="canViewDetailDevice" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/ViewRemainingSubDevices'}">
+                <c:set var="canViewRemainingSubDevices" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/AddSubDevice'}">
+                <c:set var="canAddSubDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/DeleteSubDevice'}">
+                <c:set var="canDeleteSubDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewDetailDevice'}">
+                <c:set var="canViewDetailDevice" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <style>
     .subdevice-table {
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -127,12 +152,35 @@
                 </p>
             </div>
             <div class="d-flex gap-2">
-                <a href="AddSubDevice?deviceId=${device.id}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Thêm Sub Device
-                </a>
-                <a href="ViewDetailDevice?id=${device.id}" class="btn btn-outline-primary">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại chi tiết
-                </a>
+                <!-- Nút Thêm Sub Device -->
+                <c:choose>
+                    <c:when test="${canAddSubDevice}">
+                        <a href="AddSubDevice?deviceId=${device.id}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Thêm Sub Device
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <button type="button" class="btn btn-primary" disabled
+                            title="Bạn không có quyền thêm Sub Device">
+                            <i class="fas fa-plus me-2"></i>Thêm Sub Device
+                        </button>
+                    </c:otherwise>
+                </c:choose>
+                
+                <!-- Nút Quay lại -->
+                <c:choose>
+                    <c:when test="${canViewDetailDevice}">
+                        <a href="ViewDetailDevice?id=${device.id}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại chi tiết
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <button type="button" class="btn btn-outline-secondary" disabled
+                            title="Bạn không có quyền xem chi tiết thiết bị">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại chi tiết
+                        </button>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
         
@@ -259,6 +307,7 @@
         </div>
         
         <!-- Sub Devices Table -->
+        <c:if test="${canViewRemainingSubDevices}">
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <c:choose>
@@ -290,11 +339,22 @@
                                                 ${subDevice.createdAt != null ? subDevice.createdAt : 'N/A'}
                                             </td>
                                             <td class="align-middle">
-                                                <a href="DeleteSubDevice?id=${subDevice.id}&deviceId=${device.id}" 
-                                                   class="btn btn-danger btn-sm"
-                                                   onclick="return confirm('Bạn có chắc chắn muốn xóa Sub Device này?');">
-                                                    <i class="fas fa-trash-alt me-1"></i>Xóa
-                                                </a>
+                                                <!-- Nút Xóa -->
+                                                <c:choose>
+                                                    <c:when test="${canDeleteSubDevice}">
+                                                        <a href="DeleteSubDevice?id=${subDevice.id}&deviceId=${device.id}" 
+                                                           class="btn btn-danger btn-sm"
+                                                           onclick="return confirm('Bạn có chắc chắn muốn xóa Sub Device này?');">
+                                                            <i class="fas fa-trash-alt me-1"></i>Xóa
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button type="button" class="btn btn-secondary btn-sm" disabled
+                                                            title="Bạn không có quyền xóa Sub Device">
+                                                            <i class="fas fa-trash-alt me-1"></i>Xóa
+                                                        </button>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -387,7 +447,16 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-        </div>        
+        </div>
+        </c:if>
+        
+        <c:if test="${!canViewRemainingSubDevices}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem danh sách Sub Device</h4>
+                </div>
+            </div>
+        </c:if>
     </div>
 </body>
 
