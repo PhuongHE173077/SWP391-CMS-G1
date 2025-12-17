@@ -332,6 +332,7 @@ public class MaintenanceRequestDAO extends DBContext {
                 req.setId(rs.getInt("id"));
                 req.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
                 req.setContent(rs.getString("content"));
+                req.setImage(rs.getString("image"));
                 String statusStr = rs.getString("status");
                 if (statusStr != null) {
                     req.setStatus(MaintenanceStatus.valueOf(statusStr));
@@ -457,6 +458,43 @@ public class MaintenanceRequestDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Update maintenance request status
+    public boolean updateMaintenanceRequestStatus(int requestId, MaintenanceStatus status) {
+        String sql = "UPDATE maintenance_request SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setInt(2, requestId);
+
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    // Lấy danh sách replies theo maintenance request id
+    public List<model.ReplyMaintanceRequest> getRepliesByRequestId(int requestId) {
+        List<model.ReplyMaintanceRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM reply_maintenance_request WHERE maintenance_request_id = ? ORDER BY created_at DESC";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, requestId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    model.ReplyMaintanceRequest reply = new model.ReplyMaintanceRequest();
+                    reply.setId(rs.getInt("id"));
+                    reply.setTitle(rs.getString("title"));
+                    reply.setContent(rs.getString("content"));
+                    reply.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
+                    list.add(reply);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }
