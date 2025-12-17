@@ -9,6 +9,7 @@ import model.Contract;
 import model.ContractItem;
 import model.Device;
 import model.MaintanceRequest;
+import model.ReplyMaintanceRequest;
 import model.SubDevice;
 import model.Users;
 import utils.MaintenanceStatus;
@@ -189,6 +190,38 @@ public class MaintenanceRequestDAO extends DBContext {
                     mr.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
                 }
                 return mr;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Users getUserByMaintenaneRequest(String id) {
+        Users user = new Users();
+        String query = "SELECT \n"
+                + "    rmr.id AS reply_id,\n"
+                + "    mr.id AS request_id,\n"
+                + "    u.id AS user_id,\n"
+                + "    u.displayname AS user_name\n"
+                + "FROM swp391.reply_maintenance_request rmr\n"
+                + "INNER JOIN swp391.maintenance_request mr ON rmr.maintenance_request_id = mr.id\n"
+                + "INNER JOIN swp391._user u ON mr.user_id = u.id\n"
+                + "WHERE mr.id = ?\n";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                MaintanceRequest mr = new MaintanceRequest();
+                mr.setId(rs.getInt("request_id"));
+                
+                ReplyMaintanceRequest rmr = new ReplyMaintanceRequest();
+                rmr.setId(rs.getInt("reply_id"));
+                
+                user.setId(rs.getInt("user_id"));
+                user.setDisplayname(rs.getString("user_name"));
+                
+                return user;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -474,11 +507,12 @@ public class MaintenanceRequestDAO extends DBContext {
         }
         return false;
     }
+
     // Lấy danh sách replies theo maintenance request id
     public List<model.ReplyMaintanceRequest> getRepliesByRequestId(int requestId) {
         List<model.ReplyMaintanceRequest> list = new ArrayList<>();
         String sql = "SELECT * FROM reply_maintenance_request WHERE maintenance_request_id = ? ORDER BY created_at DESC";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, requestId);
             try (ResultSet rs = ps.executeQuery()) {
