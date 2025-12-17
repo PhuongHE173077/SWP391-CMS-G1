@@ -179,7 +179,7 @@
                     <strong>Hướng dẫn:</strong> Vui lòng kiểm tra lại thông tin thiết bị trong hợp đồng của bạn và mô tả chi tiết vấn đề cần bảo trì.
                 </div>
 
-                <form action="CreateRequestMaintance" method="POST" id="maintenanceForm">
+                <form action="CreateRequestMaintance" method="POST" id="maintenanceForm" enctype="multipart/form-data">
                     <!-- Ẩn contractItemId để gửi theo form -->
                     <input type="hidden" name="contractItemId" id="contractItemId" value="${contractItem.id}" />
                     <!-- Tiêu đề yêu cầu -->
@@ -240,13 +240,17 @@
                         <small class="text-muted">Vui lòng mô tả chi tiết vấn đề cần bảo trì để chúng tôi có thể hỗ trợ bạn tốt nhất</small>
                     </div>
 
-                    <!-- Ảnh minh họa (URL) -->
+                    
                     <div class="mb-4">
                         <label for="image" class="form-label">
-                            Ảnh minh họa (URL)
+                            Ảnh minh họa
                         </label>
-                        <input type="text" class="form-control" id="image" name="image"
-                               placeholder="Dán link ảnh mô tả lỗi vào đấy">
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <small class="text-muted">Chọn ảnh mô tả lỗi (JPG, PNG, GIF - tối đa 10MB)</small>
+                        <!-- Preview ảnh -->
+                        <div id="imagePreview" class="mt-3" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 300px; max-height: 300px;">
+                        </div>
                     </div>
 
                     <!-- Nút hành động -->
@@ -269,10 +273,43 @@
         crossorigin="anonymous"></script>
 
     <script>
+        
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Kiểm tra kích thước file (10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Kích thước file không được vượt quá 10MB!');
+                    e.target.value = '';
+                    document.getElementById('imagePreview').style.display = 'none';
+                    return;
+                }
+                
+                // Kiểm tra loại file
+                if (!file.type.startsWith('image/')) {
+                    alert('Vui lòng chọn file ảnh!');
+                    e.target.value = '';
+                    document.getElementById('imagePreview').style.display = 'none';
+                    return;
+                }
+                
+                // Hiển thị preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('imagePreview').style.display = 'none';
+            }
+        });
+
         // Validation form
         document.getElementById('maintenanceForm').addEventListener('submit', function(e) {
             const title = document.getElementById('title').value.trim();
             const content = document.getElementById('content').value.trim();
+            const imageFile = document.getElementById('image').files[0];
 
             if (!title) {
                 e.preventDefault();
@@ -283,6 +320,13 @@
             if (!content || content.length < 10) {
                 e.preventDefault();
                 alert('Vui lòng nhập nội dung yêu cầu (ít nhất 10 ký tự)!');
+                return false;
+            }
+
+            // Kiểm tra kích thước file nếu có
+            if (imageFile && imageFile.size > 10 * 1024 * 1024) {
+                e.preventDefault();
+                alert('Kích thước file không được vượt quá 10MB!');
                 return false;
             }
         });
