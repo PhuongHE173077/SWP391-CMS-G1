@@ -67,42 +67,146 @@ public class EditUser extends HttpServlet {
         try {
             int id = Integer.parseInt(idRaw);
 
-            if (displayname == null || displayname.trim().isEmpty()
-                    || email == null || email.trim().isEmpty()
-                    || roleIdParam == null || roleIdParam.trim().isEmpty()) {
-
-                request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
-                Users user = userDAO.getUserById(id);
-                loadRoles(request);
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
-                return;
-            }
-
-            int roleId = Integer.parseInt(roleIdParam);
-            boolean gender = "true".equals(genderParam);
-            boolean active = activeParam != null && "true".equals(activeParam);
-
-            Roles role = roleDAO.getRoleById(roleId);
-            if (role == null) {
-                request.setAttribute("error", "Vai trò không tồn tại.");
-                Users user = userDAO.getUserById(id);
-                loadRoles(request);
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
-                return;
-            }
-
+            // Lấy user hiện tại để so sánh
             Users existingUser = userDAO.getUserById(id);
             if (existingUser == null) {
                 response.sendRedirect("user-list");
                 return;
             }
 
-            existingUser.setDisplayname(displayname.trim());
-            existingUser.setEmail(email.trim());
-            existingUser.setPhone(phone != null ? phone.trim() : null);
-            existingUser.setAddress(address != null ? address.trim() : null);
+            // Validate required fields
+            if (displayname == null || displayname.trim().isEmpty()
+                    || email == null || email.trim().isEmpty()
+                    || roleIdParam == null || roleIdParam.trim().isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+
+            String displaynameTrimmed = displayname.trim();
+            String emailTrimmed = email.trim();
+            String phoneTrimmed = phone != null ? phone.trim() : null;
+            String addressTrimmed = address != null ? address.trim() : null;
+
+            // Validate displayname length
+            if (displaynameTrimmed.length() < 2) {
+                request.setAttribute("error", "Họ và tên phải có ít nhất 2 ký tự.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+            if (displaynameTrimmed.length() > 100) {
+                request.setAttribute("error", "Họ và tên không được vượt quá 100 ký tự.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+            // Validate displayname không chứa ký tự đặc biệt nguy hiểm
+            if (displaynameTrimmed.contains("<") || displaynameTrimmed.contains(">")) {
+                request.setAttribute("error", "Họ và tên không được chứa ký tự < hoặc >.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+
+            // Validate email format
+            String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+            if (!emailTrimmed.matches(emailPattern)) {
+                request.setAttribute("error", "Email không hợp lệ.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+            if (emailTrimmed.length() > 100) {
+                request.setAttribute("error", "Email không được vượt quá 100 ký tự.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+
+            // Validate email duplicate (trừ user hiện tại)
+            String currentEmail = existingUser.getEmail();
+            if (!emailTrimmed.equalsIgnoreCase(currentEmail != null ? currentEmail.trim() : "")) {
+                if (userDAO.checkEmailExists(emailTrimmed)) {
+                    request.setAttribute("error", "Email này đã được sử dụng bởi người dùng khác.");
+                    loadRoles(request);
+                    request.setAttribute("user", existingUser);
+                    request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                    return;
+                }
+            }
+
+            // Validate phone format (nếu có)
+            if (phoneTrimmed != null && !phoneTrimmed.isEmpty()) {
+                String phonePattern = "^[0-9]{10,11}$";
+                if (!phoneTrimmed.matches(phonePattern)) {
+                    request.setAttribute("error", "Số điện thoại phải có 10-11 chữ số.");
+                    loadRoles(request);
+                    request.setAttribute("user", existingUser);
+                    request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                    return;
+                }
+
+                // Validate phone duplicate (trừ user hiện tại)
+                String currentPhone = existingUser.getPhone();
+                String currentPhoneTrimmed = currentPhone != null ? currentPhone.trim() : "";
+                if (!phoneTrimmed.equals(currentPhoneTrimmed)) {
+                    if (userDAO.checkPhoneExists(phoneTrimmed)) {
+                        request.setAttribute("error", "Số điện thoại này đã được sử dụng bởi người dùng khác.");
+                        loadRoles(request);
+                        request.setAttribute("user", existingUser);
+                        request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                        return;
+                    }
+                }
+            }
+
+            // Validate address length
+            if (addressTrimmed != null && addressTrimmed.length() > 500) {
+                request.setAttribute("error", "Địa chỉ không được vượt quá 500 ký tự.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+
+            // Validate roleId
+            int roleId;
+            try {
+                roleId = Integer.parseInt(roleIdParam);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "ID vai trò không hợp lệ.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+
+            Roles role = roleDAO.getRoleById(roleId);
+            if (role == null) {
+                request.setAttribute("error", "Vai trò không tồn tại.");
+                loadRoles(request);
+                request.setAttribute("user", existingUser);
+                request.getRequestDispatcher("admin/user/user-edit.jsp").forward(request, response);
+                return;
+            }
+
+            // Parse gender và active
+            boolean gender = "true".equals(genderParam);
+            boolean active = activeParam != null && "true".equals(activeParam);
+
+            // Update user
+            existingUser.setDisplayname(displaynameTrimmed);
+            existingUser.setEmail(emailTrimmed);
+            existingUser.setPhone(phoneTrimmed);
+            existingUser.setAddress(addressTrimmed);
             existingUser.setGender(gender);
             existingUser.setActive(active);
             existingUser.setRoles(role);

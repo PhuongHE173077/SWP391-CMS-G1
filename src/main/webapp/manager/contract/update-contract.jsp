@@ -249,16 +249,10 @@
 
                                         <!-- Submit Button -->
                                         <div class="mt-auto">
-                                            <c:if test="${!canEdit}">
-                                                <button disabled="true" type="button" id="submit-button" class="btn btn-primary w-100">
+                                            
+                                                <button  type="button" id="submit-button" class="btn btn-primary w-100">
                                                 Cập nhật hợp đồng
                                             </button>
-                                            </c:if>
-                                            <c:if test="${canEdit}">
-                                                <button disabled="true" type="button" id="submit-button" class="btn btn-primary w-100">
-                                                Cập nhật hợp đồng
-                                            </button>
-                                            </c:if>
                                         </div>
                                     </div>
                                 </div>

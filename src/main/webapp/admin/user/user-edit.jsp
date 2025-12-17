@@ -25,30 +25,38 @@
                         </div>
                     </c:if>
 
-                    <form action="edit" method="post">
+                    <form action="edit" method="post" id="editUserForm">
                         <input type="hidden" name="id" value="${user.id}" />
 
                         <div class="mb-3">
-                            <label for="displayname" class="form-label">Họ và tên</label>
+                            <label for="displayname" class="form-label">Họ và tên <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="displayname" name="displayname"
-                                   value="${not empty param.displayname ? param.displayname : user.displayname}" required>
+                                   value="${not empty param.displayname ? param.displayname : user.displayname}" 
+                                   required
+                                   minlength="2"
+                                   maxlength="100">
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" name="email"
-                                   value="${not empty param.email ? param.email : user.email}" required>
+                                   value="${not empty param.email ? param.email : user.email}" 
+                                   required
+                                   maxlength="100">
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Số điện thoại</label>
                             <input type="text" class="form-control" id="phone" name="phone"
-                                   value="${not empty param.phone ? param.phone : user.phone}">
+                                   value="${not empty param.phone ? param.phone : user.phone}"
+                                   placeholder="Ví dụ: 0123456789">
+                            <small class="form-text text-muted">Số điện thoại phải có 10-11 chữ số </small>
                         </div>
 
                         <div class="mb-3">
                             <label for="address" class="form-label">Địa chỉ</label>
-                            <textarea class="form-control" id="address" name="address" rows="2">${not empty param.address ? param.address : user.address}</textarea>
+                            <textarea class="form-control" id="address" name="address" rows="2" maxlength="500">${not empty param.address ? param.address : user.address}</textarea>
+                            <small class="form-text text-muted">Tối đa 500 ký tự</small>
                         </div>
 
                         <div class="mb-3">
@@ -75,7 +83,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="roleId" class="form-label">Vai trò</label>
+                            <label for="roleId" class="form-label">Vai trò <span class="text-danger">*</span></label>
                             <c:set var="roleSelected"
                                    value="${not empty param.roleId ? param.roleId : user.roles.id}" />
                             <select class="form-select" id="roleId" name="roleId" required>

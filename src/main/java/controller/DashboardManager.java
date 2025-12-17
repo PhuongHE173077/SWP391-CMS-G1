@@ -5,10 +5,10 @@
 
 package controller;
 
-import dal.CategoryDAO;
 import dal.DeviceDAO;
 import dal.ContractDAO;
 import dal.UserDAO;
+import dal.MaintenanceRequestDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import model.TopContractUser;
+import model.Contract;
 
 /**
  *
@@ -70,10 +72,10 @@ public class DashboardManager extends HttpServlet {
         int totalContract = con.getCountAllContract();
         request.setAttribute("totalContract", totalContract);
         
-        
-        CategoryDAO cate = new CategoryDAO();
-        int totalCategory = cate.getCountAllCategory();
-        request.setAttribute("totalCategory", totalCategory);
+        // Đếm số yêu cầu bảo hành pending
+        MaintenanceRequestDAO maintenanceDAO = new MaintenanceRequestDAO();
+        int totalPendingMaintenanceRequests = maintenanceDAO.countPendingMaintenanceRequests();
+        request.setAttribute("totalPendingMaintenanceRequests", totalPendingMaintenanceRequests);
         
         UserDAO user = new UserDAO();
         int totalCustomer = user.getCountAllCustomer();
@@ -82,6 +84,14 @@ public class DashboardManager extends HttpServlet {
         List<TopContractUser> topContractUser = new ArrayList<>();
         topContractUser = con.getTopContractUsers();
         request.setAttribute("topContractUser", topContractUser);
+        
+        // Lấy danh sách hợp đồng pending (chưa có contract_item)
+        List<Contract> pendingContracts = con.getPendingContracts(10); // Lấy tối đa 10 hợp đồng pending
+        request.setAttribute("pendingContracts", pendingContracts);
+        
+        // Lấy dữ liệu hợp đồng theo từng tháng
+        Map<String, Integer> contractsByMonth = con.getContractsByMonth();
+        request.setAttribute("contractsByMonth", contractsByMonth);
         
         request.getRequestDispatcher("manager/dashboardManager.jsp").forward(request, response);
     } 

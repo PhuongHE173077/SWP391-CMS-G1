@@ -46,7 +46,7 @@
             }
 
             .form-group input[type="text"],
-            .form-group input[type="url"],
+            .form-group input[type="file"],
             .form-group textarea,
             .form-group select {
                 width: 100%;
@@ -133,7 +133,7 @@
                 </div>
             </c:if>
 
-            <form action="AddDevice" method="POST">
+            <form action="AddDevice" method="POST" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label for="name">Tên Thiết bị (*):</label>
@@ -151,8 +151,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="image">URL Hình ảnh:</label>
-                    <input type="url" id="image" name="image" placeholder="Ví dụ: https://example.com/device_img.jpg">
+                    <label for="image">Hình ảnh:</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <small style="display: block; margin-top: 5px; color: #666;">Chọn file ảnh (JPG, PNG, GIF - tối đa 10MB)</small>
+                    <div id="imagePreview" style="margin-top: 10px; display: none;">
+                        <img id="previewImg" src="" alt="Preview" style="max-width: 300px; max-height: 300px; border-radius: 6px; border: 1px solid #ccc;">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -168,6 +172,40 @@
                 <button type="submit" class="btn-submit">💾 Lưu Thiết bị Mới</button>
             </form>
         </div>
+
+        <script>
+            // Preview ảnh khi chọn file
+            document.getElementById('image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Kiểm tra kích thước file (tối đa 10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('Kích thước file không được vượt quá 10MB!');
+                        e.target.value = '';
+                        document.getElementById('imagePreview').style.display = 'none';
+                        return;
+                    }
+                    
+                    // Kiểm tra loại file
+                    if (!file.type.startsWith('image/')) {
+                        alert('Vui lòng chọn file ảnh!');
+                        e.target.value = '';
+                        document.getElementById('imagePreview').style.display = 'none';
+                        return;
+                    }
+                    
+                    // Hiển thị preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('previewImg').src = e.target.result;
+                        document.getElementById('imagePreview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('imagePreview').style.display = 'none';
+                }
+            });
+        </script>
 
     </body>
 </html>

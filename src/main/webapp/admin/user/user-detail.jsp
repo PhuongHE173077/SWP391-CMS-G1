@@ -54,13 +54,7 @@
                 </div>
 
                 <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label class="fw-bold text-secondary small text-uppercase mb-1">Password (Hashed)</label>
-                        <div class="p-2 border rounded bg-white text-muted text-break">
-                            <%-- Lưu ý: Không thể giải mã BCrypt ngược lại thành text --%>
-                            ${user.password}
-                        </div>
-                    </div>
+                    
                     <div class="col-md-6 mt-3 mt-md-0">
                         <label class="fw-bold text-secondary small text-uppercase mb-1">Created At</label>
                         <div class="p-2 border rounded bg-white text-dark">
