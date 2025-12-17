@@ -57,7 +57,7 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
         }
 
         if (sortBy == null) {
-            sortBy = "created_at"; // Mặc định sort theo ngày
+            sortBy = "id"; // Mặc định sort theo ngày
         }
         if (sortOrder == null) {
             sortOrder = "DESC"; // Mới nhất lên đầu
