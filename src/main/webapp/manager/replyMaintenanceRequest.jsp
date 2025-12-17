@@ -156,6 +156,16 @@
                 margin-top: 10px;
                 color: #777;
             }
+            .view-image-btn {
+                margin-left: 10px;
+                color: #007bff;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+            .view-image-btn:hover {
+                text-decoration: underline;
+            }
 
             /* --- FORM PHẢN HỒI --- */
             .reply-form input, .reply-form textarea {
@@ -213,17 +223,19 @@
                     <h3>Nội Dung Chi Tiết:</h3>
                     <p>${maintanceRequest.content}</p>
                     <p><strong>Thông tin liên hệ (ID):</strong> 7</p>
-                    <div class="attachment">
-                        <strong>${maintanceRequest.image}</strong> 
-                        <a href="#">[Xem ảnh]</a>
-                    </div>
+                    <c:if test="${not empty maintanceRequest.image}">
+                        <div class="attachment">
+                            <strong>Ảnh đính kèm:</strong>
+                            <a href="${pageContext.request.contextPath}/${maintanceRequest.image}"
+                               target="_blank"
+                               class="view-image-btn">
+                                [Xem ảnh]
+                            </a>
+                        </div>
+                    </c:if>
                 </div>
             </div>
-
-
-
             <hr>
-
             <h2 class="section-heading">Phản Hồi và Nhật Ký Xử Lý</h2>
             <c:forEach var="rmr" items="${replyMaintanceRequest}" varStatus="st">
                 <div class="reply-list">           
