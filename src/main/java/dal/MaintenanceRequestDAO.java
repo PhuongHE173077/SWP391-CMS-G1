@@ -286,6 +286,7 @@ public class MaintenanceRequestDAO extends DBContext {
                 req.setId(rs.getInt("id"));
                 req.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
                 req.setContent(rs.getString("content"));
+                req.setImage(rs.getString("image"));
                 String statusStr = rs.getString("status");
                 if (statusStr != null) {
                     req.setStatus(MaintenanceStatus.valueOf(statusStr));
