@@ -413,4 +413,19 @@ public class MaintenanceRequestDAO extends DBContext {
         return false;
     }
 
+    // Update maintenance request status
+    public boolean updateMaintenanceRequestStatus(int requestId, MaintenanceStatus status) {
+        String sql = "UPDATE maintenance_request SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setInt(2, requestId);
+
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
