@@ -88,7 +88,7 @@ public class CategoryDAO extends DBContext {
     }
 
     public boolean updateCategory(int id, String name) {
-        String sql = "UPDATE Category SET name = ? WHERE id = ?";
+        String sql = "UPDATE device_category SET name = ? WHERE id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, name);

@@ -511,7 +511,10 @@ public class MaintenanceRequestDAO extends DBContext {
     // Lấy danh sách replies theo maintenance request id
     public List<model.ReplyMaintanceRequest> getRepliesByRequestId(int requestId) {
         List<model.ReplyMaintanceRequest> list = new ArrayList<>();
-        String sql = "SELECT * FROM reply_maintenance_request WHERE maintenance_request_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT rmr.*, mr.status as maintenance_status "
+                + "FROM reply_maintenance_request rmr "
+                + "INNER JOIN maintenance_request mr ON rmr.maintenance_request_id = mr.id "
+                + "WHERE rmr.maintenance_request_id = ? ORDER BY rmr.created_at DESC";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, requestId);
@@ -522,6 +525,20 @@ public class MaintenanceRequestDAO extends DBContext {
                     reply.setTitle(rs.getString("title"));
                     reply.setContent(rs.getString("content"));
                     reply.setCreatedAt(rs.getObject("created_at", java.time.OffsetDateTime.class));
+                    
+                    // Set maintenance request với status
+                    model.MaintanceRequest maintanceRequest = new model.MaintanceRequest();
+                    maintanceRequest.setId(requestId);
+                    String statusStr = rs.getString("maintenance_status");
+                    if (statusStr != null) {
+                        try {
+                            maintanceRequest.setStatus(utils.MaintenanceStatus.valueOf(statusStr));
+                        } catch (IllegalArgumentException e) {
+                            maintanceRequest.setStatus(utils.MaintenanceStatus.PENDING);
+                        }
+                    }
+                    reply.setMaintanceRequest(maintanceRequest);
+                    
                     list.add(reply);
                 }
             }
