@@ -74,7 +74,7 @@ public class CreateRequestMaintance extends HttpServlet {
 
             // Truyền contractItem sang JSP để hiển thị cố định
             request.setAttribute("contractItem", contractItem);
-            request.getRequestDispatcher("user/CreateRequestMaintance.jsp").forward(request, response);
+            request.getRequestDispatcher("customer/maintenance/CreateRequestMaintance.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
