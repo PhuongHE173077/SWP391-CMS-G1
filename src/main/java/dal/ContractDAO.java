@@ -758,11 +758,13 @@ public class ContractDAO extends DBContext {
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
                 + "LEFT JOIN _user u2 ON c.createBy = u2.id "
                 + "LEFT JOIN contract_item ci ON c.id = ci.contract_id "
+                + "LEFT JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                + "LEFT JOIN device d ON sd.device_id = d.id "
                 + "WHERE c.user_id = ? AND c.isDelete = 0 ";
         
-        // Filter by keyword (search in content or customer name)
+        // Filter by keyword (search in device name or serial number)
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += "AND (c.content LIKE ? OR u1.displayname LIKE ? OR u2.displayname LIKE ?) ";
+            sql += "AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
         }
         
         // Filter by date range
@@ -792,9 +794,8 @@ public class ContractDAO extends DBContext {
             
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern); // d.name
+                ps.setString(paramIndex++, searchPattern); // sd.seri_id
             }
             
             if (fromDate != null && !fromDate.trim().isEmpty()) {
@@ -916,10 +917,12 @@ public class ContractDAO extends DBContext {
                 + "LEFT JOIN _user u1 ON c.user_id = u1.id "
                 + "LEFT JOIN _user u2 ON c.createBy = u2.id "
                 + "LEFT JOIN contract_item ci ON c.id = ci.contract_id "
+                + "LEFT JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
+                + "LEFT JOIN device d ON sd.device_id = d.id "
                 + "WHERE c.user_id = ? AND c.isDelete = 0 ";
         
         if (keyword != null && !keyword.trim().isEmpty()) {
-            subquery += "AND (c.content LIKE ? OR u1.displayname LIKE ? OR u2.displayname LIKE ?) ";
+            subquery += "AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
         }
         
         // Filter by date range
@@ -949,9 +952,8 @@ public class ContractDAO extends DBContext {
             
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern); // d.name
+                ps.setString(paramIndex++, searchPattern); // sd.seri_id
             }
             
             if (fromDate != null && !fromDate.trim().isEmpty()) {
