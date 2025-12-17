@@ -32,7 +32,7 @@ public class ContractDAO extends DBContext {
         }
         // SORT
         // default khi hiện list là order by contract id
-        String listSort = " ORDER BY c.id DESC";
+        String listSort = " ORDER BY c.id ASC";
 
         if (sortBy != null && !sortBy.isEmpty()) {
             String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
