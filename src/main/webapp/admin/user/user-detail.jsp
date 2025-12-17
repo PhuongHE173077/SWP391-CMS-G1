@@ -5,6 +5,7 @@
 --%>
  <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -54,12 +55,22 @@
 
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="fw-bold text-secondary small text-uppercase mb-1">Password</label>
-                        <div class="p-2 border rounded bg-white text-muted">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Password (Hashed)</label>
+                        <div class="p-2 border rounded bg-white text-muted text-break">
+                            <%-- Lưu ý: Không thể giải mã BCrypt ngược lại thành text --%>
                             ${user.password}
                         </div>
                     </div>
                     <div class="col-md-6 mt-3 mt-md-0">
+                        <label class="fw-bold text-secondary small text-uppercase mb-1">Created At</label>
+                        <div class="p-2 border rounded bg-white text-dark">
+                            <fmt:formatDate value="${user.createdAtDate}" pattern="dd-MMM-yyyy"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-12">
                         <label class="fw-bold text-secondary small text-uppercase mb-1">Address</label>
                         <div class="p-2 border rounded bg-white text-dark">
                             ${user.address != null ? user.address : '-'}
@@ -90,10 +101,12 @@
 
                 <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
                     <a href="user-list" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded hover-bg-gray">
-                        Back to List
+                        <i class="fas fa-arrow-left me-1"></i> Back to List
                     </a>
                     
-                   
+                    <a href="edit?id=${user.id}" class="btn btn-warning fw-bold text-dark">
+                        <i class="fas fa-edit me-1"></i> Edit User
+                    </a>
                 </div>
 
             </div>

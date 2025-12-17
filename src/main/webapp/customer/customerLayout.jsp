@@ -6,7 +6,7 @@
 
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <title>${param.pageTitle != null ? param.pageTitle : 'Manager Panel'}</title>
+                <title>${param.pageTitle != null ? param.pageTitle : 'Customer Portal'}</title>
                 <!-- Bootstrap CSS -->
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
                 <!-- Font Awesome -->
@@ -17,7 +17,7 @@
                         --sidebar-width: 260px;
                         --sidebar-bg: #1e293b;
                         --sidebar-hover: #334155;
-                        --primary-color: #10b981;
+                        --primary-color: #667eea;
                         --text-light: #e2e8f0;
                         --text-muted: #94a3b8;
                     }
@@ -34,7 +34,7 @@
                     }
 
                     /* Sidebar */
-                    .manager-sidebar {
+                    .customer-sidebar {
                         position: fixed;
                         top: 0;
                         left: 0;
@@ -47,7 +47,7 @@
                         overflow-y: auto;
                     }
 
-                    .manager-sidebar.collapsed {
+                    .customer-sidebar.collapsed {
                         width: 70px;
                     }
 
@@ -77,9 +77,9 @@
                         font-weight: 700;
                     }
 
-                    .manager-sidebar.collapsed .sidebar-logo span,
-                    .manager-sidebar.collapsed .nav-text,
-                    .manager-sidebar.collapsed .menu-title {
+                    .customer-sidebar.collapsed .sidebar-logo span,
+                    .customer-sidebar.collapsed .nav-text,
+                    .customer-sidebar.collapsed .menu-title {
                         display: none;
                     }
 
@@ -149,18 +149,18 @@
                     }
 
                     /* Main Content */
-                    .manager-main {
+                    .customer-main {
                         margin-left: var(--sidebar-width);
                         min-height: 100vh;
                         transition: margin-left 0.3s ease;
                     }
 
-                    .manager-main.expanded {
+                    .customer-main.expanded {
                         margin-left: 70px;
                     }
 
                     /* Top Header */
-                    .manager-header {
+                    .customer-header {
                         background: #ffffff;
                         padding: 15px 30px;
                         display: flex;
@@ -270,21 +270,21 @@
                     }
 
                     /* Content Area */
-                    .manager-content {
+                    .customer-content {
                         padding: 30px;
                     }
 
                     /* Responsive */
                     @media (max-width: 768px) {
-                        .manager-sidebar {
+                        .customer-sidebar {
                             transform: translateX(-100%);
                         }
 
-                        .manager-sidebar.show {
+                        .customer-sidebar.show {
                             transform: translateX(0);
                         }
 
-                        .manager-main {
+                        .customer-main {
                             margin-left: 0;
                         }
 
@@ -292,17 +292,16 @@
                             display: none;
                         }
                     }
-                    
                 </style>
             </head>
 
             <body>
                 <!-- Sidebar -->
-                <aside class="manager-sidebar" id="managerSidebar">
+                <aside class="customer-sidebar" id="customerSidebar">
                     <div class="sidebar-header">
-                        <a href="${pageContext.request.contextPath}/Dashboard" class="sidebar-logo">
+                        <a href="${pageContext.request.contextPath}/customer/ViewListContact" class="sidebar-logo">
                             <i class="fas fa-cube"></i>
-                            <span>CMS Manager</span>
+                            <span>CMS Customer</span>
                         </a>
                         <button class="toggle-btn" onclick="toggleSidebar()">
                             <i class="fas fa-bars"></i>
@@ -313,44 +312,19 @@
                         <div class="menu-title">Main Menu</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/Dashboard" class="nav-link">
-                                    <i class="fas fa-home"></i>
-                                    <span class="nav-text">Dashboard</span>
+                                <a href="${pageContext.request.contextPath}/customer/ViewListContact" class="nav-link">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="nav-text">Danh sách hợp đồng</span>
                                 </a>
                             </li>
                         </ul>
 
-                        <div class="menu-title">Quản lý</div>
+                        <div class="menu-title">Bảo hành</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/ViewListCategory" class="nav-link">
-                                    <i class="fas fa-tags"></i>
-                                    <span class="nav-text">Quản lý danh mục</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/ViewListDevice" class="nav-link">
-                                    <i class="fas fa-file-contract"></i>
-                                    <span class="nav-text">Quản lý Thiết bị</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/contract-list" class="nav-link">
-                                    <i class="fas fa-file-contract"></i>
-                                    <span class="nav-text">Quản lý hợp đồng</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/list-contract-delete" class="nav-link">
-                                    <i class="fas fa-trash-alt"></i>
-                                    <span class="nav-text">Quản lý hợp đồng đã xóa</span>
-                                </a>
-                            </li>
-                            
-                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/seller-maintenance" class="nav-link">
-                                    <i class="fas fa-trash-alt"></i>
-                                    <span class="nav-text">Quản lý Maintenance Request</span>
+                                <a href="${pageContext.request.contextPath}/customer-maintenance" class="nav-link">
+                                    <i class="fas fa-tools"></i>
+                                    <span class="nav-text">Yêu cầu bảo hành</span>
                                 </a>
                             </li>
                         </ul>
@@ -368,9 +342,9 @@
                 </aside>
 
                 <!-- Main Content Wrapper -->
-                <div class="manager-main" id="managerMain">
+                <div class="customer-main" id="customerMain">
                     <!-- Top Header -->
-                    <header class="manager-header">
+                    <header class="customer-header">
                         <div class="header-search">
                             <i class="fas fa-search"></i>
                             <input type="text" placeholder="Tìm kiếm...">
@@ -384,7 +358,7 @@
                                             <c:when test="${not empty sessionScope.user}">
                                                 ${fn:toUpperCase(fn:substring(sessionScope.user.displayname, 0, 1))}
                                             </c:when>
-                                            <c:otherwise>M</c:otherwise>
+                                            <c:otherwise>C</c:otherwise>
                                         </c:choose>
                                     </div>
                                     <div class="user-info">
@@ -393,7 +367,7 @@
                                                 <c:when test="${not empty sessionScope.user}">
                                                     ${sessionScope.user.displayname}
                                                 </c:when>
-                                                <c:otherwise>Manager</c:otherwise>
+                                                <c:otherwise>Customer</c:otherwise>
                                             </c:choose>
                                         </div>
                                     </div>
@@ -401,7 +375,8 @@
                                 </div>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/ViewProfile">
+                                        <a class="dropdown-item"
+                                            href="${pageContext.request.contextPath}/ViewProfile">
                                             <i class="fas fa-user me-2"></i>Xem hồ sơ
                                         </a>
                                     </li>
@@ -426,5 +401,4 @@
                     </header>
 
                     <!-- Page Content -->
-                    <main class="manager-content">
-                        
+                    <main class="customer-content">

@@ -2,8 +2,11 @@ package model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -11,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import utils.BaseEntity;
+import utils.MaintenanceStatus;
 
 /**
  *
@@ -19,13 +23,15 @@ import utils.BaseEntity;
 @Entity
 @Table(name = "maintenance_request")
 public class MaintanceRequest extends BaseEntity {
-    
-     @Column(name = "title")
+
+    @Column(name = "title")
     private String title;
 
+    @Lob
     @Column(name = "content")
     private String content;
-    
+
+    @Lob
     @Column(name = "image")
     private String image;
 
@@ -33,8 +39,9 @@ public class MaintanceRequest extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Users user;
 
-    @Column(name = "status")
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private MaintenanceStatus status = MaintenanceStatus.PENDING;
 
     @NotNull
     @ManyToOne
@@ -47,12 +54,11 @@ public class MaintanceRequest extends BaseEntity {
     public MaintanceRequest() {
     }
 
-    public MaintanceRequest(String title, String content, String image, Users user, Boolean status, ContractItem contractItem) {
+    public MaintanceRequest(String title, String content, String image, Users user, ContractItem contractItem) {
         this.title = title;
         this.content = content;
         this.image = image;
         this.user = user;
-        this.status = status;
         this.contractItem = contractItem;
     }
 
@@ -88,11 +94,11 @@ public class MaintanceRequest extends BaseEntity {
         this.user = user;
     }
 
-    public Boolean getStatus() {
+    public MaintenanceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(MaintenanceStatus status) {
         this.status = status;
     }
 
@@ -111,8 +117,5 @@ public class MaintanceRequest extends BaseEntity {
     public void setReplyMaintanceRequests(Set<ReplyMaintanceRequest> replyMaintanceRequests) {
         this.replyMaintanceRequests = replyMaintanceRequests;
     }
-    
-    
 
-   
 }

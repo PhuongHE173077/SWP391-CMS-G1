@@ -12,6 +12,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,9 +21,9 @@ import lombok.Setter;
  *
  * @author admin
  */
-
 @MappedSuperclass
 public class BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -47,6 +48,12 @@ public class BaseEntity {
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
-    
-    
+
+    public Date getCreatedAtDate() {
+        if (this.createdAt != null) {
+            return Date.from(this.createdAt.toInstant());
+        }
+        return null;
+    }
+
 }
