@@ -308,17 +308,7 @@
                         </button>
                     </div>
 
-                    <nav class="sidebar-nav">
-                        <div class="menu-title">Main Menu</div>
-                        <ul style="padding-left: 0;">
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/DashboardAdmin" class="nav-link">
-                                    <i class="fas fa-home"></i>
-                                    <span class="nav-text">Dashboard</span>
-                                </a>
-                            </li>
-                        </ul>
-
+                    <nav class="sidebar-nav">                        
                         <div class="menu-title">Quản lý</div>
                         <ul style="padding-left: 0;">
                             <li class="nav-item">

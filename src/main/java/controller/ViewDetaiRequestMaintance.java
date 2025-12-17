@@ -77,7 +77,7 @@ public class ViewDetaiRequestMaintance extends HttpServlet {
         Users user = mr.getUserByMaintenaneRequest(id);
         request.setAttribute("user", user);
         
-        request.getRequestDispatcher("manager/replyMaintenanceRequest.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/maintenance/replyMaintenanceRequest.jsp").forward(request, response);
 
     }
 
