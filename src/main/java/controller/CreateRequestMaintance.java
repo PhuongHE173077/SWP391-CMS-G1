@@ -178,7 +178,7 @@ public class CreateRequestMaintance extends HttpServlet {
 
             if (success) {
                 session.setAttribute("msg", "Tạo yêu cầu bảo trì thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.");
-                response.sendRedirect("customer/ViewListContact");
+                response.sendRedirect("customer-maintenance");
             } else {
                 session.setAttribute("error", "Có lỗi xảy ra khi tạo yêu cầu bảo trì. Vui lòng thử lại!");
                 response.sendRedirect("CreateRequestMaintance?contractItemId=" + contractItemIdStr);
