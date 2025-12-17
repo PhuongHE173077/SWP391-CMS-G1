@@ -208,10 +208,8 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold" style="min-width: 80px;">
-                                                View
-                                            </a>
-                                            <a href="send-reply?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer" style="min-width: 80px;">
+
+                                            <a href="ViewDetaiRequestMaintance?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
                                                 <i class="fas fa-paper-plane me-1"></i>Reply
                                             </a>
                                             <!-- Change Status Dropdown -->
