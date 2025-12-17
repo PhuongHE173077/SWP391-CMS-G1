@@ -16,6 +16,7 @@ import dal.MaintenanceRequestDAO;
 import java.util.List;
 import model.MaintanceRequest;
 import model.ReplyMaintanceRequest;
+import model.Users;
 
 /**
  *
@@ -73,6 +74,9 @@ public class ViewDetaiRequestMaintance extends HttpServlet {
         MaintanceRequest maintanceRequest = mr.getMaintanceRequestById(id);
         request.setAttribute("maintanceRequest", maintanceRequest);
 
+        Users user = mr.getUserByMaintenaneRequest(id);
+        request.setAttribute("user", user);
+        
         request.getRequestDispatcher("manager/replyMaintenanceRequest.jsp").forward(request, response);
 
     }

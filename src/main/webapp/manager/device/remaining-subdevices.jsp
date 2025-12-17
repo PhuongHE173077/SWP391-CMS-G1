@@ -95,18 +95,20 @@
 <body class="bg-light">
     <div class="container mt-4 mb-5">
         <!-- Hiển thị thông báo thành công -->
-        <c:if test="${not empty param.success}">
+        <c:if test="${not empty sessionScope.success}">
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>${param.success}
+                <i class="fas fa-check-circle me-2"></i>${sessionScope.success}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            <c:remove var="success" scope="session"/>
         </c:if>
         
-        <c:if test="${not empty param.error}">
+        <c:if test="${not empty sessionScope.error}">
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>${param.error}
+                <i class="fas fa-exclamation-circle me-2"></i>${sessionScope.error}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            <c:remove var="error" scope="session"/>
         </c:if>
         
         <!-- Header -->
