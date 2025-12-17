@@ -23,6 +23,21 @@
                 padding: 0;
             }
 
+            .back-btn {
+                display: inline-block;
+                margin-bottom: 15px;
+                padding: 8px 14px;
+                background-color: #6c757d;
+                color: #fff;
+                text-decoration: none;
+                border-radius: 4px;
+                font-size: 0.9em;
+                transition: background-color 0.3s;
+            }
+
+            .back-btn:hover {
+                background-color: #5a6268;
+            }
             .container {
                 max-width: 900px;
                 margin: 40px auto;
@@ -180,7 +195,9 @@
     </head>
     <body>
         <div class="container">
+            <a href="seller-maintenance" class="back-btn">← Quay lại</a>
             <h1>Chi Tiết Yêu Cầu Bảo Trì</h1>
+
 
             <div class="request-detail-card">
                 <h2 class="request-title">${maintanceRequest.title}</h2>
