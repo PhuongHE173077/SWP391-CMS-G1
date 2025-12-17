@@ -9,7 +9,6 @@ import model.Contract;
 import model.ContractItem;
 import model.Device;
 import model.MaintanceRequest;
-import model.ReplyMaintanceRequest;
 import model.SubDevice;
 import model.Users;
 import utils.MaintenanceStatus;
@@ -164,41 +163,39 @@ public class MaintenanceRequestDAO extends DBContext {
 
     public MaintanceRequest getMaintanceRequestById(String id) {
         String query = "SELECT \n"
-                + "    rmr.id AS reply_id,\n"
                 + "    mr.id AS request_id,\n"
                 + "    mr.title AS request_title,\n"
                 + "    mr.content AS request_content,\n"
                 + "    mr.status AS request_status,\n"
                 + "    mr.image AS request_image,\n"
                 + "    mr.created_at AS request_create_at\n"
-                + "FROM swp391.reply_maintenance_request rmr\n"
-                + "INNER JOIN swp391.maintenance_request mr ON rmr.maintenance_request_id = mr.id\n"
-                + "WHERE mr.id = ? ORDER BY rmr.created_at ASC; ";
-        MaintanceRequest mr = new MaintanceRequest();
+                + "FROM maintenance_request mr\n"
+                + "WHERE mr.id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-
+            if (rs.next()) {
+                MaintanceRequest mr = new MaintanceRequest();
+                mr.setId(rs.getInt("request_id"));
                 mr.setTitle(rs.getString("request_title"));
                 mr.setContent(rs.getString("request_content"));
                 mr.setImage(rs.getString("request_image"));
-                mr.setStatus(rs.getBoolean("request_status"));
+                String statusStr = rs.getString("request_status");
+                if (statusStr != null) {
+                    mr.setStatus(MaintenanceStatus.valueOf(statusStr));
+                }
                 java.sql.Timestamp timestamp = rs.getTimestamp("request_create_at");
                 if (timestamp != null) {
                     mr.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
                 }
-                mr.setId(rs.getInt("request_id"));
-
-                ReplyMaintanceRequest replyMaintanceRequest = new ReplyMaintanceRequest();
-                replyMaintanceRequest.setId(rs.getInt("reply_id"));
                 return mr;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return mr;
+        return null;
+    }
+
     // Hàm đếm tổng số records để phân trang
     public int countTotalRequests(String keyword, String status, String fromDate, String toDate, int customerId) {
         String sql = "SELECT COUNT(*) FROM maintenance_request mr "
