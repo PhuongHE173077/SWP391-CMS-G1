@@ -116,7 +116,7 @@
                                         <i class="fas fa-search me-1"></i>Tìm kiếm
                                     </label>
                                     <input type="text" class="form-control" id="keyword" name="keyword"
-                                        placeholder="Tìm theo tên người tạo..." value="${keyword}">
+                                        placeholder="Tìm theo tên sản phẩm, Seri..." value="${keyword}">
                                 </div>
 
                                 <!-- Status Filter -->
@@ -171,6 +171,7 @@
                             <table class="table table-bordered table-hover align-middle mb-0">
                                 <thead>
                                     <tr>
+                                        <th class="text-center">ID</th>
                                         <th class="text-center">Ngày tạo</th>
                                         <th class="text-center">PDF</th>
                                         <th class="text-center">Seri</th>
@@ -195,6 +196,10 @@
                                                     <c:forEach items="${items}" var="item" varStatus="itemStatus">
                                                         <tr>
                                                             <c:if test="${itemStatus.index == 0}">
+                                                                <td class="text-center align-middle fw-bold"
+                                                                    rowspan="${itemCount}">
+                                                                    #${contract.id}
+                                                                </td>
                                                                 <td class="text-center align-middle"
                                                                     rowspan="${itemCount}">
                                                                     <c:set var="formattedDate"
@@ -289,6 +294,7 @@
                                                 <c:otherwise>
                                                     <!-- Contract không có items -->
                                                     <tr>
+                                                        <td class="text-center fw-bold">#${contract.id}</td>
                                                         <td class="text-center">
                                                             <c:set var="formattedDate"
                                                                 value="${dateFormatMap[contract.id]}" />
@@ -319,7 +325,7 @@
                                     </c:if>
                                     <c:if test="${empty contractList}">
                                         <tr>
-                                            <td colspan="8" class="text-center py-5">
+                                            <td colspan="9" class="text-center py-5">
                                                 <div class="no-contracts">
                                                     <i class="fas fa-file-contract fa-4x text-muted mb-3"></i>
                                                     <h5 class="text-muted">Không tìm thấy hợp đồng nào</h5>
@@ -334,60 +340,62 @@
                         </div>
 
                         <!-- Pagination -->
-                        <c:if test="${not empty contractList && totalPages > 1}">
-                            <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
-                                <div class="pagination-info">
-                                    Hiển thị ${(currentPage - 1) * pageSize + 1} -
-                                    ${currentPage * pageSize > totalContracts ? totalContracts : currentPage * pageSize}
-                                    trong tổng số ${totalContracts} hợp đồng
-                                </div>
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination mb-0">
-                                        <!-- Previous Button -->
-                                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                            <a class="page-link"
-                                                href="${pageContext.request.contextPath}/customer/ViewListContact?page=${currentPage - 1}&keyword=${keyword}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">
-                                                <i class="fas fa-chevron-left"></i>
-                                            </a>
-                                        </li>
-
-                                        <!-- Page Numbers -->
-                                        <c:forEach begin="1" end="${totalPages}" var="i">
-                                            <c:if
-                                                test="${i == 1 || i == totalPages || (i >= currentPage - 2 && i <= currentPage + 2)}">
-                                                <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                                    <a class="page-link"
-                                                        href="${pageContext.request.contextPath}/customer/ViewListContact?page=${i}&keyword=${keyword}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">
-                                                        ${i}
-                                                    </a>
-                                                </li>
-                                            </c:if>
-                                            <c:if test="${i == currentPage - 3 || i == currentPage + 3}">
-                                                <li class="page-item disabled">
-                                                    <span class="page-link">...</span>
-                                                </li>
-                                            </c:if>
-                                        </c:forEach>
-
-                                        <!-- Next Button -->
-                                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                            <a class="page-link"
-                                                href="${pageContext.request.contextPath}/customer/ViewListContact?page=${currentPage + 1}&keyword=${keyword}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+                            <div class="pagination-info">
+                                <c:choose>
+                                    <c:when test="${totalPages > 1 && not empty contractList}">
+                                        Hiển thị ${(currentPage - 1) * pageSize + 1} -
+                                        ${currentPage * pageSize > totalContracts ? totalContracts : currentPage *
+                                        pageSize}
+                                        trong tổng số ${totalContracts} hợp đồng
+                                    </c:when>
+                                    <c:when test="${not empty contractList}">
+                                        Tổng số: ${totalContracts} hợp đồng
+                                    </c:when>
+                                    <c:otherwise>
+                                        Tổng số: 0 hợp đồng
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
-                        </c:if>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination mb-0">
+                                    <!-- Previous Button -->
+                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                            href="${pageContext.request.contextPath}/customer/ViewListContact?page=${currentPage - 1}&keyword=${keyword}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
 
-                        <c:if test="${not empty contractList && totalPages <= 1}">
-                            <div class="card-footer bg-white py-3">
-                                <div class="pagination-info text-center">
-                                    Tổng số: ${totalContracts} hợp đồng
-                                </div>
-                            </div>
-                        </c:if>
+                                    <!-- Page Numbers -->
+                                    <c:forEach begin="1" end="${totalPages > 0 ? totalPages : 1}" var="i">
+                                        <c:if
+                                            test="${totalPages <= 1 || i == 1 || i == totalPages || (i >= currentPage - 2 && i <= currentPage + 2)}">
+                                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                                <a class="page-link"
+                                                    href="${pageContext.request.contextPath}/customer/ViewListContact?page=${i}&keyword=${keyword}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">
+                                                    ${i}
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                        <c:if
+                                            test="${totalPages > 1 && (i == currentPage - 3 || i == currentPage + 3)}">
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
+
+                                    <!-- Next Button -->
+                                    <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                            href="${pageContext.request.contextPath}/customer/ViewListContact?page=${currentPage + 1}&keyword=${keyword}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
 

@@ -177,7 +177,7 @@ public class ViewListContractInUser extends HttpServlet {
         request.setAttribute("pageSize", pageSize);
         
         // Forward đến JSP để hiển thị
-        request.getRequestDispatcher("/customer/contract-list.jsp").forward(request, response);
+        request.getRequestDispatcher("/customer/maintenance/contract-list.jsp").forward(request, response);
     } 
 
     /** 
