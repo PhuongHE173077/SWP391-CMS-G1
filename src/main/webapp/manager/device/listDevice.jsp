@@ -4,6 +4,39 @@
 <jsp:include page="../managerLayout.jsp">   
     <jsp:param name="pageTitle" value="View List Device" />
 </jsp:include>
+
+<!-- Tính toán quyền cho màn hình thiết bị -->
+<c:set var="canViewDevice" value="false" />
+<c:set var="canAddDevice" value="false" />
+<c:set var="canViewDetailDevice" value="false" />
+<c:set var="canEditDevice" value="false" />
+<c:set var="canDeleteDevice" value="false" />
+<c:set var="canViewDeletedDevices" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/ViewListDevice'}">
+                <c:set var="canViewDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/AddDevice'}">
+                <c:set var="canAddDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewDetailDevice'}">
+                <c:set var="canViewDetailDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/EditDevice'}">
+                <c:set var="canEditDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/DeleteDevice'}">
+                <c:set var="canDeleteDevice" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewDeletedDevices'}">
+                <c:set var="canViewDeletedDevices" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
         <style>
 
             body {
@@ -248,8 +281,25 @@
             <div class="header">
                 <h1>🛠️ Danh sách Thiết bị</h1>
                 <div style="display: flex; gap: 10px;">
-                    <a href="ViewDeletedDevices" class="add-device-btn" style="background-color: #6c757d;">🗑️ Thiết Bị Đã Xóa</a>
-                    <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a> 
+                    <!-- Nút xem thiết bị đã xóa -->
+                    <c:choose>
+                        <c:when test="${canViewDeletedDevices}">
+                            <a href="ViewDeletedDevices" class="add-device-btn" style="background-color: #6c757d;">🗑️ Thiết Bị Đã Xóa</a>
+                        </c:when>
+                        <c:otherwise>
+                            <button type="button" class="add-device-btn" style="background-color: #6c757d; opacity: 0.6; cursor: not-allowed;" disabled title="Bạn không có quyền xem thiết bị đã xóa">🗑️ Thiết Bị Đã Xóa</button>
+                        </c:otherwise>
+                    </c:choose>
+                    
+                    <!-- Nút thêm thiết bị -->
+                    <c:choose>
+                        <c:when test="${canAddDevice}">
+                            <a href="AddDevice" class="add-device-btn">➕ Thêm Thiết bị</a>
+                        </c:when>
+                        <c:otherwise>
+                            <button type="button" class="add-device-btn" style="opacity: 0.6; cursor: not-allowed;" disabled title="Bạn không có quyền thêm thiết bị">➕ Thêm Thiết bị</button>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 
@@ -268,6 +318,7 @@
                 </div>
             </form>
 
+            <c:if test="${canViewDevice}">
             <table class="device-table">
                 <thead>
                     <tr>
@@ -293,9 +344,35 @@
                             </td>
                             <td>
                                 <div class="action-col-wrapper">
-                                    <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
-                                    <a href="EditDevice?id=${d.id}">Sửa Sản Phẩm</a>
-                                    <a href="#" onClick= " showMess(${d.id})">Xóa Sản Phẩm</a>
+                                    <!-- Nút Xem Chi tiết -->
+                                    <c:choose>
+                                        <c:when test="${canViewDetailDevice}">
+                                            <a href="ViewDetailDevice?id=${d.id}">Xem Chi tiết</a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" style="opacity: 0.6; cursor: not-allowed;" disabled title="Bạn không có quyền xem chi tiết">Xem Chi tiết</button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    
+                                    <!-- Nút Sửa -->
+                                    <c:choose>
+                                        <c:when test="${canEditDevice}">
+                                            <a href="EditDevice?id=${d.id}">Sửa Sản Phẩm</a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" style="opacity: 0.6; cursor: not-allowed;" disabled title="Bạn không có quyền sửa thiết bị">Sửa Sản Phẩm</button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    
+                                    <!-- Nút Xóa - giữ nguyên logic onclick nhưng disable nếu không có quyền -->
+                                    <c:choose>
+                                        <c:when test="${canDeleteDevice}">
+                                            <a href="#" onClick="showMess(${d.id})">Xóa Sản Phẩm</a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" style="opacity: 0.6; cursor: not-allowed;" disabled title="Bạn không có quyền xóa thiết bị">Xóa Sản Phẩm</button>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </td>
                         </tr>
@@ -327,6 +404,13 @@
                 </c:forEach>
 
             </div>
+            </c:if>
+
+            <c:if test="${!canViewDevice}">
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <h3>Bạn không có quyền xem danh sách thiết bị</h3>
+                </div>
+            </c:if>
 
         </div>
 

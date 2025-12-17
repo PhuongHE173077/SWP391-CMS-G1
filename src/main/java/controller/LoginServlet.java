@@ -1,13 +1,16 @@
 package controller;
 
+import dal.RolePermissionDAO;
 import dal.UserDAO;
 import java.io.IOException;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.RolePermission;
 import model.Users;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -94,6 +97,11 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("roleId", a.getRoles().getId());
             session.setAttribute("roleName", a.getRoles().getName());
         }
+
+        // Lưu danh sách rolePermission vào session để dùng cho phân quyền
+        RolePermissionDAO rolePermissionDAO = new RolePermissionDAO();
+        List<RolePermission> rolePermissions = rolePermissionDAO.getRolePermission();
+        session.setAttribute("rolePermissions", rolePermissions);
 
         // Redirect vào servlet Home
         if (a.getRoles() != null && a.getRoles().getId() == 1) {

@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <%@page import="dal.RolePermissionDAO" %>
             <!DOCTYPE html>
             <html>
 
@@ -297,6 +298,11 @@
             </head>
 
             <body>
+                <%
+                    // Mỗi lần load layout manager, luôn lấy lại rolePermissions từ DB
+                    RolePermissionDAO rpDao = new RolePermissionDAO();
+                    session.setAttribute("rolePermissions", rpDao.getRolePermission());
+                %>
                 <!-- Sidebar -->
                 <aside class="manager-sidebar" id="managerSidebar">
                     <div class="sidebar-header">
@@ -312,47 +318,116 @@
                     <nav class="sidebar-nav">
                         <div class="menu-title">Main Menu</div>
                         <ul style="padding-left: 0;">
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/Dashboard" class="nav-link">
-                                    <i class="fas fa-home"></i>
-                                    <span class="nav-text">Dashboard</span>
-                                </a>
-                            </li>
+                            <!-- Dashboard -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasDashboardPermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/Dashboard'}">
+                                        <c:set var="hasDashboardPermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasDashboardPermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/Dashboard" class="nav-link">
+                                            <i class="fas fa-home"></i>
+                                            <span class="nav-text">Dashboard</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
                         </ul>
 
                         <div class="menu-title">Quản lý</div>
                         <ul style="padding-left: 0;">
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/ViewListCategory" class="nav-link">
-                                    <i class="fas fa-tags"></i>
-                                    <span class="nav-text">Quản lý danh mục</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/ViewListDevice" class="nav-link">
-                                    <i class="fas fa-file-contract"></i>
-                                    <span class="nav-text">Quản lý Thiết bị</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/contract-list" class="nav-link">
-                                    <i class="fas fa-file-contract"></i>
-                                    <span class="nav-text">Quản lý hợp đồng</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/list-contract-delete" class="nav-link">
-                                    <i class="fas fa-trash-alt"></i>
-                                    <span class="nav-text">Quản lý hợp đồng đã xóa</span>
-                                </a>
-                            </li>
-                            
-                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/seller-maintenance" class="nav-link">
-                                    <i class="fas fa-trash-alt"></i>
-                                    <span class="nav-text">Quản lý Maintenance Request</span>
-                                </a>
-                            </li>
+                            <!-- Quản lý danh mục -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasCategoryPermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewListCategory'}">
+                                        <c:set var="hasCategoryPermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasCategoryPermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/ViewListCategory" class="nav-link">
+                                            <i class="fas fa-tags"></i>
+                                            <span class="nav-text">Quản lý danh mục</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
+
+                            <!-- Quản lý Thiết bị -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasDevicePermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewListDevice'}">
+                                        <c:set var="hasDevicePermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasDevicePermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/ViewListDevice" class="nav-link">
+                                            <i class="fas fa-file-contract"></i>
+                                            <span class="nav-text">Quản lý Thiết bị</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
+
+                            <!-- Quản lý hợp đồng -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasContractPermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/contract-list'}">
+                                        <c:set var="hasContractPermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasContractPermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/contract-list" class="nav-link">
+                                            <i class="fas fa-file-contract"></i>
+                                            <span class="nav-text">Quản lý hợp đồng</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
+
+                            <!-- Quản lý hợp đồng đã xóa -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasDeletedContractPermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/list-contract-delete'}">
+                                        <c:set var="hasDeletedContractPermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasDeletedContractPermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/list-contract-delete" class="nav-link">
+                                            <i class="fas fa-trash-alt"></i>
+                                            <span class="nav-text">Quản lý hợp đồng đã xóa</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
+
+                            <!-- Quản lý Maintenance Request -->
+                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                                <c:set var="hasMaintenancePermission" value="false" />
+                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/seller-maintenance'}">
+                                        <c:set var="hasMaintenancePermission" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${hasMaintenancePermission}">
+                                    <li class="nav-item">
+                                        <a href="${pageContext.request.contextPath}/seller-maintenance" class="nav-link">
+                                            <i class="fas fa-trash-alt"></i>
+                                            <span class="nav-text">Quản lý Maintenance Request</span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </c:if>
                         </ul>
 
                         <div class="menu-title">Hệ thống</div>

@@ -4,6 +4,28 @@
            <jsp:include page="../customerLayout.jsp">
                     <jsp:param name="pageTitle" value="Update Maintenance Request" />
                 </jsp:include>
+                
+            <!-- Tính toán quyền cho màn hình hợp đồng customer -->
+            <c:set var="canViewOwnContracts" value="false" />
+            <c:set var="canCreateMaintenance" value="false" />
+            <c:set var="canViewContractDetail" value="false" />
+            
+            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                    <c:if test="${rp.roles.id == sessionScope.role.id}">
+                        <c:if test="${rp.router == '/customer/ViewListContact'}">
+                            <c:set var="canViewOwnContracts" value="true" />
+                        </c:if>
+                        <c:if test="${rp.router == '/CreateRequestMaintance'}">
+                            <c:set var="canCreateMaintenance" value="true" />
+                        </c:if>
+                        <c:if test="${rp.router == '/customer/contract-detail'}">
+                            <c:set var="canViewContractDetail" value="true" />
+                        </c:if>
+                    </c:if>
+                </c:forEach>
+            </c:if>
+            
             <style>
                     body {
                         background-color: #f8f9fa;
@@ -158,6 +180,7 @@
                     </div>
 
                     <!-- Table Section -->
+                    <c:if test="${canViewOwnContracts}">
                     <div class="table-section">
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover align-middle mb-0">
@@ -270,11 +293,22 @@
                                                             <td class="text-center">
                                                                 <c:set var="itemStatus" value="${statusMap[item.id]}" />
                                                                 <c:if test="${itemStatus == 'active'}">
-                                                                    <button type="button" class="warranty-request-btn"
-                                                                        onclick="sendWarrantyRequest(${item.id})">
-                                                                        <i class="fas fa-paper-plane me-1"></i>Gửi yêu
-                                                                        cầu bảo hành
-                                                                    </button>
+                                                                    <c:choose>
+                                                                        <c:when test="${canCreateMaintenance}">
+                                                                            <button type="button" class="warranty-request-btn"
+                                                                                onclick="sendWarrantyRequest(${item.id})">
+                                                                                <i class="fas fa-paper-plane me-1"></i>Gửi yêu
+                                                                                cầu bảo hành
+                                                                            </button>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <button type="button" class="btn btn-secondary btn-sm" disabled
+                                                                                title="Bạn không có quyền tạo yêu cầu bảo hành">
+                                                                                <i class="fas fa-paper-plane me-1"></i>Gửi yêu
+                                                                                cầu bảo hành
+                                                                            </button>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
                                                                 </c:if>
                                                                 <c:if test="${itemStatus != 'active'}">
                                                                     <span class="text-muted">-</span>
@@ -389,6 +423,15 @@
                             </nav>
                         </div>
                     </div>
+                    </c:if>
+                    
+                    <c:if test="${!canViewOwnContracts}">
+                        <div class="table-section">
+                            <div class="card-body text-center py-5">
+                                <h4 class="text-muted">Bạn không có quyền xem danh sách hợp đồng</h4>
+                            </div>
+                        </div>
+                    </c:if>
                 </div>
 
                 <!-- Bootstrap JS -->

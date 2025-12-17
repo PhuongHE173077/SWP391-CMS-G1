@@ -11,14 +11,49 @@
     <jsp:param name="pageTitle" value="My Contracts" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình hợp đồng -->
+<c:set var="canViewContractList" value="false" />
+<c:set var="canAddContract" value="false" />
+<c:set var="canViewContractDetail" value="false" />
+<c:set var="canUpdateContract" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/contract-list'}">
+                <c:set var="canViewContractList" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/AddContract'}">
+                <c:set var="canAddContract" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/contract-detail'}">
+                <c:set var="canViewContractDetail" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/update-contact'}">
+                <c:set var="canUpdateContract" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contract Management</h2>
-            <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
-                <i class="fas fa-plus me-2"></i>Create New Contract
-            </a>
+            <c:choose>
+                <c:when test="${canAddContract}">
+                    <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
+                        <i class="fas fa-plus me-2"></i>Create New Contract
+                    </a>
+                </c:when>
+                <c:otherwise>
+                    <button type="button" class="btn btn-primary shadow-sm fw-bold" disabled
+                        title="Bạn không có quyền tạo hợp đồng mới">
+                        <i class="fas fa-plus me-2"></i>Create New Contract
+                    </button>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <c:if test="${not empty msg}">
@@ -99,6 +134,7 @@
             </div>
         </div>
 
+        <c:if test="${canViewContractList}">
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -142,21 +178,43 @@
 
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
-                                            <a href="update-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
+                                                <!-- Nút View -->
+                                                <c:choose>
+                                                    <c:when test="${canViewContractDetail}">
+                                                        <a href="contract-detail?id=${c.id}" class="btn btn-sm btn-outline-primary fw-bold">View</a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" disabled
+                                                            title="Bạn không có quyền xem chi tiết hợp đồng">View</button>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                
+                                                <!-- Nút Edit -->
+                                                <c:choose>
+                                                    <c:when test="${canUpdateContract}">
+                                                        <a href="update-contract?id=${c.id}" class="btn btn-sm btn-outline-warning fw-bold text-dark">Edit</a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" disabled
+                                                            title="Bạn không có quyền chỉnh sửa hợp đồng">Edit</button>
+                                                    </c:otherwise>
+                                                </c:choose>
 
-                                            <form action="deactivate-contract" method="post" style="display: inline;">
-                                                <input type="hidden" name="id" value="${c.id}">
-                                                <input type="hidden" name="page" value="${currentPage}">
-                                                <input type="hidden" name="search" value="${searchValue}">
-                                                <input type="hidden" name="sortBy" value="${sortBy}">     
-                                                <input type="hidden" name="sortOrder" value="${sortOrder}"> 
-                                                <input type="hidden" name="createBy" value="${creatorValue}"> 
-                                                <c:if test="${!c.isDelete}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
+                                                <!-- Form Deactivate -->
+                                                <c:if test="${canUpdateContract}">
+                                                    <form action="deactivate-contract" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="${c.id}">
+                                                        <input type="hidden" name="page" value="${currentPage}">
+                                                        <input type="hidden" name="search" value="${searchValue}">
+                                                        <input type="hidden" name="sortBy" value="${sortBy}">     
+                                                        <input type="hidden" name="sortOrder" value="${sortOrder}"> 
+                                                        <input type="hidden" name="createBy" value="${creatorValue}"> 
+                                                        <c:if test="${!c.isDelete}">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Are you sure to Deactivate this contract?')">Deactivate</button>
+                                                        </c:if>
+                                                    </form>
                                                 </c:if>
-                                            </form>
-                                        </div>
+                                            </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -193,6 +251,15 @@
                 </c:if>
             </div>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewContractList}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem danh sách hợp đồng</h4>
+                </div>
+            </div>
+        </c:if>
     </div>
 </div>
 </body>

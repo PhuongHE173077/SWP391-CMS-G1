@@ -113,7 +113,43 @@
                                         </c:forEach>
                                     </c:forEach>
 
-                                    <c:if test="${empty routerGroups}">
+                                    <!-- Customer Routes Section -->
+                                    <tr class="group-row"
+                                        style="background-color: #d1ecf1 !important; color: #0c5460;">
+                                        <td colspan="${listRoles.size() + 1}"
+                                            style="text-align: center !important;">
+                                            <strong>--- CUSTOMER ROUTES ---</strong>
+                                        </td>
+                                    </tr>
+
+                                    <c:forEach var="group" items="${routerGroupsForCus}">
+                                        <tr class="group-row">
+                                            <td colspan="${listRoles.size() + 1}">
+                                                <i class="fas fa-folder"></i> ${group.name}
+                                            </td>
+                                        </tr>
+                                        <c:forEach var="router" items="${group.routerses}">
+                                            <tr>
+                                                <td class="screen-name">${router.name}</td>
+                                                <c:forEach var="role" items="${listRoles}">
+                                                    <td>
+                                                        <c:set var="hasPermission" value="false" />
+                                                        <c:forEach var="rp" items="${rolePermissions}">
+                                                            <c:if
+                                                                test="${rp.roles.id == role.id && rp.router == router.router}">
+                                                                <c:set var="hasPermission" value="true" />
+                                                            </c:if>
+                                                        </c:forEach>
+                                                        <c:if test="${hasPermission}">
+                                                            <span class="check-mark">X</span>
+                                                        </c:if>
+                                                    </td>
+                                                </c:forEach>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:forEach>
+
+                                    <c:if test="${empty routerGroups && empty routerGroupsForCus}">
                                         <tr>
                                             <td colspan="${listRoles.size() + 1}" class="text-center">
                                                 Không có dữ liệu màn hình

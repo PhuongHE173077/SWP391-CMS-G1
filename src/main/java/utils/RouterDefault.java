@@ -45,7 +45,12 @@ public class RouterDefault {
                 new Routers("Xem thiết bị", "/ViewListDevice"),
                 new Routers("Thêm danh mục", "/AddDevice"),
                 new Routers("Xem chi tiết thiết bị", "/ViewDetailDevice"),
-                new Routers("Update thiết bị", "/EditDevice")));
+                new Routers("Update thiết bị", "/EditDevice"),
+                new Routers("Xóa thiết bị", "/DeleteDevice"),
+                new Routers("Xem thiết bị con", "/ViewRemainingSubDevices"),
+                new Routers("Thêm thiết bị con", "/AddSubDevice"),
+                new Routers("Xóa hoàn toàn thiết bị con", "/DeleteSubDevice")
+            ));
         
         addRouterGroup("Quản lý thiết bị đã xóa", Arrays.asList(
                 new Routers("Xem thiết bị", "/ViewDeletedDevices"),
@@ -67,15 +72,6 @@ public class RouterDefault {
                 new Routers("Xem Hợp đồng đã xóa", "/list-contract-delete"),
                 new Routers("Xem chi tiết và phản hồi", "/ViewDetaiRequestMaintance"),
                 new Routers("Thay đổi trạng thái", "/UpdateRequestMaintance")));
-
-        // Router for customer
-        addRouterGroup("Danh Sách Hợp Đồng Bản thân", Arrays.asList(
-                new Routers("Xem danh sách", "/customer/ViewListContact"),
-                new Routers("Gửi yêu cầu bảo hành", "/CreateRequestMaintance")));
-
-        addRouterGroup("Danh Sách Yêu Cầu Bản thân", Arrays.asList(
-                new Routers("Xem danh sách", "/customer-maintenance"),
-                new Routers("Xem chi tiết", "/maintenance-detail")));
     }
 
     private static void initCustomerRouters() {

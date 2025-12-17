@@ -5,6 +5,23 @@
             <jsp:include page="../customerLayout.jsp">
                 <jsp:param name="pageTitle" value="Tạo Yêu Cầu Bảo Trì" />
             </jsp:include>
+            
+            <!-- Tính toán quyền cho màn hình tạo yêu cầu bảo hành -->
+            <c:set var="canCreateMaintenance" value="false" />
+            <c:set var="canViewOwnMaintenances" value="false" />
+            
+            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                    <c:if test="${rp.roles.id == sessionScope.role.id}">
+                        <c:if test="${rp.router == '/CreateRequestMaintance'}">
+                            <c:set var="canCreateMaintenance" value="true" />
+                        </c:if>
+                        <c:if test="${rp.router == '/customer-maintenance'}">
+                            <c:set var="canViewOwnMaintenances" value="true" />
+                        </c:if>
+                    </c:if>
+                </c:forEach>
+            </c:if>
 
             <style>
                 .page-header {
@@ -122,6 +139,7 @@
                 <h2><i class="fas fa-tools me-2" style="color: #667eea;"></i>Tạo Yêu Cầu Bảo Trì</h2>
             </div>
 
+            <c:if test="${canCreateMaintenance}">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="card">
@@ -238,18 +256,53 @@
 
                                 <!-- Nút hành động -->
                                 <div class="d-flex justify-content-between gap-3">
-                                    <a href="javascript:history.back()" class="btn btn-cancel">
-                                        <i class="fas fa-times me-2"></i>Hủy
-                                    </a>
-                                    <button type="submit" class="btn btn-submit">
-                                        <i class="fas fa-paper-plane me-2"></i>Gửi Yêu Cầu
-                                    </button>
+                                    <!-- Nút Hủy -->
+                                    <c:choose>
+                                        <c:when test="${canViewOwnMaintenances}">
+                                            <a href="customer-maintenance" class="btn btn-cancel">
+                                                <i class="fas fa-times me-2"></i>Hủy
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="javascript:history.back()" class="btn btn-cancel">
+                                                <i class="fas fa-times me-2"></i>Hủy
+                                            </a>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    
+                                    <!-- Nút Submit -->
+                                    <c:choose>
+                                        <c:when test="${canCreateMaintenance}">
+                                            <button type="submit" class="btn btn-submit">
+                                                <i class="fas fa-paper-plane me-2"></i>Gửi Yêu Cầu
+                                            </button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" class="btn btn-secondary" disabled
+                                                title="Bạn không có quyền tạo yêu cầu bảo hành">
+                                                <i class="fas fa-paper-plane me-2"></i>Gửi Yêu Cầu
+                                            </button>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
+            </c:if>
+            
+            <c:if test="${!canCreateMaintenance}">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card">
+                            <div class="card-body text-center py-5">
+                                <h4 class="text-muted">Bạn không có quyền tạo yêu cầu bảo hành</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
 
             <script>
                 document.getElementById('image').addEventListener('change', function (e) {

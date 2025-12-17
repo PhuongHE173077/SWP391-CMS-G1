@@ -7,9 +7,30 @@
     <jsp:param name="pageTitle" value="Contract Detail" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình chi tiết hợp đồng -->
+<c:set var="canViewContractDetail" value="false" />
+<c:set var="canUpdateContract" value="false" />
+<c:set var="canViewContractList" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/contract-detail'}">
+                <c:set var="canViewContractDetail" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/update-contact'}">
+                <c:set var="canUpdateContract" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/contract-list'}">
+                <c:set var="canViewContractList" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <body class="bg-light">
     <div class="container mt-4 mb-5">
-
+        <c:if test="${canViewContractDetail}">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white border-bottom py-3">
                 <h5 class="fw-bold text-dark m-0"><i class="fas fa-file-contract me-2"></i>The Contract Detail</h5>
@@ -201,14 +222,45 @@
         </div>
 
         <div class="mt-4 mb-5 d-flex justify-content-between align-items-center">
-            <a href="contract-list" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded hover-bg-gray bg-white">
-                <i class="fas fa-arrow-left me-1"></i> Back to Contract List
-            </a>
+            <!-- Nút Back -->
+            <c:choose>
+                <c:when test="${canViewContractList}">
+                    <a href="contract-list" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded hover-bg-gray bg-white">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Contract List
+                    </a>
+                </c:when>
+                <c:otherwise>
+                    <button type="button" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded bg-white" disabled
+                        title="Bạn không có quyền xem danh sách hợp đồng">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Contract List
+                    </button>
+                </c:otherwise>
+            </c:choose>
 
-            <a href="update-contract?id=${c.id}" class="btn btn-primary fw-bold px-4 py-2 shadow-sm">
-                <i class="fas fa-edit me-2"></i>Cập nhật hợp đồng
-            </a>
+            <!-- Nút Update -->
+            <c:choose>
+                <c:when test="${canUpdateContract}">
+                    <a href="update-contract?id=${c.id}" class="btn btn-primary fw-bold px-4 py-2 shadow-sm">
+                        <i class="fas fa-edit me-2"></i>Cập nhật hợp đồng
+                    </a>
+                </c:when>
+                <c:otherwise>
+                    <button type="button" class="btn btn-secondary fw-bold px-4 py-2 shadow-sm" disabled
+                        title="Bạn không có quyền cập nhật hợp đồng">
+                        <i class="fas fa-edit me-2"></i>Cập nhật hợp đồng
+                    </button>
+                </c:otherwise>
+            </c:choose>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewContractDetail}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem chi tiết hợp đồng</h4>
+                </div>
+            </div>
+        </c:if>
 
     </div>
 </body>
