@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -618,10 +619,10 @@
 
                     <div class="widget staff-bg">
                         <div class="widget-content">
-                            <span class="widget-number">${totalCategory}</span>
-                            <span class="widget-title">Tổng số thương hiệu</span>
+                            <span class="widget-number">${totalPendingMaintenanceRequests}</span>
+                            <span class="widget-title">Số yêu cầu bảo hành đang chờ</span>
                         </div>
-                        <div class="widget-icon"><i class="fas fa-user-tie"></i></div>
+                        <div class="widget-icon"><i class="fas fa-clock"></i></div>
                     </div>
 
                     <div class="widget customer-bg">
@@ -657,11 +658,83 @@
                             </c:forEach>                           
                         </tbody>
                     </table>
-                </div>              
+                </div>
+
+                <!-- Biểu đồ hợp đồng theo tháng -->
+                <div class="section-container">
+                    <h3><i class="fas fa-chart-bar me-2" style="color: #007bff;"></i>Biểu đồ hợp đồng theo tháng</h3>
+                    <canvas id="contractsChart" style="max-height: 400px;"></canvas>
+                </div>
 
             </main>
         </div>
     </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Dữ liệu hợp đồng theo tháng
+        const monthLabels = [];
+        const monthData = [];
+        
+        <c:forEach var="entry" items="${contractsByMonth}">
+        monthLabels.push("${entry.key}");
+        monthData.push(${entry.value});
+        </c:forEach>
+
+        // Tạo biểu đồ cột
+        const ctx = document.getElementById('contractsChart').getContext('2d');
+        const contractsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Số hợp đồng',
+                    data: monthData,
+                    backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Số hợp đồng: ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        },
+                        title: {
+                            display: true,
+                            text: 'Số lượng hợp đồng'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tháng'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 <jsp:include page="managerFooter.jsp" />
 

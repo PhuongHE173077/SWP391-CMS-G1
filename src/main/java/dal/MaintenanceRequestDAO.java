@@ -531,4 +531,22 @@ public class MaintenanceRequestDAO extends DBContext {
         return list;
     }
 
+    // Đếm số yêu cầu bảo hành pending
+    public int countPendingMaintenanceRequests() {
+        String sql = "SELECT COUNT(*) FROM maintenance_request WHERE status = ?";
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, MaintenanceStatus.PENDING.name());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting pending maintenance requests: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

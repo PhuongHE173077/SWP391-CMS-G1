@@ -1022,6 +1022,111 @@ public class ContractDAO extends DBContext {
         return topUsers;
     }
 
+    // Đếm số hợp đồng pending (chưa có contract_item nào)
+    public int countPendingContracts() {
+        String sql = "SELECT COUNT(*) FROM contract c "
+                + "WHERE c.isDelete = 0 "
+                + "AND NOT EXISTS (SELECT 1 FROM contract_item ci WHERE ci.contract_id = c.id)";
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting pending contracts: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Lấy danh sách hợp đồng pending (chưa có contract_item nào)
+    public List<Contract> getPendingContracts(int limit) {
+        List<Contract> lst = new ArrayList<>();
+        String sql = "SELECT c.*, u1.displayName as customer_name, u2.displayName as saleStaff_name "
+                + "FROM contract c "
+                + "LEFT JOIN _user u1 ON c.user_id = u1.id "
+                + "LEFT JOIN _user u2 ON c.createBy = u2.id "
+                + "WHERE c.isDelete = 0 "
+                + "AND NOT EXISTS (SELECT 1 FROM contract_item ci WHERE ci.contract_id = c.id) "
+                + "ORDER BY c.created_at DESC "
+                + "LIMIT ?";
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, limit);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Contract c = new Contract();
+                c.setId(rs.getInt("id"));
+                c.setContent(rs.getString("content"));
+                c.setUrlContract(rs.getString("url_contract"));
+                c.setIsDelete(rs.getBoolean("isDelete"));
+                
+                // Set created_at
+                java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
+                if (timestamp != null) {
+                    c.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
+                }
+                
+                // Map Customer (user)
+                Users customer = new Users();
+                customer.setId(rs.getInt("user_id"));
+                customer.setDisplayname(rs.getString("customer_name"));
+                c.setUser(customer);
+                
+                // Map Creator (createBy)
+                Users saleStaff = new Users();
+                saleStaff.setId(rs.getInt("createBy"));
+                saleStaff.setDisplayname(rs.getString("saleStaff_name"));
+                c.setCreateBy(saleStaff);
+                
+                lst.add(c);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting pending contracts: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return lst;
+    }
+
+    // Lấy số hợp đồng theo từng tháng trong 12 tháng gần nhất
+    public java.util.Map<String, Integer> getContractsByMonth() {
+        java.util.Map<String, Integer> monthData = new java.util.LinkedHashMap<>();
+        
+        // Khởi tạo tất cả các tháng với giá trị 0
+        String[] months = {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                          "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"};
+        for (String month : months) {
+            monthData.put(month, 0);
+        }
+        
+        String sql = "SELECT MONTH(created_at) as month, COUNT(*) as count "
+                + "FROM contract "
+                + "WHERE isDelete = 0 "
+                + "AND YEAR(created_at) = YEAR(CURDATE()) "
+                + "GROUP BY MONTH(created_at) "
+                + "ORDER BY MONTH(created_at)";
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                int month = rs.getInt("month");
+                int count = rs.getInt("count");
+                monthData.put("Tháng " + month, count);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting contracts by month: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return monthData;
+    }
+
     public static void main(String[] args) {
         ContractDAO c = new ContractDAO();
         System.out.println(c.getTopContractUsers());
