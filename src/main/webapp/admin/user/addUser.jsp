@@ -102,7 +102,7 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between">
-                                        <a href="" class="btn btn-secondary">Quay lại</a>
+                                        <a href="/user-list" class="btn btn-secondary">Quay lại</a>
                                         <button type="submit" class="btn btn-primary">Lưu người dùng</button>
                                     </div>
                                 </form>
