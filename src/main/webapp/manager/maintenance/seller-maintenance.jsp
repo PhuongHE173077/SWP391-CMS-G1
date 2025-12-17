@@ -145,8 +145,7 @@
                                 <th class="py-3 text-center">Customer Name</th>
                                 <th class="py-3 text-center">Device Name</th>
                                 <th class="py-3 text-center">Device Serial Number</th>
-                                <th class="py-3 text-center">Image</th>
-                                <th class="py-3 text-center" style="width: 25%;">Content</th>
+                                
                                 <th class="py-3 text-center">Date Request</th>
                                 <th class="py-3 text-center">Status</th>
                                 <th class="py-3 text-center" style="width: 200px;">Action</th>
@@ -163,30 +162,7 @@
                                     <td class="text-center">
                                         ${r.contractItem.subDevice.seriId}
                                     </td>
-                                    <td class="text-center">
-                                        <c:choose>
-                                            <c:when test="${not empty r.image}">
-                                                <img src="${r.image}" alt="Request Image"
-                                                     class="img-thumbnail mb-1"
-                                                     style="width: 80px; height: 60px; object-fit: cover;">
-
-                                                <a href="${r.image}" target="_blank"
-                                                   class="d-block small text-decoration-none mt-1">
-                                                    <i class="fas fa-external-link-alt me-1"></i>Xem ảnh
-                                                </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-muted small">
-                                                    <i class="fas fa-image me-1"></i>No Image
-                                                </span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td class="text-muted">
-                                        <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                            ${r.content}
-                                        </div>
-                                    </td>
+                                    
                                     <td class="text-center">
                                         <fmt:formatDate value="${r.createdAtDate}" pattern="dd-MMM-yyyy"/>
                                     </td>
@@ -208,12 +184,69 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="maintenance-detail?id=${r.id}" class="btn btn-sm btn-outline-primary fw-bold">
-                                                View
-                                            </a>
-                                            <a href="send-reply?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
+
+                                            <a href="ViewDetaiRequestMaintance?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
                                                 <i class="fas fa-paper-plane me-1"></i>Reply
                                             </a>
+                                            <!-- Change Status Dropdown -->
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-warning fw-bold dropdown-toggle" type="button" id="statusDropdown${r.id}" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 80px;">
+                                                    <i class="fas fa-edit me-1"></i>Status
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="statusDropdown${r.id}">
+                                                    <li>
+                                                        <form action="change-maintenance-status" method="POST" class="statusForm" data-request-id="${r.id}" data-status="PENDING" data-current-status="${r.status}">
+                                                            <input type="hidden" name="id" value="${r.id}">
+                                                            <input type="hidden" name="status" value="PENDING">
+                                                            <input type="hidden" name="page" value="${currentPage}">
+                                                            <input type="hidden" name="search" value="${searchValue}">
+                                                            <input type="hidden" name="statusFilter" value="${statusValue}">
+                                                            <input type="hidden" name="fromDate" value="${fromDateValue}">
+                                                            <input type="hidden" name="toDate" value="${toDateValue}">
+                                                            <input type="hidden" name="customerId" value="${customerIdValue}">
+                                                            <input type="hidden" name="sortBy" value="${sortBy}">
+                                                            <input type="hidden" name="sortOrder" value="${sortOrder}">
+                                                            <button type="button" class="dropdown-item ${r.status == 'PENDING' ? 'active' : ''} changeStatusBtn" ${r.status == 'PENDING' ? 'disabled' : ''}>
+                                                                <i class="fas fa-clock me-2"></i>PENDING
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form action="change-maintenance-status" method="POST" class="statusForm" data-request-id="${r.id}" data-status="APPROVE" data-current-status="${r.status}">
+                                                            <input type="hidden" name="id" value="${r.id}">
+                                                            <input type="hidden" name="status" value="APPROVE">
+                                                            <input type="hidden" name="page" value="${currentPage}">
+                                                            <input type="hidden" name="search" value="${searchValue}">
+                                                            <input type="hidden" name="statusFilter" value="${statusValue}">
+                                                            <input type="hidden" name="fromDate" value="${fromDateValue}">
+                                                            <input type="hidden" name="toDate" value="${toDateValue}">
+                                                            <input type="hidden" name="customerId" value="${customerIdValue}">
+                                                            <input type="hidden" name="sortBy" value="${sortBy}">
+                                                            <input type="hidden" name="sortOrder" value="${sortOrder}">
+                                                            <button type="button" class="dropdown-item ${r.status == 'APPROVE' ? 'active' : ''} changeStatusBtn" ${r.status == 'APPROVE' ? 'disabled' : ''}>
+                                                                <i class="fas fa-check-circle me-2"></i>APPROVE
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form action="change-maintenance-status" method="POST" class="statusForm" data-request-id="${r.id}" data-status="REJECT" data-current-status="${r.status}">
+                                                            <input type="hidden" name="id" value="${r.id}">
+                                                            <input type="hidden" name="status" value="REJECT">
+                                                            <input type="hidden" name="page" value="${currentPage}">
+                                                            <input type="hidden" name="search" value="${searchValue}">
+                                                            <input type="hidden" name="statusFilter" value="${statusValue}">
+                                                            <input type="hidden" name="fromDate" value="${fromDateValue}">
+                                                            <input type="hidden" name="toDate" value="${toDateValue}">
+                                                            <input type="hidden" name="customerId" value="${customerIdValue}">
+                                                            <input type="hidden" name="sortBy" value="${sortBy}">
+                                                            <input type="hidden" name="sortOrder" value="${sortOrder}">
+                                                            <button type="button" class="dropdown-item ${r.status == 'REJECT' ? 'active' : ''} changeStatusBtn" ${r.status == 'REJECT' ? 'disabled' : ''}>
+                                                                <i class="fas fa-times-circle me-2"></i>REJECT
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -255,5 +288,113 @@
             </div>
         </div>
     </div>
+
+    
+    <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-labelledby="statusChangeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="statusChangeModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận thay đổi trạng thái
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle fa-2x text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <p class="mb-2 fw-bold">Bạn có chắc chắn muốn thay đổi trạng thái?</p>
+                            <div id="statusChangeMessage" class="text-muted"></div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <small>Hành động này sẽ cập nhật trạng thái của yêu cầu bảo trì.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Hủy
+                    </button>
+                    <button type="button" class="btn btn-warning fw-bold" id="confirmStatusChangeBtn">
+                        <i class="fas fa-check me-2"></i>Xác nhận
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Xử lý confirmation khi thay đổi status
+        let pendingForm = null;
+        let statusChangeModal = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo modal
+            const modalElement = document.getElementById('statusChangeModal');
+            if (modalElement && typeof bootstrap !== 'undefined') {
+                statusChangeModal = new bootstrap.Modal(modalElement);
+            }
+            
+            const statusButtons = document.querySelectorAll('.changeStatusBtn');
+            
+            statusButtons.forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const form = this.closest('form');
+                    const requestId = form.dataset.requestId;
+                    const newStatus = form.dataset.status;
+                    const currentStatus = form.dataset.currentStatus;
+                    
+                    // Bỏ qua nếu status hiện tại giống status mới
+                    if (currentStatus === newStatus) {
+                        return;
+                    }
+                    
+                    // Đóng dropdown
+                    const dropdownElement = this.closest('.dropdown').querySelector('[data-bs-toggle="dropdown"]');
+                    if (dropdownElement && typeof bootstrap !== 'undefined') {
+                        const dropdown = bootstrap.Dropdown.getInstance(dropdownElement);
+                        if (dropdown) {
+                            dropdown.hide();
+                        }
+                    }
+                    pendingForm = form;
+                    
+                    const statusBadges = {
+                        'PENDING': '<span class="badge bg-warning text-dark">PENDING</span>',
+                        'APPROVE': '<span class="badge bg-success">APPROVED</span>',
+                        'REJECT': '<span class="badge bg-danger">REJECTED</span>'
+                    };
+                    
+                    const message = ``;
+                    
+                    // Cập nhật nội dung modal
+                    document.getElementById('statusChangeMessage').innerHTML = message;
+                    
+                    // Hiển thị modal
+                    if (statusChangeModal) {
+                        statusChangeModal.show();
+                    } else if (modalElement && typeof bootstrap !== 'undefined') {
+                        statusChangeModal = new bootstrap.Modal(modalElement);
+                        statusChangeModal.show();
+                    }
+                });
+            });
+            
+            document.getElementById('confirmStatusChangeBtn').addEventListener('click', function() {
+                if (pendingForm) {
+                    if (statusChangeModal) {
+                        statusChangeModal.hide();
+                    }
+                    pendingForm.submit();
+                    pendingForm = null;
+                }
+            });
+        });
+    </script>
 </body>
 <jsp:include page="../../manager/managerFooter.jsp" />

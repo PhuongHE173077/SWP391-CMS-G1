@@ -626,7 +626,7 @@
 
                     <div class="widget customer-bg">
                         <div class="widget-content">
-                            <span class="widget-number">${totalUser}</span>
+                            <span class="widget-number">${totalCustomer}</span>
                             <span class="widget-title">Tổng số Khách hàng</span>
                         </div>
                         <div class="widget-icon"><i class="fas fa-users"></i></div>

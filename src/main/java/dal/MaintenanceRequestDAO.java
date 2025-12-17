@@ -150,6 +150,52 @@ public class MaintenanceRequestDAO extends DBContext {
         return null;
     }
 
+    public void deleteMaintenanceRequest(String id) {
+        String query = "delete FROM swp391.maintenance_request\n"
+                + "where status = 0 and id =? ";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public MaintanceRequest getMaintanceRequestById(String id) {
+        String query = "SELECT \n"
+                + "    mr.id AS request_id,\n"
+                + "    mr.title AS request_title,\n"
+                + "    mr.content AS request_content,\n"
+                + "    mr.status AS request_status,\n"
+                + "    mr.image AS request_image,\n"
+                + "    mr.created_at AS request_create_at\n"
+                + "FROM maintenance_request mr\n"
+                + "WHERE mr.id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                MaintanceRequest mr = new MaintanceRequest();
+                mr.setId(rs.getInt("request_id"));
+                mr.setTitle(rs.getString("request_title"));
+                mr.setContent(rs.getString("request_content"));
+                mr.setImage(rs.getString("request_image"));
+                String statusStr = rs.getString("request_status");
+                if (statusStr != null) {
+                    mr.setStatus(MaintenanceStatus.valueOf(statusStr));
+                }
+                java.sql.Timestamp timestamp = rs.getTimestamp("request_create_at");
+                if (timestamp != null) {
+                    mr.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
+                }
+                return mr;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Hàm đếm tổng số records để phân trang
     public int countTotalRequests(String keyword, String status, String fromDate, String toDate, int customerId) {
         String sql = "SELECT COUNT(*) FROM maintenance_request mr "
@@ -414,6 +460,20 @@ public class MaintenanceRequestDAO extends DBContext {
         return false;
     }
 
+    // Update maintenance request status
+    public boolean updateMaintenanceRequestStatus(int requestId, MaintenanceStatus status) {
+        String sql = "UPDATE maintenance_request SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setInt(2, requestId);
+
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     // Lấy danh sách replies theo maintenance request id
     public List<model.ReplyMaintanceRequest> getRepliesByRequestId(int requestId) {
         List<model.ReplyMaintanceRequest> list = new ArrayList<>();

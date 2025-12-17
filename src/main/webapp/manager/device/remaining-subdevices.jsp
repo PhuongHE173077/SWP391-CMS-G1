@@ -389,5 +389,5 @@
     </div>
 </body>
 
-<jsp:include page="../admin/adminFooter.jsp" />
+    <jsp:include page="../managerFooter.jsp" />
 
