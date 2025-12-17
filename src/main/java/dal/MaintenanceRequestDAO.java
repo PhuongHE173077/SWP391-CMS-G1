@@ -238,7 +238,7 @@ public class MaintenanceRequestDAO extends DBContext {
         }
 
         // --- SORT ---
-        String orderByCol = "mr.id"; // Mặc định
+        String orderByCol = "mr.created_at"; // Mặc định
         if ("id".equalsIgnoreCase(sortBy)) {
             orderByCol = "mr.id";
         } else if ("customer".equalsIgnoreCase(sortBy)) {

@@ -77,7 +77,7 @@ public class ViewContractListServlet extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null || sortOrder.isEmpty()) {
-            sortOrder = "DESC";
+            sortOrder = "ASC";
         }
         if (search != null) {
             search = search.trim();
