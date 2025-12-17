@@ -7,6 +7,27 @@
     <jsp:param name="pageTitle" value="My Maintenance Requests" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình yêu cầu bảo hành customer -->
+<c:set var="canViewOwnMaintenances" value="false" />
+<c:set var="canCreateMaintenance" value="false" />
+<c:set var="canViewMaintenanceDetail" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/customer-maintenance'}">
+                <c:set var="canViewOwnMaintenances" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/CreateRequestMaintance'}">
+                <c:set var="canCreateMaintenance" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/maintenance-detail'}">
+                <c:set var="canViewMaintenanceDetail" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <style>
     .page-header {
         margin-bottom: 1.5rem;
@@ -24,9 +45,19 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary fw-bold"><i class="fas fa-history me-2"></i>My Maintenance Requests
             </h2>
-            <a href="CreateRequestMaintance" class="btn btn-primary shadow-sm fw-bold">
-                <i class="fas fa-plus me-2"></i>Create New Request
-            </a>
+            <c:choose>
+                <c:when test="${canCreateMaintenance}">
+                    <a href="CreateRequestMaintance" class="btn btn-primary shadow-sm fw-bold">
+                        <i class="fas fa-plus me-2"></i>Create New Request
+                    </a>
+                </c:when>
+                <c:otherwise>
+                    <button type="button" class="btn btn-secondary shadow-sm fw-bold" disabled
+                        title="Bạn không có quyền tạo yêu cầu bảo hành mới">
+                        <i class="fas fa-plus me-2"></i>Create New Request
+                    </button>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <c:if test="${not empty msg}">
@@ -145,6 +176,7 @@
             </div>
         </div>
 
+        <c:if test="${canViewOwnMaintenances}">
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -218,10 +250,21 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="maintenance-detail?id=${r.id}"
-                                               class="btn btn-sm btn-outline-primary fw-bold">
-                                                <i class="fas fa-eye me-1"></i>View
-                                            </a>
+                                            <!-- Nút View -->
+                                            <c:choose>
+                                                <c:when test="${canViewMaintenanceDetail}">
+                                                    <a href="maintenance-detail?id=${r.id}"
+                                                       class="btn btn-sm btn-outline-primary fw-bold">
+                                                        <i class="fas fa-eye me-1"></i>View
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" disabled
+                                                        title="Bạn không có quyền xem chi tiết yêu cầu">
+                                                        <i class="fas fa-eye me-1"></i>View
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>
@@ -265,5 +308,14 @@
                 </div>
             </div>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewOwnMaintenances}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem danh sách yêu cầu bảo hành</h4>
+                </div>
+            </div>
+        </c:if>
 
         <jsp:include page="../customerFooter.jsp" />

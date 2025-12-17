@@ -8,6 +8,31 @@
             <jsp:param name="pageTitle" value="Device Category List" />
         </jsp:include>
 
+        <!-- Tính toán quyền cho màn hình danh mục -->
+        <c:set var="canViewCategory" value="false" />
+        <c:set var="canAddCategory" value="false" />
+        <c:set var="canUpdateCategory" value="false" />
+        <c:set var="canDeleteCategory" value="false" />
+
+        <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+            <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                <c:if test="${rp.roles.id == sessionScope.role.id}">
+                    <c:if test="${rp.router == '/ViewListCategory'}">
+                        <c:set var="canViewCategory" value="true" />
+                    </c:if>
+                    <c:if test="${rp.router == '/AddCategory'}">
+                        <c:set var="canAddCategory" value="true" />
+                    </c:if>
+                    <c:if test="${rp.router == '/UpdateCategory'}">
+                        <c:set var="canUpdateCategory" value="true" />
+                    </c:if>
+                    <c:if test="${rp.router == '/delete_ViewListCategory'}">
+                        <c:set var="canDeleteCategory" value="true" />
+                    </c:if>
+                </c:if>
+            </c:forEach>
+        </c:if>
+
         <style>
             .card,
             .btn,
@@ -119,13 +144,26 @@
                     </div>
                 </div>
 
-                <div class="card shadow-sm mb-3">
+                <c:if test="${canViewCategory}">
+                    <div class="card shadow-sm mb-3">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-list me-2"></i>Danh sách danh
                             mục sản phẩm</h5>
-                        <a href="AddCategory" class="btn btn-success fw-bold">
-                            <i class="fas fa-plus me-1"></i>Thêm danh mục mới
-                        </a>
+
+                        <!-- Nút thêm danh mục: có quyền thì cho click, không thì disable -->
+                        <c:choose>
+                            <c:when test="${canAddCategory}">
+                                <a href="AddCategory" class="btn btn-success fw-bold">
+                                    <i class="fas fa-plus me-1"></i>Thêm danh mục mới
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="button" class="btn btn-success fw-bold" disabled
+                                    title="Bạn không có quyền thêm danh mục">
+                                    <i class="fas fa-plus me-1"></i>Thêm danh mục mới
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -143,15 +181,40 @@
                                             <td class="ps-3 fw-bold text-secondary">#${c.id}</td>
                                             <td class="text-muted">${c.name}</td>
                                             <td class="text-center">
-                                                <a href="UpdateCategory?id=${c.id}"
-                                                    class="btn btn-sm btn-outline-success fw-bold me-1">
-                                                    <i class="fas fa-edit me-1"></i>Sửa
-                                                </a>
-                                                <a href="DeleteCategory?id=${c.id}"
-                                                    class="btn btn-sm btn-outline-danger fw-bold"
-                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
-                                                    <i class="fas fa-trash me-1"></i>Xóa
-                                                </a>
+                                                <!-- Nút sửa -->
+                                                <c:choose>
+                                                    <c:when test="${canUpdateCategory}">
+                                                        <a href="UpdateCategory?id=${c.id}"
+                                                            class="btn btn-sm btn-outline-success fw-bold me-1">
+                                                            <i class="fas fa-edit me-1"></i>Sửa
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-outline-secondary fw-bold me-1"
+                                                            disabled title="Bạn không có quyền sửa danh mục này">
+                                                            <i class="fas fa-edit me-1"></i>Sửa
+                                                        </button>
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                                <!-- Nút xóa -->
+                                                <c:choose>
+                                                    <c:when test="${canDeleteCategory}">
+                                                        <a href="DeleteCategory?id=${c.id}"
+                                                            class="btn btn-sm btn-outline-danger fw-bold"
+                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
+                                                            <i class="fas fa-trash me-1"></i>Xóa
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-outline-secondary fw-bold" disabled
+                                                            title="Bạn không có quyền xóa danh mục này">
+                                                            <i class="fas fa-trash me-1"></i>Xóa
+                                                        </button>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -182,7 +245,8 @@
                             </nav>
                         </c:if>
                     </div>
-                </div>
+                    </div>
+                </c:if>
             </div>
 
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

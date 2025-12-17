@@ -11,6 +11,27 @@
     <jsp:param name="pageTitle" value="Maintenance Requests" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình yêu cầu bảo hành -->
+<c:set var="canViewMaintenance" value="false" />
+<c:set var="canViewDetailMaintenance" value="false" />
+<c:set var="canUpdateMaintenance" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/seller-maintenance'}">
+                <c:set var="canViewMaintenance" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewDetaiRequestMaintance'}">
+                <c:set var="canViewDetailMaintenance" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/UpdateRequestMaintance'}">
+                <c:set var="canUpdateMaintenance" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 
 
 <body class="bg-light">
@@ -135,6 +156,7 @@
             </div>
         </div>
 
+        <c:if test="${canViewMaintenance}">
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -184,15 +206,27 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-
-                                            <a href="ViewDetaiRequestMaintance?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
-                                                <i class="fas fa-paper-plane me-1"></i>Reply
-                                            </a>
+                                            <!-- Nút Reply -->
+                                            <c:choose>
+                                                <c:when test="${canViewDetailMaintenance}">
+                                                    <a href="ViewDetaiRequestMaintance?id=${r.id}" class="btn btn-sm btn-outline-success fw-bold" title="Send Reply to Customer">
+                                                        <i class="fas fa-paper-plane me-1"></i>Reply
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" disabled
+                                                        title="Bạn không có quyền xem chi tiết yêu cầu">
+                                                        <i class="fas fa-paper-plane me-1"></i>Reply
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                             <!-- Change Status Dropdown -->
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-warning fw-bold dropdown-toggle" type="button" id="statusDropdown${r.id}" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 80px;">
-                                                    <i class="fas fa-edit me-1"></i>Status
-                                                </button>
+                                            <c:choose>
+                                                <c:when test="${canUpdateMaintenance}">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-outline-warning fw-bold dropdown-toggle" type="button" id="statusDropdown${r.id}" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 80px;">
+                                                            <i class="fas fa-edit me-1"></i>Status
+                                                        </button>
                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdown${r.id}">
                                                     <li>
                                                         <form action="change-maintenance-status" method="POST" class="statusForm" data-request-id="${r.id}" data-status="PENDING" data-current-status="${r.status}">
@@ -247,6 +281,14 @@
                                                     </li>
                                                 </ul>
                                             </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" disabled
+                                                        title="Bạn không có quyền thay đổi trạng thái">
+                                                        <i class="fas fa-edit me-1"></i>Status
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>
@@ -287,6 +329,15 @@
                 </c:if>
             </div>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewMaintenance}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem danh sách yêu cầu bảo hành</h4>
+                </div>
+            </div>
+        </c:if>
     </div>
 
     
