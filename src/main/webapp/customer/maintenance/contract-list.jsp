@@ -1,18 +1,10 @@
 <%-- Document : contract-list Created on : Dec 10, 2025 Author : Customer Contract List --%>
     <%@page contentType="text/html" pageEncoding="UTF-8" %>
         <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-            <!DOCTYPE html>
-            <html lang="vi">
-
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Danh Sách Hợp Đồng Của Tôi</title>
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-                    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-                    crossorigin="anonymous">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-                <style>
+           <jsp:include page="../customerLayout.jsp">
+                    <jsp:param name="pageTitle" value="Update Maintenance Request" />
+                </jsp:include>
+            <style>
                     body {
                         background-color: #f8f9fa;
                     }
@@ -87,7 +79,7 @@
                         color: white;
                     }
                 </style>
-            </head>
+           
 
             <body>
                 <!-- Header Section -->
@@ -417,4 +409,4 @@
                 </script>
             </body>
 
-            </html>
+            <jsp:include page="../customerFooter.jsp" />

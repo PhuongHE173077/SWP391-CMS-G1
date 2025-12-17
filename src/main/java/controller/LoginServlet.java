@@ -98,7 +98,11 @@ public class LoginServlet extends HttpServlet {
         // Redirect vào servlet Home
         if (a.getRoles() != null && a.getRoles().getId() == 1) {
             response.sendRedirect("/ViewRole");
-        } else {
+        } else if(a.getRoles() != null && a.getRoles().getId() == 4){
+            response.sendRedirect("/customer/ViewListContact");
+        }
+        else {
+            
             response.sendRedirect("/Dashboard");
         }
 
