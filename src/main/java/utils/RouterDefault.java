@@ -69,7 +69,7 @@ public class RouterDefault {
                 new Routers("Xóa hoàn toàn hợp đồng", "/contract-detail")));
 
         addRouterGroup("Quản lý yêu cầu bảo hành", Arrays.asList(
-                new Routers("Xem Hợp đồng đã xóa", "/list-contract-delete"),
+                new Routers("Xem yêu cầu bảo hành", "/seller-maintenance"),
                 new Routers("Xem chi tiết và phản hồi", "/ViewDetaiRequestMaintance"),
                 new Routers("Thay đổi trạng thái", "/UpdateRequestMaintance")));
     }
