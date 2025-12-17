@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "DeleteSubDevice", urlPatterns = {"/DeleteSubDevice"})
 public class DeleteSubDevice extends HttpServlet {
@@ -22,6 +23,8 @@ public class DeleteSubDevice extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession();
+
             String idParam = request.getParameter("id");
             String deviceIdParam = request.getParameter("deviceId");
             
@@ -41,26 +44,32 @@ public class DeleteSubDevice extends HttpServlet {
             // Redirect về danh sách với thông báo
             if (deviceIdParam != null && !deviceIdParam.trim().isEmpty()) {
                 if (success) {
-                    response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam + "&success=Xóa Sub Device thành công");
+                    session.setAttribute("success", "Xóa Sub Device thành công");
+                    response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam);
                 } else {
-                    response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam + "&error=Có lỗi xảy ra khi xóa Sub Device");
+                    session.setAttribute("error", "Có lỗi xảy ra khi xóa Sub Device");
+                    response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam);
                 }
             } else {
                 response.sendRedirect("ViewListDevice");
             }
 
         } catch (NumberFormatException e) {
+            HttpSession session = request.getSession();
             String deviceIdParam = request.getParameter("deviceId");
             if (deviceIdParam != null && !deviceIdParam.trim().isEmpty()) {
-                response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam + "&error=ID không hợp lệ");
+                session.setAttribute("error", "ID không hợp lệ");
+                response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam);
             } else {
                 response.sendRedirect("ViewListDevice");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            HttpSession session = request.getSession();
             String deviceIdParam = request.getParameter("deviceId");
             if (deviceIdParam != null && !deviceIdParam.trim().isEmpty()) {
-                response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam + "&error=Có lỗi xảy ra");
+                session.setAttribute("error", "Có lỗi xảy ra");
+                response.sendRedirect("ViewRemainingSubDevices?deviceId=" + deviceIdParam);
             } else {
                 response.sendRedirect("ViewListDevice");
             }
