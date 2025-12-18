@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <jsp:include page="../managerLayout.jsp">   
@@ -327,6 +329,7 @@
                         <th class="text-left-col">Mô tả</th>
                         <th>Thương hiệu</th>
                         <th>Thời gian Bảo trì</th>
+                         <th>SL tồn kho</th>
                         <th>Ngày Tạo </th>
                         <th class="action-col">Hành động</th>
                     </tr>
@@ -339,6 +342,7 @@
                             <td class="description-cell text-left-col">${d.description}</td>
                             <td>${d.category.name}</td>
                             <td>${d.maintenanceTime}</td>
+                            <td>${fn:length(d.subDevices)}</td>
                             <td >
                                 ${d.createdAt}
                             </td>

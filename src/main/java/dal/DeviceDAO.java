@@ -4,26 +4,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import model.Device;
 import model.DeviceCategory;
+import model.SubDevice;
 
 public class DeviceDAO extends DBContext {
 
     public int getCountAllDevice() {
         String query = "SELECT count(*) FROM swp391.device;";
 
-        try (PreparedStatement ps = connection.prepareStatement(query);ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
 
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }                    
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
-    
+
     public void insertDevice(Device dev) {
 
         String query = " INSERT INTO swp391.device (created_at,description, image, name, maintenance_time,isDelete, category_id) \n"
@@ -54,7 +57,7 @@ public class DeviceDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    
+
     public boolean restoreDevice(int deviceId) {
         String query = "UPDATE swp391.device SET isDelete = 0 WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -88,7 +91,7 @@ public class DeviceDAO extends DBContext {
                     category.setId(rs.getInt("category_id"));
                     category.setName(rs.getString("category_name"));
                     device.setCategory(category);
-                    
+
                     java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
                     if (timestamp != null) {
                         OffsetDateTime odt = timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
@@ -164,6 +167,12 @@ public class DeviceDAO extends DBContext {
                     device.setImage(rs.getString("image"));
                     device.setMaintenanceTime(rs.getString("maintenance_time"));
                     device.setIsDelete(rs.getBoolean("isDelete"));
+
+                    Set<SubDevice> subDevices = new HashSet<>();
+                    SubDeviceDAO subDAO = new SubDeviceDAO();
+                    List<SubDevice> subDeviceList = subDAO.getRemainingSubDevicesByDeviceId(rs.getInt("id"));
+                    subDevices.addAll(subDeviceList);
+                    device.setSubDevices(subDevices);
 
                     DeviceCategory dc = new DeviceCategory();
                     String categoryName = rs.getString("category_name");
@@ -277,7 +286,7 @@ public class DeviceDAO extends DBContext {
         }
         return dev;
     }
-    
+
     // Đếm tổng số thiết bị đã xóa với filter
     public int getTotalDeletedDevices(int categoryId, String textSearch) {
         String query = "SELECT count(*) FROM swp391.device d WHERE d.isDelete = 1";
