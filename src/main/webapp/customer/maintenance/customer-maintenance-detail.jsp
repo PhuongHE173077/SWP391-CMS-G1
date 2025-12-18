@@ -145,7 +145,6 @@
 
                         .replies-container {
                             position: relative;
-                            padding-left: 2rem;
                         }
 
                         .reply-item {
@@ -155,7 +154,6 @@
                             margin-bottom: 1.25rem;
                             border: 1px solid #e9ecef;
                             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-                            position: relative;
                             transition: all 0.3s ease;
                         }
 
@@ -168,70 +166,26 @@
                             margin-bottom: 0;
                         }
 
-                        .reply-item::before {
-                            content: '';
-                            position: absolute;
-                            left: -2rem;
-                            top: 1.5rem;
-                            width: 12px;
-                            height: 12px;
-                            background: #198754;
-                            border-radius: 50%;
-                            border: 3px solid white;
-                            box-shadow: 0 0 0 2px #198754;
-                        }
-
-                        .reply-item::after {
-                            content: '';
-                            position: absolute;
-                            left: -1.5rem;
-                            top: 2rem;
-                            width: 2px;
-                            height: calc(100% + 1.25rem);
-                            background: #dee2e6;
-                        }
-
-                        .reply-item:last-child::after {
-                            display: none;
-                        }
-
                         .reply-header {
                             display: flex;
-                            align-items: flex-start;
-                            gap: 1rem;
-                            margin-bottom: 1rem;
-                        }
-
-                        .reply-avatar {
-                            width: 45px;
-                            height: 45px;
-                            border-radius: 50%;
-                            background: linear-gradient(135deg, #198754 0%, #157347 100%);
-                            display: flex;
                             align-items: center;
-                            justify-content: center;
-                            color: white;
-                            font-size: 1.2rem;
-                            flex-shrink: 0;
-                            box-shadow: 0 2px 8px rgba(25, 135, 84, 0.3);
-                        }
-
-                        .reply-info {
-                            flex: 1;
+                            justify-content: space-between;
+                            gap: 1rem;
+                            margin-bottom: 0.5rem;
                         }
 
                         .reply-title {
                             font-weight: 600;
                             color: #212529;
                             font-size: 1.05rem;
-                            margin-bottom: 0.25rem;
+                            margin: 0;
                         }
 
                         .reply-meta {
                             display: flex;
+                            flex-direction: row;
                             align-items: center;
                             gap: 1rem;
-                            flex-wrap: wrap;
                         }
 
                         .reply-date {
@@ -256,7 +210,6 @@
                             line-height: 1.7;
                             white-space: pre-wrap;
                             margin: 0;
-                            padding-left: 3.5rem;
                         }
 
                         .empty-state {
@@ -541,68 +494,51 @@
                                                     <c:forEach items="${replies}" var="reply" varStatus="status">
                                                         <div class="reply-item">
                                                             <div class="reply-header">
-                                                                <div class="reply-avatar">
-                                                                    <i class="fas fa-user-shield"></i>
+                                                                <div class="reply-title">
+                                                                    ${reply.title != null ? reply.title : 'Phản hồi từ
+                                                                    hệ thống'}
                                                                 </div>
-                                                                <div class="reply-info">
-                                                                    <div class="reply-title">
-                                                                        ${reply.title != null ? reply.title : 'Phản hồi
-                                                                        từ hệ thống'}
-                                                                    </div>
-                                                                    <div class="reply-meta">
-                                                                        <div class="reply-date">
-                                                                            <i class="fas fa-clock"></i>
-                                                                            <c:choose>
-                                                                                <c:when
-                                                                                    test="${reply.createdAtDate != null}">
-                                                                                    <fmt:formatDate
-                                                                                        value="${reply.createdAtDate}"
-                                                                                        pattern="dd/MM/yyyy" />
-                                                                                </c:when>
-                                                                                <c:otherwise>
-                                                                                    <span class="text-muted">Chưa có
-                                                                                        thời gian</span>
-                                                                                </c:otherwise>
-                                                                            </c:choose>
-                                                                        </div>
+                                                                <div class="reply-meta">
+                                                                    <div class="reply-date">
+                                                                        <i class="fas fa-clock me-1"></i>
                                                                         <c:choose>
                                                                             <c:when
-                                                                                test="${reply.maintanceRequest.status == 'APPROVE'}">
-                                                                                <span class="reply-badge"
-                                                                                    style="background: #e7f5ef; color: #198754;">
-                                                                                    <i
-                                                                                        class="fas fa-check-circle me-1"></i>Đã
-                                                                                    duyệt
-                                                                                </span>
-                                                                            </c:when>
-                                                                            <c:when
-                                                                                test="${reply.maintanceRequest.status == 'REJECT'}">
-                                                                                <span class="reply-badge"
-                                                                                    style="background: #f8e7e7; color: #dc3545;">
-                                                                                    <i
-                                                                                        class="fas fa-times-circle me-1"></i>Đã
-                                                                                    từ chối
-                                                                                </span>
-                                                                            </c:when>
-                                                                            <c:when
-                                                                                test="${reply.maintanceRequest.status == 'PENDING'}">
-                                                                                <span class="reply-badge"
-                                                                                    style="background: #fff3cd; color: #856404;">
-                                                                                    <i
-                                                                                        class="fas fa-clock me-1"></i>Đang
-                                                                                    xử lý
-                                                                                </span>
+                                                                                test="${reply.createdAtDate != null}">
+                                                                                <fmt:formatDate
+                                                                                    value="${reply.createdAtDate}"
+                                                                                    pattern="dd/MM/yyyy" />
                                                                             </c:when>
                                                                             <c:otherwise>
-                                                                                <span class="reply-badge"
-                                                                                    style="background: #e7f5ef; color: #198754;">
-                                                                                    <i
-                                                                                        class="fas fa-info-circle me-1"></i>Đã
-                                                                                    phản hồi
-                                                                                </span>
+                                                                                <span class="text-muted">N/A</span>
                                                                             </c:otherwise>
                                                                         </c:choose>
                                                                     </div>
+                                                                    <c:choose>
+                                                                        <c:when
+                                                                            test="${reply.maintanceRequest.status == 'APPROVE'}">
+                                                                            <span class="reply-badge"
+                                                                                style="background: #e7f5ef; color: #198754;">
+                                                                                <i
+                                                                                    class="fas fa-check-circle me-1"></i>APPROVE
+                                                                            </span>
+                                                                        </c:when>
+                                                                        <c:when
+                                                                            test="${reply.maintanceRequest.status == 'REJECT'}">
+                                                                            <span class="reply-badge"
+                                                                                style="background: #f8e7e7; color: #dc3545;">
+                                                                                <i
+                                                                                    class="fas fa-times-circle me-1"></i>REJECT
+                                                                            </span>
+                                                                        </c:when>
+                                                                        <c:when
+                                                                            test="${reply.maintanceRequest.status == 'PENDING'}">
+                                                                            <span class="reply-badge"
+                                                                                style="background: #fff3cd; color: #856404;">
+                                                                                <i class="fas fa-clock me-1"></i>PENDING
+                                                                            </span>
+                                                                        </c:when>
+
+                                                                    </c:choose>
                                                                 </div>
                                                             </div>
                                                             <p class="reply-content">${reply.content}</p>
