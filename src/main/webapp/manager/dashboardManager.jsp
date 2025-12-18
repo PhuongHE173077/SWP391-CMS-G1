@@ -634,30 +634,70 @@
                     </div>
                 </div>
 
-                <div class="section-container">
-                    <h3>Top 3 Khách hàng mua nhiều nhất (Doanh số)</h3>
-                    <table class="data-table">
-                        <thead class="text-center-col">
-                            <tr>
-                                <th>#</th>
-                                <th >Tên Khách hàng</th>
-                                <th >Email</th>
-                                <th >Địa chỉ</th>
-                                <th>Tổng số đơn đã mua</th>
-                            </tr>
-                        </thead>
-                        <tbody > 
-                            <c:forEach var="top" items="${topContractUser}" varStatus="loop">
-                                <tr class="text-center-col">
-                                    <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
-                                    <td >${top.displayName}</td>
-                                    <td >${top.email}</td>
-                                    <td>${top.address}</td>
-                                    <td >${top.totalContracts}</td>
-                                </tr>
-                            </c:forEach>                           
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <!-- Top 3 Khách hàng -->
+                    <div class="col-md-6">
+                        <div class="section-container">
+                            <h3><i class="fas fa-users me-2" style="color: #28a745;"></i>Top 3 Khách hàng mua nhiều nhất</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên Khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Số thiết bị đã mua</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <c:forEach var="top" items="${topContractUser}" varStatus="loop">
+                                        <tr>
+                                            <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
+                                            <td>${top.displayName}</td>
+                                            <td>${top.email}</td>
+                                            <td>${top.address}</td>
+                                            <td>${top.totalContracts}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty topContractUser}">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">Chưa có dữ liệu</td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Top 3 Thiết bị bán chạy -->
+                    <div class="col-md-6">
+                        <div class="section-container">
+                            <h3><i class="fas fa-boxes me-2" style="color: #007bff;"></i>Top 3 Thiết bị bán chạy nhất</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên thiết bị</th>
+                                        <th>Số lượng đã bán</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <c:forEach var="device" items="${topSellingDevices}" varStatus="loop">
+                                        <tr>
+                                            <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
+                                            <td>${device.deviceName}</td>
+                                            <td>${device.totalSold}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty topSellingDevices}">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Biểu đồ hợp đồng theo tháng -->
