@@ -1148,7 +1148,7 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
-    // Lấy số lượng sản phẩm đã bán theo từng tháng (đếm contract_item theo tháng tạo)
+    // Lấy số lượng sản phẩm đã bán theo từng tháng (đếm contract_item theo tháng tạo hợp đồng)
     public java.util.Map<String, Integer> getSoldProductsByMonth() {
         java.util.Map<String, Integer> monthData = new java.util.LinkedHashMap<>();
         
@@ -1159,13 +1159,14 @@ public class ContractDAO extends DBContext {
             monthData.put(month, 0);
         }
         
-        String sql = "SELECT MONTH(ci.created_at) as month, COUNT(*) as count "
-                + "FROM contract_item ci "
-                + "INNER JOIN contract c ON ci.contract_id = c.id "
+        // Đếm contract_item theo tháng tạo hợp đồng để đồng bộ với biểu đồ hợp đồng
+        String sql = "SELECT MONTH(c.created_at) as month, COUNT(ci.id) as count "
+                + "FROM contract c "
+                + "INNER JOIN contract_item ci ON c.id = ci.contract_id "
                 + "WHERE c.isDelete = 0 "
-                + "AND YEAR(ci.created_at) = YEAR(CURDATE()) "
-                + "GROUP BY MONTH(ci.created_at) "
-                + "ORDER BY MONTH(ci.created_at)";
+                + "AND YEAR(c.created_at) = YEAR(CURDATE()) "
+                + "GROUP BY MONTH(c.created_at) "
+                + "ORDER BY MONTH(c.created_at)";
         
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
