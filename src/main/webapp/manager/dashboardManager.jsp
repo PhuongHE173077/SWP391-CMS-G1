@@ -632,6 +632,14 @@
                         </div>
                         <div class="widget-icon"><i class="fas fa-users"></i></div>
                     </div>
+
+                    <div class="widget" style="background-color: #17a2b8;">
+                        <div class="widget-content">
+                            <span class="widget-number">${totalInventory}</span>
+                            <span class="widget-title">Số lượng tồn kho</span>
+                        </div>
+                        <div class="widget-icon"><i class="fas fa-warehouse"></i></div>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -706,6 +714,12 @@
                     <canvas id="contractsChart" style="max-height: 400px;"></canvas>
                 </div>
 
+                <!-- Biểu đồ sản phẩm đã bán theo tháng -->
+                <div class="section-container">
+                    <h3><i class="fas fa-chart-line me-2" style="color: #28a745;"></i>Biểu đồ sản phẩm đã bán theo tháng</h3>
+                    <canvas id="soldProductsChart" style="max-height: 400px;"></canvas>
+                </div>
+
             </main>
         </div>
     </div>
@@ -763,6 +777,74 @@
                         title: {
                             display: true,
                             text: 'Số lượng hợp đồng'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tháng'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Dữ liệu sản phẩm đã bán theo tháng
+        const soldMonthLabels = [];
+        const soldMonthData = [];
+        
+        <c:forEach var="entry" items="${soldProductsByMonth}">
+        soldMonthLabels.push("${entry.key}");
+        soldMonthData.push(${entry.value});
+        </c:forEach>
+
+        // Tạo biểu đồ đường cho sản phẩm đã bán
+        const ctx2 = document.getElementById('soldProductsChart').getContext('2d');
+        const soldProductsChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: soldMonthLabels,
+                datasets: [{
+                    label: 'Số sản phẩm đã bán',
+                    data: soldMonthData,
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: 'rgba(40, 167, 69, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Số sản phẩm: ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        },
+                        title: {
+                            display: true,
+                            text: 'Số lượng sản phẩm'
                         }
                     },
                     x: {
