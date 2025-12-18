@@ -987,39 +987,65 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
+    // Lấy Top 3 khách hàng mua nhiều nhất (đếm theo số lượng contract_item - số thiết bị đã mua)
     public List<TopContractUser> getTopContractUsers() {
-
         List<TopContractUser> topUsers = new ArrayList<>();
 
-        String query = "SELECT u.id AS user_id, u.displayname, u.email, u.address, T.TotalContracts\n"
-                + "FROM swp391._user u\n"
-                + "INNER JOIN\n"
-                + " ( SELECT user_id,COUNT(id) AS TotalContracts\n"
-                + " FROM swp391.contract GROUP BY user_id\n"
-                + " HAVING TotalContracts >= (\n"
-                + " SELECT COUNT(id) AS Rank3Count FROM swp391.contract\n"
-                + "GROUP BY user_id ORDER BY Rank3Count LIMIT 1 OFFSET 2 )) \n"
-                + "AS T ON u.id = T.user_id\n"
-                + "ORDER BY T.TotalContracts DESC;";
+        String query = "SELECT u.id AS user_id, u.displayname, u.email, u.address, "
+                + "COUNT(ci.id) AS TotalContracts "
+                + "FROM swp391._user u "
+                + "INNER JOIN swp391.contract c ON u.id = c.user_id "
+                + "INNER JOIN swp391.contract_item ci ON c.id = ci.contract_id "
+                + "WHERE c.isDelete = 0 "
+                + "GROUP BY u.id, u.displayname, u.email, u.address "
+                + "HAVING COUNT(ci.id) > 0 "
+                + "ORDER BY COUNT(ci.id) DESC "
+                + "LIMIT 3";
 
         try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 TopContractUser top = new TopContractUser();
-
                 top.setUser_id(rs.getInt("user_id"));
                 top.setTotalContracts(rs.getInt("TotalContracts"));
-
                 top.setAddress(rs.getString("address"));
                 top.setEmail(rs.getString("email"));
                 top.setDisplayName(rs.getString("displayname"));
-
                 topUsers.add(top);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return topUsers;
+    }
+    
+    // Lấy Top 3 thiết bị bán chạy nhất (đếm theo số lượng seri đã được làm hợp đồng)
+    public List<TopDevice> getTopSellingDevices() {
+        List<TopDevice> topDevices = new ArrayList<>();
+        
+        String query = "SELECT d.id AS device_id, d.name AS device_name, d.image AS device_image, "
+                + "COUNT(ci.id) AS total_sold "
+                + "FROM swp391.device d "
+                + "INNER JOIN swp391.sub_device sd ON d.id = sd.device_id "
+                + "INNER JOIN swp391.contract_item ci ON sd.id = ci.sub_devicel_id "
+                + "INNER JOIN swp391.contract c ON ci.contract_id = c.id "
+                + "WHERE c.isDelete = 0 AND d.isDelete = 0 "
+                + "GROUP BY d.id, d.name, d.image "
+                + "ORDER BY COUNT(ci.id) DESC "
+                + "LIMIT 3";
+        
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                TopDevice top = new TopDevice();
+                top.setDeviceId(rs.getInt("device_id"));
+                top.setDeviceName(rs.getString("device_name"));
+                top.setDeviceImage(rs.getString("device_image"));
+                top.setTotalSold(rs.getInt("total_sold"));
+                topDevices.add(top);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return topDevices;
     }
 
     // Đếm số hợp đồng pending (chưa có contract_item nào)
