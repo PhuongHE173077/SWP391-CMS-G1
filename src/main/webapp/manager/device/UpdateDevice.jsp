@@ -46,7 +46,7 @@
             }
 
             .form-group input[type="text"],
-            .form-group input[type="url"],
+            .form-group input[type="file"],
             .form-group textarea,
             .form-group select {
                 width: 100%;
@@ -148,7 +148,7 @@
 
             <c:set var="device" value="${device}" />
 
-            <form action="EditDevice" method="POST">
+            <form action="EditDevice" method="POST" enctype="multipart/form-data">
 
                 <input type="hidden" name="id" value="${device.id}">
 
@@ -171,8 +171,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="image">URL Hình ảnh:</label>
-                    <input type="url" id="image" name="image" placeholder="Ví dụ: https://example.com/device_img.jpg" value="${device.image}">
+                    <label for="image">Hình ảnh:</label>
+                    <!-- Hiển thị ảnh hiện tại nếu có -->
+                    <c:if test="${not empty device.image}">
+                        <div class="image-preview">
+                            <p style="margin-bottom: 10px; font-weight: 600; color: #555;">Ảnh hiện tại:</p>
+                            <img src="${device.image}" alt="Current image" id="currentImage">
+                        </div>
+                    </c:if>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <small style="display: block; margin-top: 5px; color: #666;">Chọn file ảnh mới để thay thế (JPG, PNG, GIF - tối đa 10MB). Để trống nếu giữ nguyên ảnh cũ.</small>
+                    <div id="imagePreview" style="margin-top: 10px; display: none;">
+                        <p style="margin-bottom: 5px; font-weight: 600; color: #555;">Ảnh mới:</p>
+                        <img id="previewImg" src="" alt="Preview" style="max-width: 300px; max-height: 300px; border-radius: 6px; border: 1px solid #ccc;">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -189,5 +201,48 @@
             </form>
 
         </div>
+
+        <script>
+            // Preview ảnh khi chọn file
+            const imageInput = document.getElementById('image');
+            if (imageInput) {
+                imageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Kiểm tra kích thước file (tối đa 10MB)
+                        if (file.size > 10 * 1024 * 1024) {
+                            alert('Kích thước file không được vượt quá 10MB!');
+                            e.target.value = '';
+                            const previewDiv = document.getElementById('imagePreview');
+                            if (previewDiv) previewDiv.style.display = 'none';
+                            return;
+                        }
+                        
+                        // Kiểm tra loại file
+                        if (!file.type.startsWith('image/')) {
+                            alert('Vui lòng chọn file ảnh!');
+                            e.target.value = '';
+                            const previewDiv = document.getElementById('imagePreview');
+                            if (previewDiv) previewDiv.style.display = 'none';
+                            return;
+                        }
+                        
+                        // Hiển thị preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewImg = document.getElementById('previewImg');
+                            const previewDiv = document.getElementById('imagePreview');
+                            if (previewImg) previewImg.src = e.target.result;
+                            if (previewDiv) previewDiv.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        const previewDiv = document.getElementById('imagePreview');
+                        if (previewDiv) previewDiv.style.display = 'none';
+                    }
+                });
+            }
+        </script>
+
     </body>
-</html
+</html>
