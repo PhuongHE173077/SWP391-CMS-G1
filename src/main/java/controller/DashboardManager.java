@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.TopContractUser;
+import model.TopDevice;
 import model.Contract;
 
 /**
@@ -81,9 +82,13 @@ public class DashboardManager extends HttpServlet {
         int totalCustomer = user.getCountAllCustomer();
         request.setAttribute("totalCustomer", totalCustomer);
         
-        List<TopContractUser> topContractUser = new ArrayList<>();
-        topContractUser = con.getTopContractUsers();
+        // Lấy Top 3 khách hàng mua nhiều nhất (theo số lượng contract_item)
+        List<TopContractUser> topContractUser = con.getTopContractUsers();
         request.setAttribute("topContractUser", topContractUser);
+        
+        // Lấy Top 3 thiết bị bán chạy nhất (theo số lượng seri đã được làm hợp đồng)
+        List<TopDevice> topSellingDevices = con.getTopSellingDevices();
+        request.setAttribute("topSellingDevices", topSellingDevices);
         
         // Lấy danh sách hợp đồng pending (chưa có contract_item)
         List<Contract> pendingContracts = con.getPendingContracts(10); // Lấy tối đa 10 hợp đồng pending

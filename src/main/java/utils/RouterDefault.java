@@ -56,6 +56,11 @@ public class RouterDefault {
                 new Routers("Xem thiết bị", "/ViewDeletedDevices"),
                 new Routers("Khôi phục", "/Restore_DeleteDevices")
                ));
+        
+        addRouterGroup("Quản lý Khách hàng", Arrays.asList(
+                new Routers("Xem khách hàng", "/ViewCustomer"),
+                new Routers("Xem hợp đồng khách hàng", "/Restore_DeleteDevices")
+               ));
 
         addRouterGroup("Quản lý Hợp đồng", Arrays.asList(
                 new Routers("Xem Hợp đồng", "/contract-list"),
