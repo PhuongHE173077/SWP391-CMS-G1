@@ -1,505 +1,523 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-        <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-            <%@page import="dal.RolePermissionDAO" %>
-            <!DOCTYPE html>
-            <html>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="dal.RolePermissionDAO" %>
+<!DOCTYPE html>
+<html>
 
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <title>${param.pageTitle != null ? param.pageTitle : 'Manager Panel'}</title>
-                <!-- Bootstrap CSS -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-                <!-- Font Awesome -->
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>${param.pageTitle != null ? param.pageTitle : 'Manager Panel'}</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-                <style>
-                    :root {
-                        --sidebar-width: 260px;
-                        --sidebar-bg: #1e293b;
-                        --sidebar-hover: #334155;
-                        --primary-color: #10b981;
-                        --text-light: #e2e8f0;
-                        --text-muted: #94a3b8;
-                    }
+        <style>
+            :root {
+                --sidebar-width: 260px;
+                --sidebar-bg: #1e293b;
+                --sidebar-hover: #334155;
+                --primary-color: #10b981;
+                --text-light: #e2e8f0;
+                --text-muted: #94a3b8;
+            }
 
-                    * {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-                    body {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                        background-color: #f1f5f9;
-                    }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f1f5f9;
+            }
 
-                    /* Sidebar */
-                    .manager-sidebar {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: var(--sidebar-width);
-                        height: 100vh;
-                        background: var(--sidebar-bg);
-                        color: var(--text-light);
-                        z-index: 1000;
-                        transition: all 0.3s ease;
-                        overflow-y: auto;
-                    }
+            /* Sidebar */
+            .manager-sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: var(--sidebar-width);
+                height: 100vh;
+                background: var(--sidebar-bg);
+                color: var(--text-light);
+                z-index: 1000;
+                transition: all 0.3s ease;
+                overflow-y: auto;
+            }
 
-                    .manager-sidebar.collapsed {
-                        width: 70px;
-                    }
+            .manager-sidebar.collapsed {
+                width: 70px;
+            }
 
-                    .sidebar-header {
-                        padding: 20px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        border-bottom: 1px solid var(--sidebar-hover);
-                    }
+            .sidebar-header {
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid var(--sidebar-hover);
+            }
 
-                    .sidebar-logo {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        text-decoration: none;
-                        color: var(--text-light);
-                    }
+            .sidebar-logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-decoration: none;
+                color: var(--text-light);
+            }
 
-                    .sidebar-logo i {
-                        font-size: 28px;
-                        color: var(--primary-color);
-                    }
+            .sidebar-logo i {
+                font-size: 28px;
+                color: var(--primary-color);
+            }
 
-                    .sidebar-logo span {
-                        font-size: 20px;
-                        font-weight: 700;
-                    }
+            .sidebar-logo span {
+                font-size: 20px;
+                font-weight: 700;
+            }
 
-                    .manager-sidebar.collapsed .sidebar-logo span,
-                    .manager-sidebar.collapsed .nav-text,
-                    .manager-sidebar.collapsed .menu-title {
-                        display: none;
-                    }
+            .manager-sidebar.collapsed .sidebar-logo span,
+            .manager-sidebar.collapsed .nav-text,
+            .manager-sidebar.collapsed .menu-title {
+                display: none;
+            }
 
-                    .toggle-btn {
-                        background: none;
-                        border: none;
-                        color: var(--text-muted);
-                        cursor: pointer;
-                        font-size: 18px;
-                        padding: 5px;
-                        transition: color 0.3s;
-                    }
+            .toggle-btn {
+                background: none;
+                border: none;
+                color: var(--text-muted);
+                cursor: pointer;
+                font-size: 18px;
+                padding: 5px;
+                transition: color 0.3s;
+            }
 
-                    .toggle-btn:hover {
-                        color: var(--text-light);
-                    }
+            .toggle-btn:hover {
+                color: var(--text-light);
+            }
 
-                    /* Navigation Menu */
-                    .sidebar-nav {
-                        padding: 15px 0;
-                    }
+            /* Navigation Menu */
+            .sidebar-nav {
+                padding: 15px 0;
+            }
 
-                    .menu-title {
-                        padding: 10px 20px;
-                        font-size: 11px;
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-                        color: var(--text-muted);
-                        margin-top: 10px;
-                    }
+            .menu-title {
+                padding: 10px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--text-muted);
+                margin-top: 10px;
+            }
 
-                    .nav-item {
-                        list-style: none;
-                    }
+            .nav-item {
+                list-style: none;
+            }
 
-                    .nav-link {
-                        display: flex;
-                        align-items: center;
-                        padding: 12px 20px;
-                        color: var(--text-muted);
-                        text-decoration: none;
-                        transition: all 0.3s ease;
-                        gap: 12px;
-                        border-left: 3px solid transparent;
-                    }
+            .nav-link {
+                display: flex;
+                align-items: center;
+                padding: 12px 20px;
+                color: var(--text-muted);
+                text-decoration: none;
+                transition: all 0.3s ease;
+                gap: 12px;
+                border-left: 3px solid transparent;
+            }
 
-                    .nav-link:hover {
-                        background: var(--sidebar-hover);
-                        color: var(--text-light);
-                        border-left-color: var(--primary-color);
-                    }
+            .nav-link:hover {
+                background: var(--sidebar-hover);
+                color: var(--text-light);
+                border-left-color: var(--primary-color);
+            }
 
-                    .nav-link.active {
-                        background: var(--sidebar-hover);
-                        color: var(--primary-color);
-                        border-left-color: var(--primary-color);
-                    }
+            .nav-link.active {
+                background: var(--sidebar-hover);
+                color: var(--primary-color);
+                border-left-color: var(--primary-color);
+            }
 
-                    .nav-link i {
-                        width: 20px;
-                        text-align: center;
-                        font-size: 16px;
-                    }
+            .nav-link i {
+                width: 20px;
+                text-align: center;
+                font-size: 16px;
+            }
 
-                    .nav-text {
-                        font-size: 14px;
-                    }
+            .nav-text {
+                font-size: 14px;
+            }
 
-                    /* Main Content */
-                    .manager-main {
-                        margin-left: var(--sidebar-width);
-                        min-height: 100vh;
-                        transition: margin-left 0.3s ease;
-                    }
+            /* Main Content */
+            .manager-main {
+                margin-left: var(--sidebar-width);
+                min-height: 100vh;
+                transition: margin-left 0.3s ease;
+            }
 
-                    .manager-main.expanded {
-                        margin-left: 70px;
-                    }
+            .manager-main.expanded {
+                margin-left: 70px;
+            }
 
-                    /* Top Header */
-                    .manager-header {
-                        background: #ffffff;
-                        padding: 15px 30px;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-                        position: sticky;
-                        top: 0;
-                        z-index: 100;
-                    }
+            /* Top Header */
+            .manager-header {
+                background: #ffffff;
+                padding: 15px 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
 
-                    .header-search {
-                        position: relative;
-                        width: 300px;
-                    }
+            .header-search {
+                position: relative;
+                width: 300px;
+            }
 
-                    .header-search input {
-                        width: 100%;
-                        padding: 10px 15px 10px 40px;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        transition: border-color 0.3s;
-                    }
+            .header-search input {
+                width: 100%;
+                padding: 10px 15px 10px 40px;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                font-size: 14px;
+                transition: border-color 0.3s;
+            }
 
-                    .header-search input:focus {
-                        outline: none;
-                        border-color: var(--primary-color);
-                    }
+            .header-search input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
 
-                    .header-search i {
-                        position: absolute;
-                        left: 15px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        color: var(--text-muted);
-                    }
+            .header-search i {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+            }
 
-                    .header-actions {
-                        display: flex;
-                        align-items: center;
-                        gap: 20px;
-                    }
+            .header-actions {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
 
-                    .header-icon {
-                        position: relative;
-                        color: #64748b;
-                        font-size: 18px;
-                        cursor: pointer;
-                        transition: color 0.3s;
-                    }
+            .header-icon {
+                position: relative;
+                color: #64748b;
+                font-size: 18px;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
 
-                    .header-icon:hover {
-                        color: var(--primary-color);
-                    }
+            .header-icon:hover {
+                color: var(--primary-color);
+            }
 
-                    .notification-badge {
-                        position: absolute;
-                        top: -5px;
-                        right: -5px;
-                        background: #ef4444;
-                        color: white;
-                        font-size: 10px;
-                        padding: 2px 5px;
-                        border-radius: 10px;
-                    }
+            .notification-badge {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: #ef4444;
+                color: white;
+                font-size: 10px;
+                padding: 2px 5px;
+                border-radius: 10px;
+            }
 
-                    .user-profile {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        cursor: pointer;
-                        padding: 5px 10px;
-                        border-radius: 8px;
-                        transition: background 0.3s;
-                    }
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                padding: 5px 10px;
+                border-radius: 8px;
+                transition: background 0.3s;
+            }
 
-                    .user-profile:hover {
-                        background: #f1f5f9;
-                    }
+            .user-profile:hover {
+                background: #f1f5f9;
+            }
 
-                    .user-avatar {
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 50%;
-                        background: var(--primary-color);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: white;
-                        font-weight: 600;
-                    }
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--primary-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 600;
+            }
 
-                    .user-info {
-                        text-align: left;
-                    }
+            .user-info {
+                text-align: left;
+            }
 
-                    .user-name {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #1e293b;
-                    }
+            .user-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1e293b;
+            }
 
-                    .user-role {
-                        font-size: 12px;
-                        color: var(--text-muted);
-                    }
+            .user-role {
+                font-size: 12px;
+                color: var(--text-muted);
+            }
 
-                    /* Content Area */
-                    .manager-content {
-                        padding: 30px;
-                    }
+            /* Content Area */
+            .manager-content {
+                padding: 30px;
+            }
 
-                    /* Responsive */
-                    @media (max-width: 768px) {
-                        .manager-sidebar {
-                            transform: translateX(-100%);
-                        }
+            /* Responsive */
+            @media (max-width: 768px) {
+                .manager-sidebar {
+                    transform: translateX(-100%);
+                }
 
-                        .manager-sidebar.show {
-                            transform: translateX(0);
-                        }
+                .manager-sidebar.show {
+                    transform: translateX(0);
+                }
 
-                        .manager-main {
-                            margin-left: 0;
-                        }
+                .manager-main {
+                    margin-left: 0;
+                }
 
-                        .header-search {
-                            display: none;
-                        }
-                    }
-                    
-                </style>
-            </head>
+                .header-search {
+                    display: none;
+                }
+            }
 
-            <body>
-                <%
-                    // Mỗi lần load layout manager, luôn lấy lại rolePermissions từ DB
-                    RolePermissionDAO rpDao = new RolePermissionDAO();
-                    session.setAttribute("rolePermissions", rpDao.getRolePermission());
-                %>
-                <!-- Sidebar -->
-                <aside class="manager-sidebar" id="managerSidebar">
-                    <div class="sidebar-header">
-                        <a href="${pageContext.request.contextPath}/Dashboard" class="sidebar-logo">
-                            <i class="fas fa-cube"></i>
-                            <span>CMS Manager</span>
-                        </a>
-                        <button class="toggle-btn" onclick="toggleSidebar()">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                    </div>
+        </style>
+    </head>
 
-                    <nav class="sidebar-nav">
-                        <div class="menu-title">Main Menu</div>
-                        <ul style="padding-left: 0;">
-                            <!-- Dashboard -->
-                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
-                                <c:set var="hasDashboardPermission" value="false" />
-                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
-                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/Dashboard'}">
-                                        <c:set var="hasDashboardPermission" value="true" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${hasDashboardPermission}">
-                                    <li class="nav-item">
-                                        <a href="${pageContext.request.contextPath}/Dashboard" class="nav-link">
-                                            <i class="fas fa-home"></i>
-                                            <span class="nav-text">Dashboard</span>
-                                        </a>
-                                    </li>
-                                </c:if>
+    <body>
+        <%
+            // Mỗi lần load layout manager, luôn lấy lại rolePermissions từ DB
+            RolePermissionDAO rpDao = new RolePermissionDAO();
+            session.setAttribute("rolePermissions", rpDao.getRolePermission());
+        %>
+        <!-- Sidebar -->
+        <aside class="manager-sidebar" id="managerSidebar">
+            <div class="sidebar-header">
+                <a href="${pageContext.request.contextPath}/Dashboard" class="sidebar-logo">
+                    <i class="fas fa-cube"></i>
+                    <span>CMS Manager</span>
+                </a>
+                <button class="toggle-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="menu-title">Main Menu</div>
+                <ul style="padding-left: 0;">
+                    <!-- Dashboard -->
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasDashboardPermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/Dashboard'}">
+                                <c:set var="hasDashboardPermission" value="true" />
                             </c:if>
-                        </ul>
-
-                        <div class="menu-title">Quản lý</div>
-                        <ul style="padding-left: 0;">
-                            <!-- Quản lý danh mục -->
-                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
-                                <c:set var="hasCategoryPermission" value="false" />
-                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
-                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewListCategory'}">
-                                        <c:set var="hasCategoryPermission" value="true" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${hasCategoryPermission}">
-                                    <li class="nav-item">
-                                        <a href="${pageContext.request.contextPath}/ViewListCategory" class="nav-link">
-                                            <i class="fas fa-tags"></i>
-                                            <span class="nav-text">Quản lý danh mục</span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                            </c:if>
-
-                            <!-- Quản lý Thiết bị -->
-                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
-                                <c:set var="hasDevicePermission" value="false" />
-                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
-                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewListDevice'}">
-                                        <c:set var="hasDevicePermission" value="true" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${hasDevicePermission}">
-                                    <li class="nav-item">
-                                        <a href="${pageContext.request.contextPath}/ViewListDevice" class="nav-link">
-                                            <i class="fas fa-file-contract"></i>
-                                            <span class="nav-text">Quản lý Thiết bị</span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                            </c:if>
-
-                            <!-- Quản lý hợp đồng -->
-                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
-                                <c:set var="hasContractPermission" value="false" />
-                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
-                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/contract-list'}">
-                                        <c:set var="hasContractPermission" value="true" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${hasContractPermission}">
-                                    <li class="nav-item">
-                                        <a href="${pageContext.request.contextPath}/contract-list" class="nav-link">
-                                            <i class="fas fa-file-contract"></i>
-                                            <span class="nav-text">Quản lý hợp đồng</span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                            </c:if>
-
-                            <!-- Quản lý hợp đồng đã xóa -->
-                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
-                                <c:set var="hasDeletedContractPermission" value="false" />
-                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
-                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/list-contract-delete'}">
-                                        <c:set var="hasDeletedContractPermission" value="true" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${hasDeletedContractPermission}">
-                                    <li class="nav-item">
-                                        <a href="${pageContext.request.contextPath}/list-contract-delete" class="nav-link">
-                                            <i class="fas fa-trash-alt"></i>
-                                            <span class="nav-text">Quản lý hợp đồng đã xóa</span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                            </c:if>
-
-                            <!-- Quản lý Maintenance Request -->
-                            <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
-                                <c:set var="hasMaintenancePermission" value="false" />
-                                <c:forEach var="rp" items="${sessionScope.rolePermissions}">
-                                    <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/seller-maintenance'}">
-                                        <c:set var="hasMaintenancePermission" value="true" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${hasMaintenancePermission}">
-                                    <li class="nav-item">
-                                        <a href="${pageContext.request.contextPath}/seller-maintenance" class="nav-link">
-                                            <i class="fas fa-trash-alt"></i>
-                                            <span class="nav-text">Quản lý Maintenance Request</span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                            </c:if>
-                        </ul>
-
-                        <div class="menu-title">Hệ thống</div>
-                        <ul style="padding-left: 0;">
+                        </c:forEach>
+                        <c:if test="${hasDashboardPermission}">
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/LogOut" class="nav-link">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    <span class="nav-text">Đăng xuất</span>
+                                <a href="${pageContext.request.contextPath}/Dashboard" class="nav-link">
+                                    <i class="fas fa-home"></i>
+                                    <span class="nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+                </ul>
+
+                <div class="menu-title">Quản lý</div>
+                <ul style="padding-left: 0;">
+                    <!-- Quản lý danh mục -->
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasCategoryPermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewListCategory'}">
+                                <c:set var="hasCategoryPermission" value="true" />
+                            </c:if>
+                        </c:forEach>
+                        <c:if test="${hasCategoryPermission}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/ViewListCategory" class="nav-link">
+                                    <i class="fas fa-tags"></i>
+                                    <span class="nav-text">Quản lý danh mục</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+
+                    <!-- Quản lý Thiết bị -->
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasDevicePermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewListDevice'}">
+                                <c:set var="hasDevicePermission" value="true" />
+                            </c:if>
+                        </c:forEach>
+                        <c:if test="${hasDevicePermission}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/ViewListDevice" class="nav-link">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="nav-text">Quản lý Thiết bị</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasMaintenancePermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/ViewCustomer'}">
+                                <c:set var="hasMaintenancePermission" value="true" />
+                            </c:if>
+                        </c:forEach>
+                        <c:if test="${hasMaintenancePermission}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/ViewCustomer" class="nav-link">
+                                    <i class="fas fa-user"></i>
+                                    <span class="nav-text">Quản lý Khách hàng</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+
+                    <!-- Quản lý hợp đồng -->
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasContractPermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/contract-list'}">
+                                <c:set var="hasContractPermission" value="true" />
+                            </c:if>
+                        </c:forEach>
+                        <c:if test="${hasContractPermission}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/contract-list" class="nav-link">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="nav-text">Quản lý hợp đồng</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+
+                    <!-- Quản lý hợp đồng đã xóa -->
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasDeletedContractPermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/list-contract-delete'}">
+                                <c:set var="hasDeletedContractPermission" value="true" />
+                            </c:if>
+                        </c:forEach>
+                        <c:if test="${hasDeletedContractPermission}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/list-contract-delete" class="nav-link">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span class="nav-text">Quản lý hợp đồng đã xóa</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+
+                    <!-- Quản lý Maintenance Request -->
+                    <c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+                        <c:set var="hasMaintenancePermission" value="false" />
+                        <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+                            <c:if test="${rp.roles.id == sessionScope.role.id && rp.router == '/seller-maintenance'}">
+                                <c:set var="hasMaintenancePermission" value="true" />
+                            </c:if>
+                        </c:forEach>
+                        <c:if test="${hasMaintenancePermission}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/seller-maintenance" class="nav-link">
+                                    <i class="fas fa-tools"></i>
+                                    <span class="nav-text">Quản lý Maintenance Request</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </c:if>
+
+
+                </ul>
+
+                <div class="menu-title">Hệ thống</div>
+                <ul style="padding-left: 0;">
+                    <li class="nav-item">
+                        <a href="${pageContext.request.contextPath}/LogOut" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="nav-text">Đăng xuất</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="manager-main" id="managerMain">
+            <!-- Top Header -->
+            <header class="manager-header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="dropdown">
+                        <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar">
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.user}">
+                                        ${fn:toUpperCase(fn:substring(sessionScope.user.displayname, 0, 1))}
+                                    </c:when>
+                                    <c:otherwise>M</c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">
+                                    <c:choose>
+                                        <c:when test="${not empty sessionScope.user}">
+                                            ${sessionScope.user.displayname}
+                                        </c:when>
+                                        <c:otherwise>Manager</c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-down" style="color: #64748b; font-size: 12px;"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/ViewProfile">
+                                    <i class="fas fa-user me-2"></i>Xem hồ sơ
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   href="${pageContext.request.contextPath}/ChangePassword">
+                                    <i class="fas fa-key me-2"></i>Đổi mật khẩu
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger"
+                                   href="${pageContext.request.contextPath}/LogOut">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                 </a>
                             </li>
                         </ul>
-                    </nav>
-                </aside>
+                    </div>
+                </div>
+            </header>
 
-                <!-- Main Content Wrapper -->
-                <div class="manager-main" id="managerMain">
-                    <!-- Top Header -->
-                    <header class="manager-header">
-                        <div class="header-search">
-                            <i class="fas fa-search"></i>
-                            <input type="text" placeholder="Tìm kiếm...">
-                        </div>
-
-                        <div class="header-actions">
-                            <div class="dropdown">
-                                <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <div class="user-avatar">
-                                        <c:choose>
-                                            <c:when test="${not empty sessionScope.user}">
-                                                ${fn:toUpperCase(fn:substring(sessionScope.user.displayname, 0, 1))}
-                                            </c:when>
-                                            <c:otherwise>M</c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                    <div class="user-info">
-                                        <div class="user-name">
-                                            <c:choose>
-                                                <c:when test="${not empty sessionScope.user}">
-                                                    ${sessionScope.user.displayname}
-                                                </c:when>
-                                                <c:otherwise>Manager</c:otherwise>
-                                            </c:choose>
-                                        </div>
-                                    </div>
-                                    <i class="fas fa-chevron-down" style="color: #64748b; font-size: 12px;"></i>
-                                </div>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/ViewProfile">
-                                            <i class="fas fa-user me-2"></i>Xem hồ sơ
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                            href="${pageContext.request.contextPath}/ChangePassword">
-                                            <i class="fas fa-key me-2"></i>Đổi mật khẩu
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-danger"
-                                            href="${pageContext.request.contextPath}/LogOut">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </header>
-
-                    <!-- Page Content -->
-                    <main class="manager-content">
-                        
+            <!-- Page Content -->
+            <main class="manager-content">

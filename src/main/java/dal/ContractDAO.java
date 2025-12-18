@@ -14,7 +14,8 @@ import model.*;
 public class ContractDAO extends DBContext {
 
     // HÀM LẤY LIST CONTRACTS CỦA STAFF
-    public List<Contract> getAllActiveContracts(String keyword, int createById, int pageIndex, int pageSize, String sortBy,
+    public List<Contract> getAllActiveContracts(String keyword, int createById, int pageIndex, int pageSize,
+            String sortBy,
             String sortOrder) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
@@ -443,7 +444,7 @@ public class ContractDAO extends DBContext {
             // Bắt đầu transaction
             connection.setAutoCommit(false);
 
-            // 1. Xóa contract_item trước 
+            // 1. Xóa contract_item trước
             String deleteItemsSql = "DELETE FROM contract_item WHERE contract_id = ?";
             try (PreparedStatement ps = connection.prepareStatement(deleteItemsSql)) {
                 ps.setInt(1, contractId);
@@ -600,11 +601,11 @@ public class ContractDAO extends DBContext {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new String[]{
-                        rs.getString("displayname"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address")
+                    return new String[] {
+                            rs.getString("displayname"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("address")
                     };
                 }
             }
@@ -741,14 +742,18 @@ public class ContractDAO extends DBContext {
         return false;
     }
 
-    // Lấy danh sách contract theo user_id với phân trang, tìm kiếm và lọc trạng thái
-    // status: null = all, "active" = còn hiệu lực (có ít nhất 1 item còn hiệu lực), "expired" = hết hiệu lực
+    // Lấy danh sách contract theo user_id với phân trang, tìm kiếm và lọc trạng
+    // thái
+    // status: null = all, "active" = còn hiệu lực (có ít nhất 1 item còn hiệu lực),
+    // "expired" = hết hiệu lực
     // fromDate, toDate: filter theo ngày tạo (format: yyyy-MM-dd)
-    public List<Contract> getListContractByUserId(int userId, String keyword, String status, String fromDate, String toDate, int pageIndex, int pageSize) {
+    public List<Contract> getListContractByUserId(int userId, String keyword, String status, String fromDate,
+            String toDate, int pageIndex, int pageSize) {
         List<Contract> lst = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
-        
-        // Subquery để check xem contract có còn hiệu lực không (có ít nhất 1 item còn endDate > NOW())
+
+        // Subquery để check xem contract có còn hiệu lực không (có ít nhất 1 item còn
+        // endDate > NOW())
         String sql = "SELECT DISTINCT c.*, "
                 + "c.created_at, "
                 + "u1.displayname AS customer_name, "
@@ -761,12 +766,12 @@ public class ContractDAO extends DBContext {
                 + "LEFT JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
                 + "LEFT JOIN device d ON sd.device_id = d.id "
                 + "WHERE c.user_id = ? AND c.isDelete = 0 ";
-        
+
         // Filter by keyword (search in device name or serial number)
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
         }
-        
+
         // Filter by date range
         if (fromDate != null && !fromDate.trim().isEmpty()) {
             sql += "AND DATE(c.created_at) >= ? ";
@@ -774,9 +779,9 @@ public class ContractDAO extends DBContext {
         if (toDate != null && !toDate.trim().isEmpty()) {
             sql += "AND DATE(c.created_at) <= ? ";
         }
-        
+
         sql += "GROUP BY c.id, c.created_at, u1.displayname, u2.displayname ";
-        
+
         // Filter by status (having clause after group by)
         if (status != null && !status.trim().isEmpty()) {
             if (status.equals("active")) {
@@ -785,29 +790,29 @@ public class ContractDAO extends DBContext {
                 sql += "HAVING MAX(ci.endDate) <= NOW() OR MAX(ci.endDate) IS NULL ";
             }
         }
-        
+
         sql += "ORDER BY c.id DESC LIMIT ? OFFSET ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             int paramIndex = 1;
             ps.setInt(paramIndex++, userId);
-            
+
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
                 ps.setString(paramIndex++, searchPattern); // d.name
                 ps.setString(paramIndex++, searchPattern); // sd.seri_id
             }
-            
+
             if (fromDate != null && !fromDate.trim().isEmpty()) {
                 ps.setString(paramIndex++, fromDate);
             }
             if (toDate != null && !toDate.trim().isEmpty()) {
                 ps.setString(paramIndex++, toDate);
             }
-            
+
             ps.setInt(paramIndex++, pageSize);
-            ps.setInt(paramIndex++, offset);
-            
+            ps.setInt(paramIndex, offset);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Contract c = new Contract();
@@ -824,13 +829,12 @@ public class ContractDAO extends DBContext {
 
                     // Map Customer (user)
                     Users customer = new Users();
-                    customer.setId(rs.getInt("user_id"));
+                    customer.setId(userId); // Since we search by userId
                     customer.setDisplayname(rs.getString("customer_name"));
                     c.setUser(customer);
 
                     // Map Creator (createBy)
                     Users saleStaff = new Users();
-                    saleStaff.setId(rs.getInt("createBy"));
                     saleStaff.setDisplayname(rs.getString("saleStaff_name"));
                     c.setCreateBy(saleStaff);
 
@@ -838,10 +842,85 @@ public class ContractDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error getting contracts by user ID: " + e.getMessage());
             e.printStackTrace();
         }
         return lst;
+    }
+
+    public List<CustomerStatistic> getCustomerStatistics(String keyword, int pageIndex, int pageSize) {
+        List<CustomerStatistic> list = new ArrayList<>();
+        int offset = (pageIndex - 1) * pageSize;
+
+        String sql = "SELECT u.id, u.displayname, u.email, u.phone, "
+                + "COUNT(DISTINCT c.id) as total_contracts, "
+                + "COUNT(ci.id) as total_products "
+                + "FROM _user u "
+                + "LEFT JOIN contract c ON u.id = c.user_id AND c.isDelete = 0 "
+                + "LEFT JOIN contract_item ci ON c.id = ci.contract_id "
+                + "WHERE u.role_id = 4 "; // role_id 4 is Customer
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (u.displayname LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ";
+        }
+
+        sql += "GROUP BY u.id, u.displayname, u.email, u.phone ";
+        sql += "ORDER BY total_contracts DESC ";
+        sql += "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            int index = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
+            }
+            ps.setInt(index++, pageSize);
+            ps.setInt(index++, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CustomerStatistic stats = new CustomerStatistic();
+                    stats.setUserId(rs.getInt("id"));
+                    stats.setDisplayName(rs.getString("displayname"));
+                    stats.setEmail(rs.getString("email"));
+                    stats.setPhone(rs.getString("phone"));
+                    stats.setTotalContracts(rs.getInt("total_contracts"));
+                    stats.setTotalProducts(rs.getInt("total_products"));
+                    list.add(stats);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int countCustomerStatistics(String keyword) {
+        String sql = "SELECT COUNT(*) FROM _user u WHERE u.role_id = 4 ";
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND (u.displayname LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ";
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            int index = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword.trim() + "%";
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
+                ps.setString(index++, searchPattern);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     // Lấy status của contract (active nếu có ít nhất 1 item còn hiệu lực)
@@ -868,21 +947,22 @@ public class ContractDAO extends DBContext {
         }
         return "expired";
     }
-    
+
     // Lấy Map contractId -> status cho nhiều contracts
     public java.util.Map<Integer, String> getContractStatusMap(List<Integer> contractIds) {
         java.util.Map<Integer, String> statusMap = new java.util.HashMap<>();
         if (contractIds == null || contractIds.isEmpty()) {
             return statusMap;
         }
-        
+
         // Build placeholders
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < contractIds.size(); i++) {
-            if (i > 0) placeholders.append(",");
+            if (i > 0)
+                placeholders.append(",");
             placeholders.append("?");
         }
-        
+
         String sql = "SELECT c.id, CASE "
                 + "WHEN (SELECT COUNT(*) FROM contract_item WHERE contract_id = c.id) = 0 THEN 'expired' "
                 + "WHEN (SELECT MAX(ci.endDate) FROM contract_item ci WHERE ci.contract_id = c.id) > NOW() THEN 'active' "
@@ -920,11 +1000,11 @@ public class ContractDAO extends DBContext {
                 + "LEFT JOIN sub_device sd ON ci.sub_devicel_id = sd.id "
                 + "LEFT JOIN device d ON sd.device_id = d.id "
                 + "WHERE c.user_id = ? AND c.isDelete = 0 ";
-        
+
         if (keyword != null && !keyword.trim().isEmpty()) {
             subquery += "AND (d.name LIKE ? OR sd.seri_id LIKE ?) ";
         }
-        
+
         // Filter by date range
         if (fromDate != null && !fromDate.trim().isEmpty()) {
             subquery += "AND DATE(c.created_at) >= ? ";
@@ -932,9 +1012,9 @@ public class ContractDAO extends DBContext {
         if (toDate != null && !toDate.trim().isEmpty()) {
             subquery += "AND DATE(c.created_at) <= ? ";
         }
-        
+
         subquery += "GROUP BY c.id ";
-        
+
         String havingClause = "";
         if (status != null && !status.trim().isEmpty()) {
             if (status.equals("active")) {
@@ -943,26 +1023,26 @@ public class ContractDAO extends DBContext {
                 havingClause = "HAVING MAX(ci.endDate) <= NOW() OR MAX(ci.endDate) IS NULL";
             }
         }
-        
+
         String sql = "SELECT COUNT(*) FROM (" + subquery + havingClause + ") AS filtered_contracts";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             int paramIndex = 1;
             ps.setInt(paramIndex++, userId);
-            
+
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
                 ps.setString(paramIndex++, searchPattern); // d.name
                 ps.setString(paramIndex++, searchPattern); // sd.seri_id
             }
-            
+
             if (fromDate != null && !fromDate.trim().isEmpty()) {
                 ps.setString(paramIndex++, fromDate);
             }
             if (toDate != null && !toDate.trim().isEmpty()) {
                 ps.setString(paramIndex++, toDate);
             }
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -973,6 +1053,7 @@ public class ContractDAO extends DBContext {
         }
         return 0;
     }
+
     public int getCountAllContract() {
         String query = "SELECT count(*) FROM swp391.contract";
 
@@ -1027,7 +1108,7 @@ public class ContractDAO extends DBContext {
         String sql = "SELECT COUNT(*) FROM contract c "
                 + "WHERE c.isDelete = 0 "
                 + "AND NOT EXISTS (SELECT 1 FROM contract_item ci WHERE ci.contract_id = c.id)";
-        
+
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -1052,37 +1133,37 @@ public class ContractDAO extends DBContext {
                 + "AND NOT EXISTS (SELECT 1 FROM contract_item ci WHERE ci.contract_id = c.id) "
                 + "ORDER BY c.created_at DESC "
                 + "LIMIT ?";
-        
+
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, limit);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 Contract c = new Contract();
                 c.setId(rs.getInt("id"));
                 c.setContent(rs.getString("content"));
                 c.setUrlContract(rs.getString("url_contract"));
                 c.setIsDelete(rs.getBoolean("isDelete"));
-                
+
                 // Set created_at
                 java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
                 if (timestamp != null) {
                     c.setCreatedAt(timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC));
                 }
-                
+
                 // Map Customer (user)
                 Users customer = new Users();
                 customer.setId(rs.getInt("user_id"));
                 customer.setDisplayname(rs.getString("customer_name"));
                 c.setUser(customer);
-                
+
                 // Map Creator (createBy)
                 Users saleStaff = new Users();
                 saleStaff.setId(rs.getInt("createBy"));
                 saleStaff.setDisplayname(rs.getString("saleStaff_name"));
                 c.setCreateBy(saleStaff);
-                
+
                 lst.add(c);
             }
         } catch (SQLException e) {
@@ -1095,25 +1176,25 @@ public class ContractDAO extends DBContext {
     // Lấy số hợp đồng theo từng tháng trong 12 tháng gần nhất
     public java.util.Map<String, Integer> getContractsByMonth() {
         java.util.Map<String, Integer> monthData = new java.util.LinkedHashMap<>();
-        
+
         // Khởi tạo tất cả các tháng với giá trị 0
-        String[] months = {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-                          "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"};
+        String[] months = { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
         for (String month : months) {
             monthData.put(month, 0);
         }
-        
+
         String sql = "SELECT MONTH(created_at) as month, COUNT(*) as count "
                 + "FROM contract "
                 + "WHERE isDelete = 0 "
                 + "AND YEAR(created_at) = YEAR(CURDATE()) "
                 + "GROUP BY MONTH(created_at) "
                 + "ORDER BY MONTH(created_at)";
-        
+
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 int month = rs.getInt("month");
                 int count = rs.getInt("count");
@@ -1123,7 +1204,7 @@ public class ContractDAO extends DBContext {
             System.err.println("Error getting contracts by month: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return monthData;
     }
 
