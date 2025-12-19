@@ -6,10 +6,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <jsp:include page="../adminLayout.jsp">
     <jsp:param name="pageTitle" value="User Management" />
 </jsp:include>
@@ -18,9 +14,9 @@
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-users-cog me-2"></i>User Management</h2>
+            <h2 class="text-primary fw-bold"><i class="fas fa-users-cog me-2"></i>Quản lí User</h2>
             <a href="AddUser" class="btn btn-primary shadow-sm fw-bold">
-                <i class="fas fa-plus me-2"></i>Add New User
+                <i class="fas fa-plus me-2"></i>Thêm người dùng mới
             </a>
         </div>
 
@@ -53,11 +49,11 @@
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="createdAt" ${sortBy == 'createdAt' ? 'checked' : ''}>
-                                <label class="form-check-label">Created At</label>
+                                <label class="form-check-label">Ngày tạo</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="fullname" ${sortBy == 'fullname' ? 'checked' : ''}>
-                                <label class="form-check-label">Full Name</label>
+                                <label class="form-check-label">Tên đầy đủ</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="email" ${sortBy == 'email' ? 'checked' : ''}>
@@ -69,11 +65,11 @@
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label>
+                                <label class="form-check-label">Tăng dần</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label>
+                                <label class="form-check-label">Giảm dần</label>
                             </div>
                         </div>
                     </div>
@@ -131,23 +127,21 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="py-3 ps-3">ID</th>
-                                <th class="py-3">Full Name</th>
-                                <th class="py-3 text-center">Created At</th>
-                                <th class="py-3">Email</th>
-                                <th class="py-3 text-center">Gender</th>
-                                <th class="py-3 text-center">Role</th>
-                                <th class="py-3 text-center">Status</th>
+                                <th class="py-3 ps-3 text-center">ID</th>
+                                <th class="py-3 text-center">Tên đầy đủ</th>
+                                <th class="py-3 text-center">Ngày tạo</th>
+                                <th class="py-3 text-center">Email</th>
+                                <th class="py-3 text-center">Giới tính</th>
+                                <th class="py-3 text-center">Vai trò</th>
+                                <th class="py-3 text-center">Trạng thái</th>
                                 <th class="py-3 text-center" style="width: 250px;">Action</th> </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${userList}" var="u">
                                 <tr>
-                                    <td class="ps-3 fw-bold text-secondary">${u.id}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="fw-bold text-dark">${u.displayname}</span>
-                                        </div>
+                                    <td class="ps-3 fw-bold text-secondary text-center">${u.id}</td>
+                                    <td class="text-center">
+                                        ${u.displayname}
                                     </td>
                                     <td class="text-center">
                                         <fmt:formatDate value="${u.createdAtDate}" pattern="dd-MMM-yyyy"/>
@@ -244,8 +238,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 <jsp:include page="../adminFooter.jsp" />

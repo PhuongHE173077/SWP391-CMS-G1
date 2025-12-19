@@ -33,7 +33,7 @@ public class ContractDAO extends DBContext {
         }
         // SORT
         // default khi hiện list là order by contract id
-        String listSort = " ORDER BY c.id ASC";
+        String listSort = " ORDER BY c.id DESC";
 
         if (sortBy != null && !sortBy.isEmpty()) {
             String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
@@ -191,7 +191,7 @@ public class ContractDAO extends DBContext {
     }
 
     public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate,
-            int pageIndex, int pageSize, String sortBy, String sortOrder) { // <--- Thêm tham số sortBy, sortOrder
+            int pageIndex, int pageSize, String sortBy, String sortOrder) {  
 
         List<ContractItem> list = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
@@ -213,8 +213,8 @@ public class ContractDAO extends DBContext {
         }
 
         // --- PHẦN XỬ LÝ SORT MỚI ---
-        String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("DESC")) ? "DESC" : "ASC";
-        String listSort = " ORDER BY ci.id ASC"; // Mặc định
+        String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
+        String listSort = " ORDER BY d.id DESC"; // Mặc định
 
         if (sortBy != null && !sortBy.isEmpty()) {
             switch (sortBy) {
@@ -228,7 +228,7 @@ public class ContractDAO extends DBContext {
                     listSort = " ORDER BY sd.seri_id " + orderBy;
                     break;
                 default:
-                    listSort = " ORDER BY ci.id " + orderBy;
+                    listSort = " ORDER BY d.id " + orderBy;
                     break;
             }
         }

@@ -46,7 +46,7 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
         String sortOrder = request.getParameter("sortOrder");
         String pageRaw = request.getParameter("page");
         // 3. Xử lý mặc định
-        if (sortBy == null) sortBy = "created_at";
+        if (sortBy == null) sortBy = "id";
         if (sortOrder == null) sortOrder = "DESC";
         
         int pageIndex = 1;
@@ -54,6 +54,9 @@ public class CustomerViewMaintenanceServlet extends HttpServlet {
             if (pageRaw != null) pageIndex = Integer.parseInt(pageRaw);
         } catch (NumberFormatException e) { pageIndex = 1; }
         
+        if (search != null) {
+            search = search.trim();
+        }
         int pageSize = 5;
         // 4. Gọi DAO
         MaintenanceRequestDAO mrDao = new MaintenanceRequestDAO();

@@ -35,7 +35,7 @@ public class ViewContractListServlet extends HttpServlet {
         Users user = (Users) session.getAttribute("user");
 
         if (user == null) {
-            response.sendRedirect("login.jsp"); // Chưa đăng nhập thì đá về login
+            response.sendRedirect("login.jsp");  
             return;
         }
 
@@ -77,7 +77,7 @@ public class ViewContractListServlet extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null || sortOrder.isEmpty()) {
-            sortOrder = "ASC";
+            sortOrder = "DESC";
         }
         if (search != null) {
             search = search.trim();

@@ -168,7 +168,7 @@ public class UserDAO extends DBContext {
             sql += " AND u.gender = ? ";
         }
         // default khi hiện list là order by user Id
-        String listSort = " ORDER BY u.id ASC";
+        String listSort = " ORDER BY u.id DESC";
 
         if (sortBy != null && !sortBy.isEmpty()) {
             String orderBy = (sortOrder != null && sortOrder.equalsIgnoreCase("ASC")) ? "ASC" : "DESC";
@@ -187,7 +187,7 @@ public class UserDAO extends DBContext {
                     listSort = " ORDER BY u.created_at " + orderBy;
                     break;
                 default:
-                    listSort = " ORDER BY u.id ASC";
+                    listSort = " ORDER BY u.id DESC";
                     break;
             }
         }

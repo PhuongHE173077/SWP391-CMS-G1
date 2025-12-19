@@ -60,7 +60,7 @@ public class ViewUserList extends HttpServlet {
             sortBy = "id";
         }
         if (sortOrder == null) {
-            sortOrder = "ASC";
+            sortOrder = "DESC";
         }
         if (indexPage == null) {
             indexPage = "1";
