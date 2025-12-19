@@ -127,7 +127,9 @@
                                         <span class="badge bg-success rounded-pill px-3">${s.totalProducts}</span>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn-success ">Xem chi tiết</button>                                       
+                                        <a href="customer-detail?id=${s.userId}" class="btn btn-success btn-sm fw-bold">
+                                            <i class="fas fa-eye me-1"></i>Xem chi tiết
+                                        </a>                                       
                                     </td>
                                 </tr>
                             </c:forEach>
