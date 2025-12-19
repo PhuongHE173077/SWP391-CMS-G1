@@ -193,7 +193,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4"> 
                 <div class="stat-card">
                     <div class="stat-number">
                         <c:set var="activeContracts" value="0" />
@@ -355,3 +355,4 @@
 </body>
 
 <jsp:include page="../managerFooter.jsp" />
+

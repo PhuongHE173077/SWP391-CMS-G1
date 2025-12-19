@@ -1148,6 +1148,43 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
+    // Lấy số lượng sản phẩm đã bán theo từng tháng (đếm contract_item theo tháng tạo hợp đồng)
+    public java.util.Map<String, Integer> getSoldProductsByMonth() {
+        java.util.Map<String, Integer> monthData = new java.util.LinkedHashMap<>();
+        
+        // Khởi tạo tất cả các tháng với giá trị 0
+        String[] months = {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                          "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"};
+        for (String month : months) {
+            monthData.put(month, 0);
+        }
+        
+        // Đếm contract_item theo tháng tạo hợp đồng để đồng bộ với biểu đồ hợp đồng
+        String sql = "SELECT MONTH(c.created_at) as month, COUNT(ci.id) as count "
+                + "FROM contract c "
+                + "INNER JOIN contract_item ci ON c.id = ci.contract_id "
+                + "WHERE c.isDelete = 0 "
+                + "AND YEAR(c.created_at) = YEAR(CURDATE()) "
+                + "GROUP BY MONTH(c.created_at) "
+                + "ORDER BY MONTH(c.created_at)";
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                int month = rs.getInt("month");
+                int count = rs.getInt("count");
+                monthData.put("Tháng " + month, count);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting sold products by month: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return monthData;
+    }
+
     // Lấy danh sách hợp đồng pending (chưa có contract_item nào)
     public List<Contract> getPendingContracts(int limit) {
         List<Contract> lst = new ArrayList<>();
