@@ -58,16 +58,15 @@
                             <fmt:formatDate value="${user.createdAtDate}" pattern="dd-MMM-yyyy"/>
                         </div>
                     </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-12">
+                     <div class="col-md-6 mt-3 mt-md-0">
                         <label class="fw-bold text-secondary small text-uppercase mb-1">Địa chỉ</label>
                         <div class="p-2 border rounded bg-white text-dark">
                             ${user.address != null ? user.address : '-'}
                         </div>
                     </div>
                 </div>
+ 
+               
 
                 <div class="row mb-4">
                     <div class="col-md-4">
