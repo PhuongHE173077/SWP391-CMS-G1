@@ -75,8 +75,8 @@
                                 <label class="form-check-label">Khách hàng</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
-                                <label class="form-check-label">Trạng thái</label>
+                                <input class="form-check-input" type="radio" name="sortBy" value="seri" ${sortBy == 'seri' ? 'checked' : ''}>
+                                <label class="form-check-label">Số Seri của thiết bị</label>
                             </div>
                         </div>
 

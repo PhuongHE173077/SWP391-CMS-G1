@@ -322,8 +322,8 @@ public class MaintenanceRequestDAO extends DBContext {
             orderByCol = "mr.id";
         } else if ("customer".equalsIgnoreCase(sortBy)) {
             orderByCol = "u.displayname";
-        } else if ("status".equalsIgnoreCase(sortBy)) {
-            orderByCol = "mr.status";
+        } else if ("seri".equalsIgnoreCase(sortBy)) {
+            orderByCol = "sd.seri_id";
         } else if ("content".equalsIgnoreCase(sortBy)) {
             orderByCol = "mr.content";
         }

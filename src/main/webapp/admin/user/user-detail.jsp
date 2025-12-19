@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-4">
+               <div class="row mb-4">
                     
                     <div class="col-md-6 mt-3 mt-md-0">
                         <label class="fw-bold text-secondary small text-uppercase mb-1">Ngày tạo</label>

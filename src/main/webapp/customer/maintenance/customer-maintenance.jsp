@@ -82,7 +82,7 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="id"
                                        ${sortBy=='id' ? 'checked' : '' }>
-                                <label class="form-check-label">ID</label>
+                                <label class="form-check-label">ID của yêu cầu</label>
                             </div>
 
                             <div class="form-check form-check-inline">
@@ -99,8 +99,8 @@
 
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy"
-                                       value="status" ${sortBy=='status' ? 'checked' : '' }>
-                                <label class="form-check-label">Trạng thái</label>
+                                       value="seri" ${sortBy=='seri' ? 'checked' : '' }>
+                                <label class="form-check-label">Số Seri của thiết bị</label>
                             </div>
                         </div>
 
