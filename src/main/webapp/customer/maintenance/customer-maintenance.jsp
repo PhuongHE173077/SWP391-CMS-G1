@@ -82,7 +82,7 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="id"
                                        ${sortBy=='id' ? 'checked' : '' }>
-                                <label class="form-check-label">ID</label>
+                                <label class="form-check-label">ID của yêu cầu</label>
                             </div>
 
                             <div class="form-check form-check-inline">
