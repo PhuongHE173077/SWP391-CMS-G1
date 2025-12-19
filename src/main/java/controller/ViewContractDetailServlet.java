@@ -66,11 +66,12 @@ public class ViewContractDetailServlet extends HttpServlet {
 
             // Mặc định
             if (sortBy == null) {
-                sortBy = "id"; // Mặc định sort item id (hoặc deviceId tùy bạn)
+                sortBy = "deviceId";  
             }
             if (sortOrder == null) {
-                sortOrder = "ASC";
+                sortOrder = "DESC";
             }
+            
             // ---------------------
 
             String pageRaw = request.getParameter("page");

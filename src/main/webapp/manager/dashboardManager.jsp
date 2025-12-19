@@ -632,38 +632,92 @@
                         </div>
                         <div class="widget-icon"><i class="fas fa-users"></i></div>
                     </div>
+
+                    <div class="widget" style="background-color: #17a2b8;">
+                        <div class="widget-content">
+                            <span class="widget-number">${totalInventory}</span>
+                            <span class="widget-title">Số lượng tồn kho</span>
+                        </div>
+                        <div class="widget-icon"><i class="fas fa-warehouse"></i></div>
+                    </div>
                 </div>
 
-                <div class="section-container">
-                    <h3>Top 3 Khách hàng mua nhiều nhất (Doanh số)</h3>
-                    <table class="data-table">
-                        <thead class="text-center-col">
-                            <tr>
-                                <th>#</th>
-                                <th >Tên Khách hàng</th>
-                                <th >Email</th>
-                                <th >Địa chỉ</th>
-                                <th>Tổng số đơn đã mua</th>
-                            </tr>
-                        </thead>
-                        <tbody > 
-                            <c:forEach var="top" items="${topContractUser}" varStatus="loop">
-                                <tr class="text-center-col">
-                                    <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
-                                    <td >${top.displayName}</td>
-                                    <td >${top.email}</td>
-                                    <td>${top.address}</td>
-                                    <td >${top.totalContracts}</td>
-                                </tr>
-                            </c:forEach>                           
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <!-- Top 3 Khách hàng -->
+                    <div class="col-md-6">
+                        <div class="section-container">
+                            <h3><i class="fas fa-users me-2" style="color: #28a745;"></i>Top 3 Khách hàng mua nhiều nhất</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên Khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Số thiết bị đã mua</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <c:forEach var="top" items="${topContractUser}" varStatus="loop">
+                                        <tr>
+                                            <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
+                                            <td>${top.displayName}</td>
+                                            <td>${top.email}</td>
+                                            <td>${top.address}</td>
+                                            <td>${top.totalContracts}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty topContractUser}">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">Chưa có dữ liệu</td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Top 3 Thiết bị bán chạy -->
+                    <div class="col-md-6">
+                        <div class="section-container">
+                            <h3><i class="fas fa-boxes me-2" style="color: #007bff;"></i>Top 3 Thiết bị bán chạy nhất</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên thiết bị</th>
+                                        <th>Số lượng đã bán</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <c:forEach var="device" items="${topSellingDevices}" varStatus="loop">
+                                        <tr>
+                                            <td class="top-rank rank-${loop.count}"><i class="fas fa-trophy"></i> ${loop.count}</td>
+                                            <td>${device.deviceName}</td>
+                                            <td>${device.totalSold}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty topSellingDevices}">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Biểu đồ hợp đồng theo tháng -->
                 <div class="section-container">
                     <h3><i class="fas fa-chart-bar me-2" style="color: #007bff;"></i>Biểu đồ hợp đồng theo tháng</h3>
                     <canvas id="contractsChart" style="max-height: 400px;"></canvas>
+                </div>
+
+                <!-- Biểu đồ sản phẩm đã bán theo tháng -->
+                <div class="section-container">
+                    <h3><i class="fas fa-chart-line me-2" style="color: #28a745;"></i>Biểu đồ sản phẩm đã bán theo tháng</h3>
+                    <canvas id="soldProductsChart" style="max-height: 400px;"></canvas>
                 </div>
 
             </main>
@@ -723,6 +777,74 @@
                         title: {
                             display: true,
                             text: 'Số lượng hợp đồng'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tháng'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Dữ liệu sản phẩm đã bán theo tháng
+        const soldMonthLabels = [];
+        const soldMonthData = [];
+        
+        <c:forEach var="entry" items="${soldProductsByMonth}">
+        soldMonthLabels.push("${entry.key}");
+        soldMonthData.push(${entry.value});
+        </c:forEach>
+
+        // Tạo biểu đồ đường cho sản phẩm đã bán
+        const ctx2 = document.getElementById('soldProductsChart').getContext('2d');
+        const soldProductsChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: soldMonthLabels,
+                datasets: [{
+                    label: 'Số sản phẩm đã bán',
+                    data: soldMonthData,
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: 'rgba(40, 167, 69, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Số sản phẩm: ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        },
+                        title: {
+                            display: true,
+                            text: 'Số lượng sản phẩm'
                         }
                     },
                     x: {

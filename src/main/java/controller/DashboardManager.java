@@ -9,6 +9,7 @@ import dal.DeviceDAO;
 import dal.ContractDAO;
 import dal.UserDAO;
 import dal.MaintenanceRequestDAO;
+import dal.SubDeviceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.TopContractUser;
+import model.TopDevice;
 import model.Contract;
 
 /**
@@ -81,9 +83,18 @@ public class DashboardManager extends HttpServlet {
         int totalCustomer = user.getCountAllCustomer();
         request.setAttribute("totalCustomer", totalCustomer);
         
-        List<TopContractUser> topContractUser = new ArrayList<>();
-        topContractUser = con.getTopContractUsers();
+        // Đếm số lượng tồn kho (subdevice)
+        SubDeviceDAO subDeviceDAO = new SubDeviceDAO();
+        int totalInventory = subDeviceDAO.countAllSubDevices();
+        request.setAttribute("totalInventory", totalInventory);
+        
+        // Lấy Top 3 khách hàng mua nhiều nhất (theo số lượng contract_item)
+        List<TopContractUser> topContractUser = con.getTopContractUsers();
         request.setAttribute("topContractUser", topContractUser);
+        
+        // Lấy Top 3 thiết bị bán chạy nhất (theo số lượng seri đã được làm hợp đồng)
+        List<TopDevice> topSellingDevices = con.getTopSellingDevices();
+        request.setAttribute("topSellingDevices", topSellingDevices);
         
         // Lấy danh sách hợp đồng pending (chưa có contract_item)
         List<Contract> pendingContracts = con.getPendingContracts(10); // Lấy tối đa 10 hợp đồng pending
@@ -92,6 +103,10 @@ public class DashboardManager extends HttpServlet {
         // Lấy dữ liệu hợp đồng theo từng tháng
         Map<String, Integer> contractsByMonth = con.getContractsByMonth();
         request.setAttribute("contractsByMonth", contractsByMonth);
+        
+        // Lấy dữ liệu sản phẩm đã bán theo từng tháng
+        Map<String, Integer> soldProductsByMonth = con.getSoldProductsByMonth();
+        request.setAttribute("soldProductsByMonth", soldProductsByMonth);
         
         request.getRequestDispatcher("manager/dashboardManager.jsp").forward(request, response);
     } 

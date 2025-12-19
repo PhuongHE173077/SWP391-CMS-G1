@@ -335,6 +335,21 @@ public class SubDeviceDAO extends DBContext {
         return 0;
     }
     
+    // Đếm tổng số lượng tồn kho (tất cả subdevice chưa bị xóa)
+    public int countAllSubDevices() {
+        String query = "SELECT COUNT(*) FROM sub_device WHERE isDelete = 0";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
     // Xóa SubDevice
     public boolean deleteSubDevice(int subDeviceId) {
         String query = "DELETE FROM sub_device WHERE id = ?";
