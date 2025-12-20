@@ -127,7 +127,7 @@
                 <i class="fas fa-home"></i>
                 <span>Trang chủ</span>
             </a>
-            <h2>Đổi mặt khẩu</h2>
+            <h2>Đổi mật khẩu</h2>
 
             <c:if test="${not empty error}">
                 <div class="message error">${error}</div>
