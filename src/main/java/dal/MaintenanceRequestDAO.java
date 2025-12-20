@@ -317,13 +317,13 @@ public class MaintenanceRequestDAO extends DBContext {
         }
 
         // --- SORT ---
-        String orderByCol = "mr.created_at"; // Mặc định
+        String orderByCol = "mr.id"; // Mặc định
         if ("id".equalsIgnoreCase(sortBy)) {
             orderByCol = "mr.id";
         } else if ("customer".equalsIgnoreCase(sortBy)) {
             orderByCol = "u.displayname";
-        } else if ("status".equalsIgnoreCase(sortBy)) {
-            orderByCol = "mr.status";
+        } else if ("seri".equalsIgnoreCase(sortBy)) {
+            orderByCol = "sd.seri_id";
         } else if ("content".equalsIgnoreCase(sortBy)) {
             orderByCol = "mr.content";
         }
@@ -349,10 +349,10 @@ public class MaintenanceRequestDAO extends DBContext {
                 ps.setInt(index++, customerId);
             }
             if (fromDate != null && !fromDate.isEmpty()) {
-                ps.setString(index++, fromDate + " 00:00:00");
+                ps.setString(index++, fromDate);
             }
             if (toDate != null && !toDate.isEmpty()) {
-                ps.setString(index++, toDate + " 23:59:59");
+                ps.setString(index++, toDate);
             }
 
             int offset = (pageIndex - 1) * pageSize;

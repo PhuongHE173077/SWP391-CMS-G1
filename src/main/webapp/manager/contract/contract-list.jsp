@@ -40,11 +40,11 @@
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>My Contract Management</h2>
+            <h2 class="text-primary fw-bold"><i class="fas fa-file-contract me-2"></i>Quản lí Contract</h2>
             <c:choose>
                 <c:when test="${canAddContract}">
                     <a href="AddContract" class="btn btn-primary shadow-sm fw-bold">
-                        <i class="fas fa-plus me-2"></i>Create New Contract
+                        <i class="fas fa-plus me-2"></i>Thêm mới hợp đồng
                     </a>
                 </c:when>
                 <c:otherwise>
@@ -87,12 +87,12 @@
 
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="createdAt" ${sortBy == 'createdAt' ? 'checked' : ''}>
-                                <label class="form-check-label">Created At</label>
+                                <label class="form-check-label">Ngày tạo</label>
                             </div>
 
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
-                                <label class="form-check-label">Customer Name</label> 
+                                <label class="form-check-label">Khách hàng</label> 
                             </div>                            
                         </div>
 
@@ -100,12 +100,12 @@
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label> 
+                                <label class="form-check-label">Tăng dần</label> 
                             </div>
 
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label> 
+                                <label class="form-check-label">Giảm dần</label> 
                             </div>
                         </div>
                     </div>
@@ -142,11 +142,11 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="py-3 ps-3 text-center">ID</th>
-                                <th class="py-3 text-center">Customer Name</th>
-                                <th class="py-3 text-center">Created At</th>
+                                <th class="py-3 text-center">Khách hàng</th>
+                                <th class="py-3 text-center">Ngày tạo</th>
                                 <th class="py-3 text-center">URL Contract</th>
-                                <th class="py-3 text-center">Create By</th>
-                                <th class="py-3 text-center">Status</th>
+                                <th class="py-3 text-center">Người tạo</th>
+                                <th class="py-3 text-center">Trạng thái</th>
                                 <!--chỉ lấy những contract có status là active-->
                                 <th class="py-3 text-center" style="width: 250px;">Action</th>
                             </tr>
@@ -164,7 +164,7 @@
                                         <c:if test="${not empty c.urlContract}">
                                             <a href="${c.urlContract}" target="_blank" class="text-info"><i class="fas fa-file-pdf fa-lg"></i></a>
                                             </c:if>
-                                            <c:if test="${empty c.urlContract}">No file attached</c:if>
+                                            <c:if test="${empty c.urlContract}">Không có file đính kèm</c:if>
                                         </td>
 
                                         <td class="text-center">

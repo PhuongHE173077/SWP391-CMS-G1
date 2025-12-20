@@ -33,7 +33,7 @@
         <c:if test="${canViewContractDetail}">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white border-bottom py-3">
-                <h5 class="fw-bold text-dark m-0"><i class="fas fa-file-contract me-2"></i>The Contract Detail</h5>
+                <h5 class="fw-bold text-dark m-0"><i class="fas fa-file-contract me-2"></i>Chi tiết hợp đồng</h5>
             </div>
             <div class="card-body">
                 <div class="row mb-3">
@@ -43,13 +43,13 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Content</label>
+                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Nội dung hợp đồng</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" value="${c.content}" readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Customer Name</label>
+                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Khách hàng</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" value="${c.user.displayname}" readonly>
                     </div>
@@ -68,13 +68,13 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Created By</label>
+                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Người tạo</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" value="${c.createBy.displayname}" readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Status</label>
+                    <label class="col-sm-2 col-form-label fw-bold text-secondary">Trạng thái</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control fw-bold ${c.isDelete ? 'text-danger' : 'text-success'}"
                                value="${c.isDelete ? 'Inactive' : 'Active'}" readonly>
@@ -96,15 +96,15 @@
                             <span class="fw-bold text-dark">Sort by:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="deviceId" ${sortBy == 'deviceId' ? 'checked' : ''}>
-                                <label class="form-check-label">Device ID</label>
+                                <label class="form-check-label">ID của thiết bị</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="deviceName" ${sortBy == 'deviceName' ? 'checked' : ''}>
-                                <label class="form-check-label">Device Name</label>
+                                <label class="form-check-label">Tên thiết bị</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="serial" ${sortBy == 'serial' ? 'checked' : ''}>
-                                <label class="form-check-label">Serial Number</label>
+                                <label class="form-check-label">Số Seri</label>
                             </div>
                         </div>
 
@@ -112,11 +112,11 @@
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label>
+                                <label class="form-check-label">Tăng dần</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label>
+                                <label class="form-check-label">Giảm dần</label>
                             </div>
                         </div>
                     </div>
@@ -125,13 +125,13 @@
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input type="date" class="form-control" id="startDate" name="startDate" value="${startDate}">
-                                <label for="startDate">Start Date</label>
+                                <label for="startDate">Ngày bắt đầu tính bảo hành</label>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input type="date" class="form-control" id="endDate" name="endDate" value="${endDate}">
-                                <label for="endDate">End Date</label>
+                                <label for="endDate">Ngày kết thúc bảo hành</label>
                             </div>
                         </div>
                         <div class="col-md-5">
@@ -142,7 +142,7 @@
                         </div>
                         <div class="col-md-3 d-flex gap-2 align-items-center">
                             <button type="submit" class="btn btn-primary w-100 fw-bold" style="height: 58px;">Search</button>
-                            <a href="contract-detail?id=${c.id}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" style="height: 58px;">Reset</a>
+                            <a href="contract-detail?id=${c.id}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" style="height: 58px;">Reset Filter</a>
                         </div>
                     </div>
                 </form>
@@ -158,20 +158,20 @@
                     <table class="table table-bordered table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="py-3 ps-3 text-center">Id</th>
-                                <th class="py-3 ps-3 text-center">Name of Electric Generator</th>
-                                <th class="py-3 ps-3 text-center">Serial Number</th>
-                                <th class="py-3 ps-3 text-center">Start Date</th>
-                                <th class="py-3 ps-3 text-center">End Date</th>
+                                <th class="py-3 ps-3 text-center">ID của thiết bị</th>
+                                <th class="py-3 ps-3 text-center">Tên thiết bị</th>
+                                <th class="py-3 ps-3 text-center">Số Seri</th>
+                                <th class="py-3 ps-3 text-center">Ngày bắt đầu tính bảo hành</th>
+                                <th class="py-3 ps-3 text-center">Ngày kết thúc bảo hành</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${itemList}" var="item">
                                 <tr>
-                                    <td class="text-center fw-bold">${item.subDevice.device.id}</td>
+                                    <td class="text-center">${item.subDevice.device.id}</td>
                                     <td class="text-center fw-bold">${item.subDevice.device.name}</td>
                                     <td class="text-center">
-                                        <span class="badge bg-light text-dark border font-monospace">${item.subDevice.seriId}</span>
+                                        <span class="badge bg-light text-dark border font-monospace"> ${item.subDevice.seriId}</span>
                                     </td>
                                     <td class="text-center">
                                         <fmt:formatDate value="${item.startAt}" pattern="dd-MM-yyyy" />
@@ -226,13 +226,13 @@
             <c:choose>
                 <c:when test="${canViewContractList}">
                     <a href="contract-list" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded hover-bg-gray bg-white">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Contract List
+                        <i class="fas fa-arrow-left me-1"></i> Trở về Contract List
                     </a>
                 </c:when>
                 <c:otherwise>
                     <button type="button" class="text-decoration-none fw-bold text-secondary py-2 px-3 border rounded bg-white" disabled
                         title="Bạn không có quyền xem danh sách hợp đồng">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Contract List
+                        <i class="fas fa-arrow-left me-1"></i> Trở về Contract List
                     </button>
                 </c:otherwise>
             </c:choose>
@@ -240,7 +240,7 @@
             <!-- Nút Update -->
             <c:choose>
                 <c:when test="${canUpdateContract}">
-                    <a href="update-contract?id=${c.id}" class="btn btn-primary fw-bold px-4 py-2 shadow-sm">
+                    <a href="update-contract?id=${c.id}" class="btn btn-warning fw-bold text-dark">
                         <i class="fas fa-edit me-2"></i>Cập nhật hợp đồng
                     </a>
                 </c:when>

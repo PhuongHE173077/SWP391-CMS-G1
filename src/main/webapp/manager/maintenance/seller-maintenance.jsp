@@ -38,7 +38,7 @@
     <div class="container-fluid px-4 mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary fw-bold"><i class="fas fa-tools me-2"></i>Maintenance Request Management</h2>
+            <h2 class="text-primary fw-bold"><i class="fas fa-tools me-2"></i>Quản lí Maintenance Request</h2>
         </div>
 
         <c:if test="${not empty msg}">
@@ -64,19 +64,19 @@
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="created_at" ${sortBy == 'created_at' ? 'checked' : ''}>
-                                <label class="form-check-label">Created At</label>
+                                <label class="form-check-label">Ngày tạo yêu cầu</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="content" ${sortBy == 'content' ? 'checked' : ''}>
-                                <label class="form-check-label">Content</label>
+                                <label class="form-check-label">Nội dung</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortBy" value="customer" ${sortBy == 'customer' ? 'checked' : ''}>
-                                <label class="form-check-label">Customer</label>
+                                <label class="form-check-label">Khách hàng</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sortBy" value="status" ${sortBy == 'status' ? 'checked' : ''}>
-                                <label class="form-check-label">Status</label>
+                                <input class="form-check-input" type="radio" name="sortBy" value="seri" ${sortBy == 'seri' ? 'checked' : ''}>
+                                <label class="form-check-label">Số Seri của thiết bị</label>
                             </div>
                         </div>
 
@@ -84,11 +84,11 @@
                             <span class="fw-bold text-dark">Order:</span>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="ASC" ${sortOrder == 'ASC' ? 'checked' : ''}>
-                                <label class="form-check-label">Ascending</label>
+                                <label class="form-check-label">Tăng dần</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sortOrder" value="DESC" ${sortOrder == 'DESC' ? 'checked' : ''}>
-                                <label class="form-check-label">Descending</label>
+                                <label class="form-check-label">Giảm dần</label>
                             </div>
                         </div>
                     </div>
@@ -163,13 +163,12 @@
                     <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-light text-secondary">
                             <tr>
-                                <th class="py-3 ps-3 text-center">Request ID</th>
-                                <th class="py-3 text-center">Customer Name</th>
-                                <th class="py-3 text-center">Device Name</th>
-                                <th class="py-3 text-center">Device Serial Number</th>
-                                
-                                <th class="py-3 text-center">Date Request</th>
-                                <th class="py-3 text-center">Status</th>
+                                <th class="py-3 ps-3 text-center" style="width: 140px">ID của yêu cầu</th>
+                                <th class="py-3 text-center">Khách hàng</th>
+                                <th class="py-3 text-center">Tên thiết bị</th>
+                                <th class="py-3 text-center">Số Seri của thiết bị</th>
+                                <th class="py-3 text-center">Ngày tạo yêu cầu</th>
+                                <th class="py-3 text-center">Trạng thái</th>
                                 <th class="py-3 text-center" style="width: 200px;">Action</th>
                             </tr>
                         </thead>

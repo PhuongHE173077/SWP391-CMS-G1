@@ -57,7 +57,7 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
         }
 
         if (sortBy == null) {
-            sortBy = "created_at"; // Mặc định sort theo ngày
+            sortBy = "id"; // Mặc định sort theo ngày
         }
         if (sortOrder == null) {
             sortOrder = "DESC"; // Mới nhất lên đầu
@@ -69,6 +69,9 @@ public class SellerViewMaintenanceRequestServlet extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             pageIndex = 1;
+        }
+        if (search != null) {
+            search = search.trim();
         }
 
         int pageSize = 5; // Số lượng record trên 1 trang
