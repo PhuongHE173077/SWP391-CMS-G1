@@ -8,6 +8,23 @@
     <jsp:param name="pageTitle" value="Customer Statistics" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình khách hàng -->
+<c:set var="canViewCustomer" value="false" />
+<c:set var="canViewCustomerDetail" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/ViewCustomer'}">
+                <c:set var="canViewCustomer" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/customer-detail'}">
+                <c:set var="canViewCustomerDetail" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <style>
     .card,
     .btn,
@@ -95,6 +112,7 @@
             </div>
         </div>
 
+        <c:if test="${canViewCustomer}">
         <div class="card shadow-sm mb-3">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h5 class="m-0 font-weight-bold text-secondary"><i class="fas fa-chart-bar me-2"></i>Thống kê Khách hàng</h5>
@@ -127,9 +145,20 @@
                                         <span class="badge bg-success rounded-pill px-3">${s.totalProducts}</span>
                                     </td>
                                     <td class="text-center">
-                                        <a href="customer-detail?id=${s.userId}" class="btn btn-success btn-sm fw-bold">
-                                            <i class="fas fa-eye me-1"></i>Xem chi tiết
-                                        </a>                                       
+                                        <!-- Nút Xem chi tiết -->
+                                        <c:choose>
+                                            <c:when test="${canViewCustomerDetail}">
+                                                <a href="customer-detail?id=${s.userId}" class="btn btn-success btn-sm fw-bold">
+                                                    <i class="fas fa-eye me-1"></i>Xem chi tiết
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <button type="button" class="btn btn-secondary btn-sm fw-bold" disabled
+                                                    title="Bạn không có quyền xem chi tiết khách hàng">
+                                                    <i class="fas fa-eye me-1"></i>Xem chi tiết
+                                                </button>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -160,6 +189,15 @@
                 </c:if>
             </div>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewCustomer}">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem danh sách khách hàng</h4>
+                </div>
+            </div>
+        </c:if>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

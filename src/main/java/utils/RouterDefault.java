@@ -59,7 +59,7 @@ public class RouterDefault {
         
         addRouterGroup("Quản lý Khách hàng", Arrays.asList(
                 new Routers("Xem khách hàng", "/ViewCustomer"),
-                new Routers("Xem hợp đồng khách hàng", "/Restore_DeleteDevices")
+                new Routers("Xem hợp đồng khách hàng", "/customer-detail")
                ));
 
         addRouterGroup("Quản lý Hợp đồng", Arrays.asList(

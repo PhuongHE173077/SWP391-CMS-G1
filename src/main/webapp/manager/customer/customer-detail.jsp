@@ -9,6 +9,23 @@
     <jsp:param name="pageTitle" value="Customer Detail" />
 </jsp:include>
 
+<!-- Tính toán quyền cho màn hình chi tiết khách hàng -->
+<c:set var="canViewCustomerDetail" value="false" />
+<c:set var="canViewCustomer" value="false" />
+
+<c:if test="${not empty sessionScope.role && not empty sessionScope.rolePermissions}">
+    <c:forEach var="rp" items="${sessionScope.rolePermissions}">
+        <c:if test="${rp.roles.id == sessionScope.role.id}">
+            <c:if test="${rp.router == '/customer-detail'}">
+                <c:set var="canViewCustomerDetail" value="true" />
+            </c:if>
+            <c:if test="${rp.router == '/ViewCustomer'}">
+                <c:set var="canViewCustomer" value="true" />
+            </c:if>
+        </c:if>
+    </c:forEach>
+</c:if>
+
 <style>
     body {
         background-color: #f8f9fa;
@@ -78,12 +95,24 @@
 
 <body class="bg-light">
     <div class="container-fluid px-4 mt-4">
+        <c:if test="${canViewCustomerDetail}">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center gap-3">
-                <a href="ViewCustomer" class="btn btn-outline-secondary fw-bold">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại
-                </a>
+                <!-- Nút Quay lại -->
+                <c:choose>
+                    <c:when test="${canViewCustomer}">
+                        <a href="ViewCustomer" class="btn btn-outline-secondary fw-bold">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <button type="button" class="btn btn-outline-secondary fw-bold" disabled
+                            title="Bạn không có quyền xem danh sách khách hàng">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        </button>
+                    </c:otherwise>
+                </c:choose>
                 <div>
                     <h2 class="text-primary fw-bold mb-1">
                         <i class="fas fa-user me-2"></i>Chi Tiết Khách Hàng
@@ -349,6 +378,15 @@
                 </div>
             </div>
         </div>
+        </c:if>
+        
+        <c:if test="${!canViewCustomerDetail}">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4 class="text-muted">Bạn không có quyền xem chi tiết khách hàng</h4>
+                </div>
+            </div>
+        </c:if>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
