@@ -8,7 +8,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="../managerLayout.jsp">
-    <jsp:param name="pageTitle" value="Deleted Contract Management" />
+    <jsp:param name="pageTitle" value="Manage Sub Device" />
 </jsp:include>
 
 <!-- Tính toán quyền cho màn hình Sub Device -->

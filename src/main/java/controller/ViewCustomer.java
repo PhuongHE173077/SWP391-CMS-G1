@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  *
@@ -74,7 +75,7 @@ public class ViewCustomer extends HttpServlet {
             }
         }
 
-        java.util.List<model.CustomerStatistic> list = contractDAO.getCustomerStatistics(keyword, pageIndex, pageSize);
+        List<model.CustomerStatistic> list = contractDAO.getCustomerStatistics(keyword, pageIndex, pageSize);
         int totalRecords = contractDAO.countCustomerStatistics(keyword);
         int totalPage = (int) Math.ceil((double) totalRecords / pageSize);
 

@@ -43,7 +43,7 @@ public class RouterDefault {
         // Manage device
         addRouterGroup("Quản lý thiết bị", Arrays.asList(
                 new Routers("Xem thiết bị", "/ViewListDevice"),
-                new Routers("Thêm danh mục", "/AddDevice"),
+                new Routers("Thêm thiết bị", "/AddDevice"),
                 new Routers("Xem chi tiết thiết bị", "/ViewDetailDevice"),
                 new Routers("Update thiết bị", "/EditDevice"),
                 new Routers("Xóa thiết bị", "/DeleteDevice"),

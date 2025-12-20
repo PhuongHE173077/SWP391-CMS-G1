@@ -69,7 +69,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Quản lý Permission theo Role</h2>
                     <a href="UpdateRolePermission" class="btn btn-secondary">
-                        Update sách Role
+                        Update Role Permission
                     </a>
                 </div>
 

@@ -191,7 +191,7 @@ public class ContractDAO extends DBContext {
     }
 
     public List<ContractItem> getItemsByContractId(int contractId, String keyword, String startDate, String endDate,
-            int pageIndex, int pageSize, String sortBy, String sortOrder) {  
+            int pageIndex, int pageSize, String sortBy, String sortOrder) {
 
         List<ContractItem> list = new ArrayList<>();
         int offset = (pageIndex - 1) * pageSize;
@@ -852,18 +852,19 @@ public class ContractDAO extends DBContext {
         int offset = (pageIndex - 1) * pageSize;
 
         String sql = "SELECT u.id, u.displayname, u.email, u.phone, "
-                + "COUNT(DISTINCT c.id) as total_contracts, "
-                + "COUNT(ci.id) as total_products "
+                + "COUNT(DISTINCT c.id) AS total_contracts, "
+                + "COUNT(ci.id) AS total_products "
                 + "FROM _user u "
-                + "LEFT JOIN contract c ON u.id = c.user_id AND c.isDelete = 0 "
+                + "JOIN contract c ON u.id = c.user_id AND c.isDelete = 0 "
                 + "LEFT JOIN contract_item ci ON c.id = ci.contract_id "
-                + "WHERE u.role_id = 4 "; // role_id 4 is Customer
+                + "WHERE u.role_id = 4 ";
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (u.displayname LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ";
         }
 
         sql += "GROUP BY u.id, u.displayname, u.email, u.phone ";
+        sql += "HAVING COUNT(DISTINCT c.id) > 0 ";
         sql += "ORDER BY total_contracts DESC ";
         sql += "LIMIT ? OFFSET ?";
 
@@ -1068,7 +1069,8 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
-    // Lấy Top 3 khách hàng mua nhiều nhất (đếm theo số lượng contract_item - số thiết bị đã mua)
+    // Lấy Top 3 khách hàng mua nhiều nhất (đếm theo số lượng contract_item - số
+    // thiết bị đã mua)
     public List<TopContractUser> getTopContractUsers() {
         List<TopContractUser> topUsers = new ArrayList<>();
 
@@ -1098,11 +1100,12 @@ public class ContractDAO extends DBContext {
         }
         return topUsers;
     }
-    
-    // Lấy Top 3 thiết bị bán chạy nhất (đếm theo số lượng seri đã được làm hợp đồng)
+
+    // Lấy Top 3 thiết bị bán chạy nhất (đếm theo số lượng seri đã được làm hợp
+    // đồng)
     public List<TopDevice> getTopSellingDevices() {
         List<TopDevice> topDevices = new ArrayList<>();
-        
+
         String query = "SELECT d.id AS device_id, d.name AS device_name, d.image AS device_image, "
                 + "COUNT(ci.id) AS total_sold "
                 + "FROM swp391.device d "
@@ -1113,7 +1116,7 @@ public class ContractDAO extends DBContext {
                 + "GROUP BY d.id, d.name, d.image "
                 + "ORDER BY COUNT(ci.id) DESC "
                 + "LIMIT 3";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 TopDevice top = new TopDevice();
@@ -1148,17 +1151,18 @@ public class ContractDAO extends DBContext {
         return 0;
     }
 
-    // Lấy số lượng sản phẩm đã bán theo từng tháng (đếm contract_item theo tháng tạo hợp đồng)
+    // Lấy số lượng sản phẩm đã bán theo từng tháng (đếm contract_item theo tháng
+    // tạo hợp đồng)
     public java.util.Map<String, Integer> getSoldProductsByMonth() {
         java.util.Map<String, Integer> monthData = new java.util.LinkedHashMap<>();
-        
+
         // Khởi tạo tất cả các tháng với giá trị 0
-        String[] months = {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-                          "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"};
+        String[] months = { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
         for (String month : months) {
             monthData.put(month, 0);
         }
-        
+
         // Đếm contract_item theo tháng tạo hợp đồng để đồng bộ với biểu đồ hợp đồng
         String sql = "SELECT MONTH(c.created_at) as month, COUNT(ci.id) as count "
                 + "FROM contract c "
@@ -1167,11 +1171,11 @@ public class ContractDAO extends DBContext {
                 + "AND YEAR(c.created_at) = YEAR(CURDATE()) "
                 + "GROUP BY MONTH(c.created_at) "
                 + "ORDER BY MONTH(c.created_at)";
-        
+
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 int month = rs.getInt("month");
                 int count = rs.getInt("count");
@@ -1181,7 +1185,7 @@ public class ContractDAO extends DBContext {
             System.err.println("Error getting sold products by month: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return monthData;
     }
 

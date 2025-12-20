@@ -109,6 +109,9 @@ public class LoginServlet extends HttpServlet {
         } else if(a.getRoles() != null && a.getRoles().getId() == 4){
             response.sendRedirect("/customer/ViewListContact");
         }
+        else if(a.getRoles() != null && a.getRoles().getId() == 3){
+            response.sendRedirect("/contract-list");
+        }
         else {
             
             response.sendRedirect("/Dashboard");

@@ -265,7 +265,14 @@
                                                     </button>
                                                 </c:otherwise>
                                             </c:choose>
+                                            
+                                            <a href="/DeleteMaintenanceRequest?id=${r.id}"
+                                                       class="btn btn-warning btn-outline-primary fw-bold">
+                                                        <i class="fas fa-trash me-1"></i>Delete
+                                                    </a>
                                         </div>
+                                        
+                                        
                                     </td>
                                 </tr>
                             </c:forEach>

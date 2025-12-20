@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -24,6 +25,7 @@ import utils.BaseEntity;
 @Table(name = "device")
 public class Device extends BaseEntity {
 
+    @Lob
     @Column(name = "image")
     private String image;
 
@@ -31,6 +33,7 @@ public class Device extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Lob
     @Column(name = "description")
     private String description;
 
@@ -115,5 +118,5 @@ public class Device extends BaseEntity {
 
     public void setSubDevices(Set<SubDevice> subDevices) {
         this.subDevices = subDevices;
-    }  
+    }
 }
