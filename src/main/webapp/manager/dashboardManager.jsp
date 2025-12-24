@@ -708,17 +708,7 @@
                     </div>
                 </div>
 
-                <!-- Biểu đồ hợp đồng theo tháng -->
-                <div class="section-container">
-                    <h3><i class="fas fa-chart-bar me-2" style="color: #007bff;"></i>Biểu đồ hợp đồng theo tháng</h3>
-                    <canvas id="contractsChart" style="max-height: 400px;"></canvas>
-                </div>
-
-                <!-- Biểu đồ sản phẩm đã bán theo tháng -->
-                <div class="section-container">
-                    <h3><i class="fas fa-chart-line me-2" style="color: #28a745;"></i>Biểu đồ sản phẩm đã bán theo tháng</h3>
-                    <canvas id="soldProductsChart" style="max-height: 400px;"></canvas>
-                </div>
+                
 
             </main>
         </div>

@@ -46,7 +46,7 @@ public class UpdateContractServlet extends HttpServlet {
                 return;
             }
 
-            // Kiểm tra điều kiện 6 ngày
+            // Kiểm tra điều kiện 3 ngày
             boolean canEdit = false;
             if (contract.getCreatedAt() != null) {
                 OffsetDateTime now = OffsetDateTime.now();

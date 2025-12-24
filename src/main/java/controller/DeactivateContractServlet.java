@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import model.Contract;
 
 /**
  *
@@ -34,6 +35,10 @@ public class DeactivateContractServlet extends HttpServlet {
             // 2. Gọi DAO để thực hiện update xuống DB
             ContractDAO dao = new ContractDAO();
             dao.changeContractStatus(id, 1);
+            
+            Contract contract = dao.getContractById(id);
+            
+            
 
             // 3. Gửi thông báo thành công qua Session (Flash Message)
             HttpSession session = request.getSession();
